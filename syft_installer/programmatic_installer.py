@@ -1,6 +1,7 @@
 """
 Fully programmatic installer for notebook environments.
 """
+from pathlib import Path
 from typing import Optional
 
 from syft_installer.hybrid_installer import HybridInstaller
@@ -39,13 +40,22 @@ class ProgrammaticInstaller(HybridInstaller):
         """
         self.progress.update("Starting installation", 10)
         
-        # Download binary
-        self.progress.update("Downloading SyftBox binary", 20)
-        self.download_binary()
+        # Download binary if needed
+        if not self.syftbox_binary_path.exists():
+            self.progress.update("Downloading SyftBox binary", 20)
+            self._download_binary()
+        else:
+            self.progress.update("Binary already exists", 20)
         
-        # Setup environment
+        # Basic setup (PATH, directories)
         self.progress.update("Setting up environment", 40)
-        self.setup_environment()
+        self._add_to_path()
+        self._uninstall_old_versions()
+        
+        # Create necessary directories
+        self.syftbox_dir.mkdir(parents=True, exist_ok=True)
+        config_dir = Path.home() / ".syftbox"
+        config_dir.mkdir(parents=True, exist_ok=True)
         
         # Request OTP
         self.progress.update(f"Requesting OTP for {self.email}", 60)
