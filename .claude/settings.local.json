@@ -14,7 +14,9 @@
       "Bash(uv pip install:*)",
       "Bash(pytest:*)",
       "Bash(mv:*)",
-      "Bash(chmod:*)"
+      "Bash(chmod:*)",
+      "Bash(mkdir:*)",
+      "Bash(rm:*)"
     ],
     "deny": []
   }
