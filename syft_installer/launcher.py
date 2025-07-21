@@ -1,7 +1,6 @@
 import os
 import signal
 import subprocess
-import threading
 import time
 from pathlib import Path
 from typing import Optional
@@ -15,7 +14,6 @@ class Launcher:
     
     def __init__(self):
         self.process: Optional[subprocess.Popen] = None
-        self.thread: Optional[threading.Thread] = None
     
     def start(self, config: Config, background: bool = False) -> None:
         """
@@ -40,29 +38,48 @@ class Launcher:
         ]
         
         if background:
-            # Run in background thread
-            self.thread = threading.Thread(target=self._run_background, args=(cmd,))
-            self.thread.daemon = True
-            self.thread.start()
+            # Start the process detached - no thread needed
+            self._run_background(cmd)
         else:
             # Run in foreground
             self._run_foreground(cmd)
     
     def stop(self) -> None:
         """Stop SyftBox client."""
+        # First try to stop our own process if we have one
         if self.process and self.process.poll() is None:
-            # Send SIGTERM for graceful shutdown
-            self.process.terminate()
-            
-            # Wait up to 5 seconds for process to exit
             try:
+                self.process.terminate()
                 self.process.wait(timeout=5)
             except subprocess.TimeoutExpired:
-                # Force kill if not responsive
                 self.process.kill()
                 self.process.wait()
-            
+            except Exception:
+                pass
             self.process = None
+        
+        # Also stop any other syftbox daemons
+        try:
+            # Use pkill to stop all syftbox daemon processes
+            subprocess.run(["pkill", "-f", "syftbox daemon"], check=False)
+        except Exception:
+            # Fallback: try to find and kill manually
+            try:
+                result = subprocess.run(
+                    ["pgrep", "-f", "syftbox daemon"],
+                    capture_output=True,
+                    text=True,
+                )
+                if result.returncode == 0:
+                    pids = result.stdout.strip().split('\n')
+                    for pid in pids:
+                        if pid:
+                            try:
+                                os.kill(int(pid), signal.SIGTERM)
+                            except Exception:
+                                pass
+            except Exception:
+                pass
     
     def restart(self, config: Config) -> None:
         """Restart SyftBox client."""
@@ -72,26 +89,31 @@ class Launcher:
     
     def is_running(self) -> bool:
         """Check if SyftBox client is running."""
-        if self.process:
-            return self.process.poll() is None
-        
-        # Also check for existing syftbox processes
+        # Always check for external processes, not just our own
         try:
-            # Check for syftbox process (not "syftbox client")
+            # Check for syftbox daemon process
             result = subprocess.run(
-                ["pgrep", "-f", "syftbox"],
+                ["pgrep", "-f", "syftbox daemon"],
                 capture_output=True,
                 text=True,
             )
-            # Make sure we found a real syftbox process, not just our pgrep command
             if result.returncode == 0:
                 pids = result.stdout.strip().split('\n')
-                # Filter out empty strings
+                # Filter out empty strings and our own pgrep
                 pids = [p for p in pids if p]
                 return len(pids) > 0
             return False
         except Exception:
-            return False
+            # Fallback for systems without pgrep
+            try:
+                result = subprocess.run(
+                    ["ps", "aux"],
+                    capture_output=True,
+                    text=True,
+                )
+                return "syftbox daemon" in result.stdout
+            except Exception:
+                return False
     
     def get_status(self) -> dict:
         """Get client status information."""
@@ -111,12 +133,27 @@ class Launcher:
     def _run_background(self, cmd: list) -> None:
         """Run client in background thread."""
         try:
-            self.process = subprocess.Popen(
-                cmd,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            )
-            self.process.wait()
+            # Use nohup and detach from current process completely
+            import platform
+            if platform.system() == "Windows":
+                # Windows doesn't have nohup, use START instead
+                self.process = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    creationflags=subprocess.CREATE_NEW_PROCESS_GROUP | subprocess.CREATE_NO_WINDOW
+                )
+            else:
+                # Unix-like systems: use nohup and full detachment
+                self.process = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    stdin=subprocess.DEVNULL,
+                    start_new_session=True,
+                    preexec_fn=os.setpgrp  # Detach from process group
+                )
+                # Don't wait - let it run independently
         except Exception:
             pass
 
