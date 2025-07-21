@@ -11,10 +11,10 @@ pip install syft-installer
 ## Quick Start
 
 ```python
-import syftbox
+import syft_installer as si
 
 # Install and run SyftBox with one line
-syftbox.run()
+si.run()
 ```
 
 That's it! This single command:
@@ -27,17 +27,17 @@ That's it! This single command:
 ## Simple API
 
 ```python
-import syftbox
+import syft_installer as si
 
-syftbox.run()        # Install (if needed) and start
-syftbox.status()     # Show current status
-syftbox.stop()       # Stop the daemon
-syftbox.restart()    # Restart the daemon
-syftbox.uninstall()  # Remove everything
+si.run()        # Install (if needed) and start
+si.status()     # Show current status
+si.stop()       # Stop the daemon
+si.restart()    # Restart the daemon
+si.uninstall()  # Remove everything
 
 # Quick checks
-syftbox.check.is_installed  # -> True/False
-syftbox.check.is_running    # -> True/False
+si.is_installed()  # -> True/False
+si.is_running()    # -> True/False
 ```
 
 ## Examples

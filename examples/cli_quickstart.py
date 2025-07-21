@@ -6,16 +6,16 @@ Run this script to install and start SyftBox:
     python cli_quickstart.py
 """
 
-import syftbox
+import syft_installer as si
 
 def main():
     print("\n🚀 SyftBox Quickstart\n")
     
     # Check current status
     print("Checking status...")
-    if syftbox.check.is_installed:
+    if si.is_installed():
         print("✅ SyftBox is installed")
-        if syftbox.check.is_running:
+        if si.is_running():
             print("✅ SyftBox is running")
         else:
             print("❌ SyftBox is not running")
@@ -24,21 +24,21 @@ def main():
     
     # Show detailed status
     print("\nCurrent status:")
-    syftbox.status()
+    si.status()
     
     # Offer to run SyftBox
-    if not syftbox.check.is_running:
+    if not si.is_running():
         response = input("\nWould you like to start SyftBox? (y/n): ")
         if response.lower() == 'y':
             print("\nStarting SyftBox...")
-            syftbox.run()
+            si.run()
             print("\n✅ SyftBox is now running!")
     else:
         print("\n✅ SyftBox is already running!")
         print("\nAvailable commands:")
-        print("  syftbox.stop()     - Stop the daemon")
-        print("  syftbox.restart()  - Restart the daemon")
-        print("  syftbox.status()   - Check status")
+        print("  si.stop()     - Stop the daemon")
+        print("  si.restart()  - Restart the daemon")
+        print("  si.status()   - Check status")
 
 if __name__ == "__main__":
     main()
