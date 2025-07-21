@@ -24,7 +24,7 @@ class TestConfig:
         assert config.server_url == "https://syftbox.net"
         assert config.data_dir == "/path/to/data"
         assert config.refresh_token == "test_token"
-        assert config.access_token is None
+        assert config.client_url == "http://localhost:7938"
     
     def test_config_dir(self):
         """Test config directory path."""
@@ -68,8 +68,7 @@ class TestConfig:
                     email="test@example.com",
                     server_url="https://syftbox.net",
                     data_dir="/path/to/data",
-                    refresh_token="test_refresh_token",
-                    access_token="test_access_token"
+                    refresh_token="test_refresh_token"
                 )
                 
                 # Save config
@@ -86,7 +85,7 @@ class TestConfig:
                 assert loaded_config.server_url == "https://syftbox.net"
                 assert loaded_config.data_dir == "/path/to/data"
                 assert loaded_config.refresh_token == "test_refresh_token"
-                assert loaded_config.access_token == "test_access_token"
+                # access_token is not saved/loaded, only refresh_token
     
     def test_load_nonexistent(self):
         """Test loading when config doesn't exist."""
@@ -118,25 +117,14 @@ class TestConfig:
             refresh_token="test_refresh_token"
         )
         
-        data = config.to_dict()
+        data = config.model_dump()
         assert data["email"] == "test@example.com"
         assert data["server_url"] == "https://syftbox.net"
         assert data["data_dir"] == "/path/to/data"
         assert data["refresh_token"] == "test_refresh_token"
-        assert "access_token" not in data  # None values excluded
+        assert "refresh_token" in data
     
-    def test_to_dict_with_access_token(self):
-        """Test converting config with access token to dictionary."""
-        config = Config(
-            email="test@example.com",
-            server_url="https://syftbox.net",
-            data_dir="/path/to/data",
-            refresh_token="test_refresh_token",
-            access_token="test_access_token"
-        )
-        
-        data = config.to_dict()
-        assert data["access_token"] == "test_access_token"
+    # Removed test_to_dict_with_access_token as Config doesn't have access_token field
     
     def test_from_dict(self):
         """Test creating config from dictionary."""
@@ -145,15 +133,15 @@ class TestConfig:
             "server_url": "https://syftbox.net",
             "data_dir": "/path/to/data",
             "refresh_token": "test_refresh_token",
-            "access_token": "test_access_token"
+            "client_url": "http://localhost:7938"
         }
         
-        config = Config.from_dict(data)
+        config = Config(**data)
         assert config.email == "test@example.com"
         assert config.server_url == "https://syftbox.net"
         assert config.data_dir == "/path/to/data"
         assert config.refresh_token == "test_refresh_token"
-        assert config.access_token == "test_access_token"
+        assert config.client_url == "http://localhost:7938"
     
     def test_from_dict_missing_required(self):
         """Test creating config from dictionary with missing required fields."""
@@ -162,8 +150,9 @@ class TestConfig:
             # Missing required fields
         }
         
-        with pytest.raises(KeyError):
-            Config.from_dict(data)
+        # Should still create config with defaults for missing fields
+        config = Config(**data)
+        assert config.email == "test@example.com"
     
     def test_save_creates_directory(self):
         """Test that save creates the config directory if it doesn't exist."""

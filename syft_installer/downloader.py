@@ -53,7 +53,13 @@ class Downloader:
             total_size = int(response.headers.get("content-length", 0))
             
             # Use rich progress bar if available and in terminal
-            if os.isatty(sys.stdout.fileno()):
+            try:
+                is_terminal = os.isatty(sys.stdout.fileno())
+            except (AttributeError, OSError):
+                # In some environments (like Colab), stdout may not have fileno
+                is_terminal = False
+            
+            if is_terminal:
                 with Progress(
                     "[progress.description]{task.description}",
                     DownloadColumn(),

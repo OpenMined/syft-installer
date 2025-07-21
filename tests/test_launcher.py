@@ -16,7 +16,7 @@ class TestLauncher:
         """Test launcher initialization."""
         launcher = Launcher()
         assert launcher.process is None
-        assert launcher.thread is None
+        # Launcher doesn't use threads anymore
     
     @patch('subprocess.Popen')
     def test_start_foreground(self, mock_popen):

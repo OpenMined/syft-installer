@@ -5,7 +5,7 @@ from syft_installer.validators import (
     validate_email,
     validate_otp,
     sanitize_otp,
-    validate_server_url
+    validate_url
 )
 
 
@@ -96,7 +96,7 @@ class TestValidators:
             result = sanitize_otp(input_otp)
             assert result == expected, f"Expected sanitize_otp('{input_otp}') to return '{expected}', got '{result}'"
     
-    def test_validate_server_url_valid(self):
+    def test_validate_url_valid(self):
         """Test valid server URLs."""
         valid_urls = [
             "https://syftbox.net",
@@ -109,9 +109,9 @@ class TestValidators:
         ]
         
         for url in valid_urls:
-            assert validate_server_url(url) is True, f"Expected {url} to be valid"
+            assert validate_url(url) is True, f"Expected {url} to be valid"
     
-    def test_validate_server_url_invalid(self):
+    def test_validate_url_invalid(self):
         """Test invalid server URLs."""
         invalid_urls = [
             "",
@@ -128,4 +128,4 @@ class TestValidators:
         ]
         
         for url in invalid_urls:
-            assert validate_server_url(url) is False, f"Expected {url} to be invalid"
+            assert validate_url(url) is False, f"Expected {url} to be invalid"

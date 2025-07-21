@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 
 def validate_email(email: str) -> bool:
-    """
+    r"""
     Validate email address.
     - Must pass RFC 5322 validation
     - Must match pattern: ^[^\s@]+@[^\s@]+\.[^\s@]+$
