@@ -39,8 +39,13 @@ class Authenticator:
         url = f"{self.server_url}/auth/otp/request"
         data = {"email": email}
         
+        print(f"🌐 Making request to: {url}")
+        print(f"📧 With email: {email}")
+        
         try:
-            response = self.session.post(url, json=data)
+            response = self.session.post(url, json=data, timeout=30)
+            print(f"📡 Response status: {response.status_code}")
+            print(f"📡 Response headers: {dict(response.headers)}")
             response.raise_for_status()
             
             # OTP request returns empty body on success

@@ -76,7 +76,8 @@ class SimpleInstaller:
         # Request OTP
         print(f"\n📧 Requesting OTP for {self.email}...")
         try:
-            self.auth.request_otp(self.email)
+            result = self.auth.request_otp(self.email)
+            print(f"📧 OTP request response: {result}")
             self._otp_requested = True
             print("✅ OTP sent! Check your email (including spam folder)")
             print("\n👉 Next: Call step2_verify_otp('YOUR_OTP') with the code from your email")
@@ -88,6 +89,10 @@ class SimpleInstaller:
                 "next_step": "step2_verify_otp"
             }
         except Exception as e:
+            print(f"❌ OTP request failed with error: {str(e)}")
+            print(f"❌ Error type: {type(e).__name__}")
+            import traceback
+            traceback.print_exc()
             return {"status": "error", "message": f"OTP request failed: {str(e)}"}
     
     def step2_verify_otp(self, otp: str, start_client: bool = True) -> Dict[str, str]:
