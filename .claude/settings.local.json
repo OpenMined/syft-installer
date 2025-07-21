@@ -16,7 +16,10 @@
       "Bash(mv:*)",
       "Bash(chmod:*)",
       "Bash(mkdir:*)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(uv build:*)",
+      "Bash(uv publish:*)",
+      "Bash(curl:*)"
     ],
     "deny": []
   }

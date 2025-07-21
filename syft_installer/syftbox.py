@@ -238,8 +238,7 @@ class SyftBox:
         """Run installation flow."""
         installer = SimpleInstaller(
             email=self.email,
-            server_url=self.server,
-            data_dir=str(self.data_dir)
+            server_url=self.server
         )
         
         # Step 1: Download and request OTP
