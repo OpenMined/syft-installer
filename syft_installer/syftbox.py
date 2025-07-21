@@ -263,9 +263,19 @@ class SyftBox:
         # Step 1: Download and request OTP
         result = installer.step1_download_and_request_otp()
         
+        # Check if step 1 failed
+        if result.get("status") == "error":
+            console.print(f"\n❌ Installation failed: {result.get('message', 'Unknown error')}")
+            return
+        
         # Step 2: Get OTP from user and verify
         otp = console.input("\n📧 Enter the OTP sent to your email: ")
-        installer.step2_verify_otp(otp, start_client=False)
+        result = installer.step2_verify_otp(otp, start_client=False)
+        
+        # Check if step 2 failed
+        if result.get("status") == "error":
+            console.print(f"\n❌ Verification failed: {result.get('message', 'Unknown error')}")
+            return
         
         console.print("\n✅ Installation complete!")
     

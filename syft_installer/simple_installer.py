@@ -57,6 +57,12 @@ class SimpleInstaller:
         """
         print("🚀 Starting SyftBox installation...")
         
+        # Debug runtime environment
+        import platform
+        print(f"🖥️  Platform: {platform.system()} {platform.release()}")
+        print(f"🐍 Python: {platform.python_version()}")
+        print(f"📁 Working directory: {os.getcwd()}")
+        
         # Create directories
         self.bin_dir.mkdir(parents=True, exist_ok=True)
         self.config_dir.mkdir(parents=True, exist_ok=True)
@@ -69,6 +75,7 @@ class SimpleInstaller:
                 self.downloader.download_and_install(self.binary_path)
                 print("✅ Binary downloaded successfully")
             except Exception as e:
+                print(f"❌ Download failed: {str(e)}")
                 return {"status": "error", "message": f"Download failed: {str(e)}"}
         else:
             print("✅ Binary already exists")

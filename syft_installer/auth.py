@@ -52,6 +52,8 @@ class Authenticator:
             return {"status": "success", "message": "OTP sent to email"}
                 
         except requests.exceptions.RequestException as e:
+            print(f"❌ Request exception: {type(e).__name__}")
+            print(f"❌ Exception details: {str(e)}")
             if hasattr(e, 'response') and e.response is not None:
                 try:
                     error_data = e.response.json()
