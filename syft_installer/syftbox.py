@@ -120,7 +120,8 @@ class SyftBox:
         Args:
             background: Run client in background (default: True)
         """
-        console.print("\n[bold]🚀 Starting SyftBox...[/bold]\n")
+        from syft_installer.__version__ import __version__
+        console.print(f"\n[bold]🚀 Starting SyftBox... (syft-installer v{__version__})[/bold]\n")
         
         if not self.is_installed:
             console.print("📦 SyftBox not installed. Installing now...\n")

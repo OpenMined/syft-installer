@@ -177,7 +177,27 @@ class Launcher:
                 
                 # Try to detect if we're in a restricted environment (like Colab)
                 # Check if we're in Google Colab specifically
-                in_colab = 'google.colab' in str(get_ipython()) if 'get_ipython' in globals() else False
+                print("   Checking environment...")
+                try:
+                    import IPython
+                    ipython = IPython.get_ipython()
+                    ipython_str = str(ipython) if ipython else "None"
+                    print(f"   IPython instance: {ipython_str}")
+                    in_colab = 'google.colab' in ipython_str
+                except:
+                    print("   No IPython detected")
+                    in_colab = False
+                
+                # Alternative Colab detection
+                if not in_colab:
+                    try:
+                        import google.colab
+                        in_colab = True
+                        print("   Detected Google Colab via import")
+                    except ImportError:
+                        pass
+                
+                print(f"   In Colab: {in_colab}")
                 
                 if in_colab:
                     print("   ⚠️  Detected Google Colab environment - using simple subprocess")
@@ -239,6 +259,17 @@ class Launcher:
             print(f"   ❌ Failed to start daemon: {e}")
             import traceback
             traceback.print_exc()
+            
+            # Try to read stderr if available
+            if hasattr(self, 'stderr_file'):
+                try:
+                    self.stderr_file.seek(0)
+                    stderr_content = self.stderr_file.read()
+                    if stderr_content:
+                        print(f"   Stderr output: {stderr_content}")
+                except:
+                    pass
+            
             raise
 
 
