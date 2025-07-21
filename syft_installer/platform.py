@@ -51,10 +51,10 @@ def get_binary_url(base_url: str = "https://syftbox.net") -> str:
     """
     os_name, arch = get_platform_info()
     
-    # Binary naming convention: syftbox-{os}-{arch}
-    binary_name = f"syftbox-{os_name}-{arch}"
+    # Binary naming convention: syftbox_client_{os}_{arch}.tar.gz
+    binary_name = f"syftbox_client_{os_name}_{arch}"
     
-    return f"{base_url}/binaries/{binary_name}.tar.gz"
+    return f"{base_url}/releases/{binary_name}.tar.gz"
 
 
 def get_python_version() -> str:

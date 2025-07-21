@@ -1,0 +1,137 @@
+Metadata-Version: 2.4
+Name: syft-installer
+Version: 0.1.0
+Summary: Python installer for SyftBox - programmatic alternative to the TUI installer
+Author-email: OpenMined <info@openmined.org>
+License: Apache-2.0
+Project-URL: Homepage, https://github.com/OpenMined/syft-installer
+Project-URL: Documentation, https://github.com/OpenMined/syft-installer#readme
+Project-URL: Repository, https://github.com/OpenMined/syft-installer.git
+Project-URL: Issues, https://github.com/OpenMined/syft-installer/issues
+Keywords: syftbox,installer,federated-learning,privacy
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: requests>=2.31.0
+Requires-Dist: pydantic>=2.0.0
+Requires-Dist: rich>=13.0.0
+Requires-Dist: ipywidgets>=8.0.0
+Requires-Dist: PyJWT>=2.8.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: pytest-asyncio>=0.21.0; extra == "dev"
+Requires-Dist: black>=23.0.0; extra == "dev"
+Requires-Dist: ruff>=0.1.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Requires-Dist: types-requests; extra == "dev"
+Dynamic: license-file
+
+# syft-installer
+
+Python library for installing SyftBox - a programmatic alternative to the TUI installer.
+
+## Installation
+
+```bash
+pip install syft-installer
+```
+
+## Quick Start
+
+```python
+import syft_installer as si
+
+# Simple one-liner installation
+si.install()
+```
+
+## Usage Examples
+
+### Basic Installation
+
+```python
+import syft_installer as si
+
+# Create installer instance
+installer = si.Installer()
+installer.install()  # Interactive installation
+```
+
+### Pre-configured Installation
+
+```python
+import syft_installer as si
+
+# Skip email prompt
+installer = si.Installer(email="user@example.com")
+installer.install()  # Only prompts for OTP
+```
+
+### Programmatic Installation
+
+```python
+import syft_installer as si
+
+# Full control over the process
+installer = si.Installer(email="user@example.com")
+installer.request_otp()
+
+# Get OTP from email
+otp = input("Enter OTP: ")  # Or get programmatically
+installer.verify_otp(otp)
+
+# Start client
+installer.start_client(background=True)
+```
+
+### Google Colab
+
+The library automatically detects and adapts to the Colab environment:
+
+```python
+import syft_installer as si
+
+# Works seamlessly in Colab notebooks
+si.install()  # Uses widgets for input
+```
+
+### Headless/CI Mode
+
+```python
+import syft_installer as si
+
+# For automated environments
+installer = si.Installer(
+    email="user@example.com",
+    headless=True
+)
+
+installer.request_otp()
+# Get OTP from email programmatically
+installer.verify_otp("ABCD1234")
+installer.start_client(background=True)
+```
+
+## Features
+
+- 🚀 Simple one-liner installation
+- 🔧 Full programmatic control
+- 📱 OTP-based authentication
+- 🌍 Environment auto-detection (terminal, Jupyter, Colab)
+- 🤖 Headless mode for CI/CD
+- ⚡ Background process management
+- 🔄 Token refresh handling
+
+## License
+
+Apache License 2.0

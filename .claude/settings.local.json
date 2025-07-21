@@ -3,7 +3,8 @@
     "allow": [
       "WebFetch(domain:syftbox.net)",
       "Bash(git add:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(git commit:*)"
     ],
     "deny": []
   }
