@@ -175,14 +175,40 @@ class Launcher:
                 self.stderr_file = tempfile.NamedTemporaryFile(mode='w+', delete=False, prefix='syftbox_stderr_')
                 print(f"   Stderr will be logged to: {self.stderr_file.name}")
                 
-                self.process = subprocess.Popen(
-                    cmd,
-                    stdout=subprocess.DEVNULL,
-                    stderr=self.stderr_file,
-                    stdin=subprocess.DEVNULL,
-                    start_new_session=True,
-                    preexec_fn=os.setpgrp  # Detach from process group
-                )
+                # Try to detect if we're in a restricted environment (like Colab)
+                # Check if we're in Google Colab specifically
+                in_colab = 'google.colab' in str(get_ipython()) if 'get_ipython' in globals() else False
+                
+                if in_colab:
+                    print("   ⚠️  Detected Google Colab environment - using simple subprocess")
+                    # In Colab, use minimal subprocess options
+                    self.process = subprocess.Popen(
+                        cmd,
+                        stdout=subprocess.DEVNULL,
+                        stderr=self.stderr_file,
+                        stdin=subprocess.DEVNULL
+                    )
+                else:
+                    # Regular Unix systems - full detachment
+                    try:
+                        self.process = subprocess.Popen(
+                            cmd,
+                            stdout=subprocess.DEVNULL,
+                            stderr=self.stderr_file,
+                            stdin=subprocess.DEVNULL,
+                            start_new_session=True,
+                            preexec_fn=os.setpgrp  # Detach from process group
+                        )
+                    except (OSError, AttributeError) as e:
+                        print(f"   ⚠️  Failed to detach process: {e}")
+                        print("   Falling back to simple subprocess")
+                        # Fallback to simple subprocess
+                        self.process = subprocess.Popen(
+                            cmd,
+                            stdout=subprocess.DEVNULL,
+                            stderr=self.stderr_file,
+                            stdin=subprocess.DEVNULL
+                        )
             
             print(f"   Process started with PID: {self.process.pid}")
             
