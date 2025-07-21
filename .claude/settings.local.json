@@ -4,7 +4,14 @@
       "WebFetch(domain:syftbox.net)",
       "Bash(git add:*)",
       "Bash(grep:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:openmined.github.io)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(mkdir:*)",
+      "Bash(python:*)",
+      "Bash(lsof:*)",
+      "Bash(curl:*)"
     ],
     "deny": []
   }

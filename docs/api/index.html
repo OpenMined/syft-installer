@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Reference - Syft Installer</title>
+    <meta name="description" content="Complete API reference for syft-installer - all classes, methods, and parameters">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <img src="../images/syft-logo.svg" alt="Syft" class="logo-img">
+                <a href="../index.html" class="logo-text">syft-installer</a>
+            </div>
+            <nav>
+                <a href="../index.html">Home</a>
+                <a href="../quickstart.html">Quick Start</a>
+                <a href="#installer-class">Installer</a>
+                <a href="#functions">Functions</a>
+                <a href="https://github.com/OpenMined/syft-installer" target="_blank">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>📚 API Reference</h1>
+                <p class="hero-subtitle">Complete reference for all classes, methods, and configuration options in syft-installer.</p>
+            </div>
+        </section>
+
+        <!-- Quick Reference -->
+        <section class="section">
+            <div class="section-content">
+                <h2>⚡ Quick Reference</h2>
+                <p>Jump to what you need:</p>
+                
+                <div class="api-grid">
+                    <div class="api-section">
+                        <h3><a href="#install-function">si.install()</a></h3>
+                        <p>One-liner installation function</p>
+                        <pre><code class="language-python">si.install(
+    install_mode="interactive",
+    install_apps=None,
+    debug=False
+)</code></pre>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h3><a href="#installer-class">Installer Class</a></h3>
+                        <p>Main installer class for step-by-step control</p>
+                        <pre><code class="language-python">installer = si.Installer(
+    email=None,
+    headless=False
+)</code></pre>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h3><a href="#environment-variables">Environment Variables</a></h3>
+                        <p>Configuration via environment</p>
+                        <pre><code class="language-bash">INSTALL_MODE=interactive
+INSTALL_APPS=app1,app2
+DEBUG=true</code></pre>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h3><a href="#exceptions">Exceptions</a></h3>
+                        <p>Error handling and custom exceptions</p>
+                        <pre><code class="language-python">try:
+    si.install()
+except si.InstallationError as e:
+    print(f"Error: {e}")</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Install Function -->
+        <section id="install-function" class="section">
+            <div class="section-content">
+                <h2>🚀 si.install() Function</h2>
+                <p>The main entry point for simple SyftBox installation.</p>
+                
+                <div class="api-section">
+                    <h3>Signature</h3>
+                    <pre><code class="language-python">def install(
+    install_mode: str = "interactive",
+    install_apps: Optional[str] = None,
+    debug: bool = False,
+    **kwargs
+) -> bool</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <h3>Parameters</h3>
+                    <table class="api-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>install_mode</code></td>
+                                <td>str</td>
+                                <td>"interactive"</td>
+                                <td>Installation mode: "interactive", "download-only", or "setup-only"</td>
+                            </tr>
+                            <tr>
+                                <td><code>install_apps</code></td>
+                                <td>str | None</td>
+                                <td>None</td>
+                                <td>Comma-separated list of apps to install (e.g., "dataroom,whisper")</td>
+                            </tr>
+                            <tr>
+                                <td><code>debug</code></td>
+                                <td>bool</td>
+                                <td>False</td>
+                                <td>Enable debug output and logging</td>
+                            </tr>
+                            <tr>
+                                <td><code>**kwargs</code></td>
+                                <td>dict</td>
+                                <td>{}</td>
+                                <td>Additional arguments passed to Installer class</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="api-section">
+                    <h3>Returns</h3>
+                    <p><code>bool</code> - True if installation completed successfully, False otherwise</p>
+                </div>
+                
+                <div class="api-section">
+                    <h3>Examples</h3>
+                    <pre><code class="language-python"># Simple installation
+success = si.install()
+
+# Download only
+si.install(install_mode="download-only")
+
+# Install with apps and debug
+si.install(
+    install_apps="dataroom,whisper", 
+    debug=True
+)
+
+# Pass additional arguments to Installer
+si.install(email="user@example.com", headless=True)</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installer Class -->
+        <section id="installer-class" class="section">
+            <div class="section-content">
+                <h2>🔧 Installer Class</h2>
+                <p>Main class for programmatic control over SyftBox installation.</p>
+                
+                <div class="api-section">
+                    <h3>Constructor</h3>
+                    <pre><code class="language-python">class Installer:
+    def __init__(
+        self,
+        email: Optional[str] = None,
+        headless: bool = False,
+        config: Optional[Dict] = None
+    )</code></pre>
+                    
+                    <table class="api-table">
+                        <thead>
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Type</th>
+                                <th>Default</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>email</code></td>
+                                <td>str | None</td>
+                                <td>None</td>
+                                <td>Email address for authentication. If None, will prompt user</td>
+                            </tr>
+                            <tr>
+                                <td><code>headless</code></td>
+                                <td>bool</td>
+                                <td>False</td>
+                                <td>Run in headless mode (no interactive prompts)</td>
+                            </tr>
+                            <tr>
+                                <td><code>config</code></td>
+                                <td>dict | None</td>
+                                <td>None</td>
+                                <td>Custom configuration dictionary</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="api-section">
+                    <h3>Methods</h3>
+                    
+                    <h4>install()</h4>
+                    <p>Perform complete installation process.</p>
+                    <pre><code class="language-python">def install(
+    self,
+    install_mode: str = "interactive",
+    install_apps: Optional[str] = None,
+    debug: bool = False
+) -> bool</code></pre>
+                    
+                    <h4>request_otp()</h4>
+                    <p>Request OTP to be sent to user's email.</p>
+                    <pre><code class="language-python">def request_otp(self) -> bool</code></pre>
+                    
+                    <h4>verify_otp(otp: str)</h4>
+                    <p>Verify the OTP received via email.</p>
+                    <pre><code class="language-python">def verify_otp(self, otp: str) -> bool</code></pre>
+                    
+                    <h4>download()</h4>
+                    <p>Download SyftBox binary for the current platform.</p>
+                    <pre><code class="language-python">def download(self) -> bool</code></pre>
+                    
+                    <h4>setup()</h4>
+                    <p>Set up SyftBox (assumes binary is already downloaded).</p>
+                    <pre><code class="language-python">def setup(
+    self,
+    install_apps: Optional[str] = None
+) -> bool</code></pre>
+                    
+                    <h4>start_client()</h4>
+                    <p>Start the SyftBox client process.</p>
+                    <pre><code class="language-python">def start_client(
+    self,
+    background: bool = False
+) -> bool</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <h3>Properties</h3>
+                    
+                    <table class="api-table">
+                        <thead>
+                            <tr>
+                                <th>Property</th>
+                                <th>Type</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>is_authenticated</code></td>
+                                <td>bool</td>
+                                <td>True if user is authenticated with valid token</td>
+                            </tr>
+                            <tr>
+                                <td><code>is_downloaded</code></td>
+                                <td>bool</td>
+                                <td>True if SyftBox binary is downloaded</td>
+                            </tr>
+                            <tr>
+                                <td><code>is_running</code></td>
+                                <td>bool</td>
+                                <td>True if SyftBox client is currently running</td>
+                            </tr>
+                            <tr>
+                                <td><code>version</code></td>
+                                <td>str</td>
+                                <td>Version of the downloaded/installed SyftBox</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="api-section">
+                    <h3>Examples</h3>
+                    <pre><code class="language-python"># Step-by-step installation
+installer = si.Installer(email="user@example.com")
+
+if installer.request_otp():
+    otp = input("Enter OTP: ")
+    if installer.verify_otp(otp):
+        installer.start_client(background=True)
+        print("Installation complete!")
+
+# Check status
+if installer.is_authenticated:
+    print("User is authenticated")
+
+if installer.is_running:
+    print(f"SyftBox {installer.version} is running")</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Environment Variables -->
+        <section id="environment-variables" class="section">
+            <div class="section-content">
+                <h2>🌍 Environment Variables</h2>
+                <p>Configure syft-installer behavior using environment variables (matches install.sh):</p>
+                
+                <table class="api-table">
+                    <thead>
+                        <tr>
+                            <th>Variable</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>INSTALL_MODE</code></td>
+                            <td>"interactive"</td>
+                            <td>Installation mode: "interactive", "download-only", or "setup-only"</td>
+                        </tr>
+                        <tr>
+                            <td><code>INSTALL_APPS</code></td>
+                            <td>None</td>
+                            <td>Comma-separated list of apps to install (e.g., "dataroom,whisper")</td>
+                        </tr>
+                        <tr>
+                            <td><code>DEBUG</code></td>
+                            <td>False</td>
+                            <td>Enable debug output (set to "true" or "1")</td>
+                        </tr>
+                        <tr>
+                            <td><code>ARTIFACT_BASE_URL</code></td>
+                            <td>official URL</td>
+                            <td>Custom base URL for downloading SyftBox artifacts</td>
+                        </tr>
+                        <tr>
+                            <td><code>SYFT_EMAIL</code></td>
+                            <td>None</td>
+                            <td>Email address for authentication (avoids prompting)</td>
+                        </tr>
+                        <tr>
+                            <td><code>SYFT_OTP</code></td>
+                            <td>None</td>
+                            <td>OTP for authentication (use with caution in automation)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="api-section">
+                    <h3>Usage Examples</h3>
+                    <pre><code class="language-bash"># Set environment variables
+export INSTALL_MODE=download-only
+export INSTALL_APPS=dataroom,whisper
+export DEBUG=true
+
+# Run Python script
+python -c "import syft_installer as si; si.install()"</code></pre>
+                    
+                    <pre><code class="language-python"># Or set in Python
+import os
+import syft_installer as si
+
+os.environ["INSTALL_MODE"] = "setup-only"
+os.environ["DEBUG"] = "true"
+
+si.install()</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exceptions -->
+        <section id="exceptions" class="section">
+            <div class="section-content">
+                <h2>⚠️ Exceptions</h2>
+                <p>Custom exceptions raised by syft-installer:</p>
+                
+                <div class="api-section">
+                    <h3>InstallationError</h3>
+                    <p>Base exception for all installation-related errors.</p>
+                    <pre><code class="language-python">class InstallationError(Exception):
+    """Base exception for installation errors"""</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <h3>AuthenticationError</h3>
+                    <p>Raised when authentication fails (invalid email, OTP, etc.).</p>
+                    <pre><code class="language-python">class AuthenticationError(InstallationError):
+                    """Authentication failed"""</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <h3>DownloadError</h3>
+                    <p>Raised when binary download fails.</p>
+                    <pre><code class="language-python">class DownloadError(InstallationError):
+                    """Binary download failed"""</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <h3>SetupError</h3>
+                    <p>Raised when setup/configuration fails.</p>
+                    <pre><code class="language-python">class SetupError(InstallationError):
+                    """Setup/configuration failed"""</code></pre>
+                </div>
+                
+                <div class="api-section">
+                    <h3>Error Handling Example</h3>
+                    <pre><code class="language-python">import syft_installer as si
+from syft_installer.exceptions import (
+    AuthenticationError,
+    DownloadError,
+    SetupError
+)
+
+try:
+    installer = si.Installer(email="user@example.com")
+    installer.install()
+    
+except AuthenticationError as e:
+    print(f"Authentication failed: {e}")
+    # Handle auth error (retry, different email, etc.)
+    
+except DownloadError as e:
+    print(f"Download failed: {e}")
+    # Handle download error (retry, check connection, etc.)
+    
+except SetupError as e:
+    print(f"Setup failed: {e}")
+    # Handle setup error (permissions, disk space, etc.)
+    
+except si.InstallationError as e:
+    print(f"General installation error: {e}")
+    # Handle any other installation error</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Usage -->
+        <section id="advanced" class="section">
+            <div class="section-content">
+                <h2>🚀 Advanced Usage Patterns</h2>
+                
+                <div class="api-grid">
+                    <div class="api-section">
+                        <h3>Custom Configuration</h3>
+                        <pre><code class="language-python"># Custom configuration
+config = {
+    "download_url": "https://custom.url",
+    "install_dir": "/custom/path",
+    "timeout": 300
+}
+
+installer = si.Installer(config=config)
+installer.install()</code></pre>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h3>Retry Logic</h3>
+                        <pre><code class="language-python"># Retry with backoff
+import time
+from syft_installer.exceptions import DownloadError
+
+for attempt in range(3):
+    try:
+        si.install()
+        break
+    except DownloadError:
+        time.sleep(2 ** attempt)
+        if attempt == 2:
+            raise</code></pre>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h3>Progress Monitoring</h3>
+                        <pre><code class="language-python"># Monitor installation progress
+installer = si.Installer()
+
+print("Requesting OTP...")
+installer.request_otp()
+
+otp = input("Enter OTP: ")
+print("Verifying OTP...")
+installer.verify_otp(otp)
+
+print("Starting client...")
+installer.start_client()</code></pre>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h3>Conditional Installation</h3>
+                        <pre><code class="language-python"># Install only if not already running
+installer = si.Installer()
+
+if not installer.is_running:
+    print("SyftBox not running, installing...")
+    installer.install()
+else:
+    print("SyftBox already running!")</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Documentation</h3>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../quickstart.html">Quick Start</a></li>
+                    <li><a href="../core-concept.html">Architecture</a></li>
+                    <li><a href="#installer-class">API Reference</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="https://github.com/OpenMined/syft-installer">GitHub</a></li>
+                    <li><a href="https://github.com/OpenMined/syft-installer/issues">Issues</a></li>
+                    <li><a href="https://openmined.org">OpenMined</a></li>
+                    <li><a href="https://slack.openmined.org">Slack</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://syftbox.openmined.org">SyftBox</a></li>
+                    <li><a href="https://docs.syftbox.openmined.org">SyftBox Docs</a></li>
+                    <li><a href="https://pypi.org/project/syft-installer/">PyPI</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>Built with ❤️ by <a href="https://openmined.org">OpenMined</a></p>
+            <p>Licensed under Apache 2.0</p>
+        </div>
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <style>
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .api-table th,
+        .api-table td {
+            border: 1px solid var(--color-gray-300);
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .api-table th {
+            background-color: var(--color-gray-100);
+            font-weight: 600;
+        }
+        
+        .api-table code {
+            background-color: var(--color-gray-100);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.875em;
+        }
+    </style>
+</body>
+</html>
