@@ -1,6 +1,6 @@
 # syft-installer
 
-Python library for installing SyftBox - a programmatic alternative to the TUI installer.
+Python library for installing SyftBox - follows the official install.sh implementation while providing programmatic capabilities for notebooks and headless environments.
 
 ## Installation
 
@@ -15,6 +15,27 @@ import syft_installer as si
 
 # Simple one-liner installation
 si.install()
+```
+
+## Features
+
+- 🎯 **Follows install.sh exactly** - Uses the same flow as the official installer
+- 🖥️ **Terminal mode** - Delegates to `syftbox login` TUI when in terminal
+- 📓 **Notebook support** - Falls back to programmatic auth in Jupyter/Colab
+- 🌍 **Environment variables** - Supports all install.sh environment variables
+- 🚀 **Multiple install modes** - interactive, download-only, setup-only
+- 📦 **App installation** - Install SyftBox apps during setup
+- 🛠️ **PATH management** - Automatically updates shell profiles
+
+## Environment Variables
+
+The installer supports all environment variables from install.sh:
+
+```bash
+export INSTALL_MODE=download-only  # or setup-only, interactive (default)
+export INSTALL_APPS=app1,app2      # Comma-separated list of apps
+export DEBUG=true                  # Enable debug output
+export ARTIFACT_BASE_URL=https://custom.url  # Custom download URL
 ```
 
 ## Usage Examples
@@ -65,6 +86,27 @@ import syft_installer as si
 
 # Works seamlessly in Colab notebooks
 si.install()  # Uses widgets for input
+```
+
+### Installation Modes
+
+```python
+import syft_installer as si
+
+# Download only (no setup)
+si.install(install_mode="download-only")
+
+# Setup only (assumes binary already downloaded)
+si.install(install_mode="setup-only")
+
+# Interactive (default) - full installation with prompts
+si.install(install_mode="interactive")
+
+# With app installation
+si.install(install_apps="dataroom,whisper")
+
+# Debug mode
+si.install(debug=True)
 ```
 
 ### Headless/CI Mode
