@@ -7,6 +7,7 @@ from syft_installer.simple_installer import SimpleInstaller
 from syft_installer.config import load_config, is_installed
 from syft_installer.launcher import start_client, stop_client, is_running
 from syft_installer.daemon_manager import list_daemons, kill_daemon, kill_all_daemons, interactive_daemon_manager
+from syft_installer.syftbox import SyftBox
 
 
 def install(**kwargs):
@@ -42,6 +43,7 @@ __all__ = [
     "Installer",
     "ProgrammaticInstaller",
     "SimpleInstaller",
+    "SyftBox",
     "install",
     "install_programmatic",
     "load_config",
