@@ -272,36 +272,3 @@ class Launcher:
             
             raise
 
-
-# Module-level functions for convenience
-_launcher = Launcher()
-
-
-def start_client(config: Optional[Config] = None, background: bool = False) -> None:
-    """Start SyftBox client."""
-    if not config:
-        config = Config.load()
-        if not config:
-            raise ValueError("No configuration found. Run installer first.")
-    
-    _launcher.start(config, background)
-
-
-def stop_client() -> None:
-    """Stop SyftBox client."""
-    _launcher.stop()
-
-
-def restart_client(config: Optional[Config] = None) -> None:
-    """Restart SyftBox client."""
-    if not config:
-        config = Config.load()
-        if not config:
-            raise ValueError("No configuration found. Run installer first.")
-    
-    _launcher.restart(config)
-
-
-def is_running() -> bool:
-    """Check if SyftBox client is running."""
-    return _launcher.is_running()
