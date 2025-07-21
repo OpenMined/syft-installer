@@ -66,7 +66,9 @@ class Config(BaseModel):
                 data = json.load(f)
             return cls(**data)
         except Exception as e:
-            raise ConfigError(f"Failed to load configuration: {str(e)}")
+            # Return None instead of raising an exception
+            # This could happen if the file is corrupted or has wrong format
+            return None
     
     def is_valid(self) -> bool:
         """Check if configuration has valid credentials."""

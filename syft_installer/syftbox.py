@@ -122,13 +122,32 @@ class SyftBox:
         if not self.is_installed:
             console.print("📦 SyftBox not installed. Installing now...\n")
             self._install()
-        else:
+        
+        # Re-check after installation
+        try:
             config = self.config
-            console.print(f"✅ SyftBox already installed for [cyan]{config.email}[/cyan]")
+            if not config:
+                console.print("❌ Installation may have failed - no configuration found")
+                # Try to diagnose the issue
+                config_file = Path.home() / ".syftbox" / "config.json"
+                if config_file.exists():
+                    console.print(f"Config file exists at {config_file}")
+                    try:
+                        with open(config_file, 'r') as f:
+                            data = f.read()
+                            console.print(f"Config content: {data[:200]}...")
+                    except Exception as e:
+                        console.print(f"Failed to read config: {e}")
+                else:
+                    console.print(f"Config file not found at {config_file}")
+                return
+            console.print(f"✅ SyftBox installed for [cyan]{config.email}[/cyan]")
+        except Exception as e:
+            console.print(f"❌ Error loading configuration: {e}")
+            return
         
         if not self.is_running:
             console.print("\n▶️  Starting SyftBox client...")
-            config = self.config
             self._launcher.start(config, background=background)
             console.print("✅ SyftBox client started!\n")
         else:
