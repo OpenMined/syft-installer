@@ -4,7 +4,10 @@
       "WebFetch(domain:syftbox.net)",
       "Bash(git add:*)",
       "Bash(grep:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(python test:*)",
+      "Bash(python3:*)",
+      "Bash(pip install:*)"
     ],
     "deny": []
   }

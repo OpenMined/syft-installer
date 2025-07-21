@@ -13,7 +13,7 @@ class Config(BaseModel):
     """SyftBox configuration."""
     email: str
     data_dir: str = Field(default_factory=lambda: RuntimeEnvironment().default_data_dir)
-    server_url: str = "https://api.syftbox.com"
+    server_url: str = "https://syftbox.net"
     client_url: str = "http://localhost:7938"
     refresh_token: Optional[str] = None
     

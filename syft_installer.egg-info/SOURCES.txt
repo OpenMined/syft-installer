@@ -7,7 +7,9 @@ syft_installer/auth.py
 syft_installer/config.py
 syft_installer/downloader.py
 syft_installer/exceptions.py
+syft_installer/hybrid_installer.py
 syft_installer/installer.py
+syft_installer/installer_v2.py
 syft_installer/launcher.py
 syft_installer/platform.py
 syft_installer/runtime.py

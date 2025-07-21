@@ -11,11 +11,11 @@ from syft_installer.validators import validate_email, validate_otp, sanitize_otp
 class Authenticator:
     """Handle OTP-based authentication flow."""
     
-    def __init__(self, server_url: str = "https://api.syftbox.com"):
+    def __init__(self, server_url: str = "https://syftbox.net"):
         self.server_url = server_url.rstrip("/")
         self.session = requests.Session()
         self.session.headers.update({
-            "User-Agent": "syft-installer/0.2.1",
+            "User-Agent": "syft-installer/0.3.1",
             "Content-Type": "application/json",
         })
     

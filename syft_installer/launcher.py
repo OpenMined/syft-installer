@@ -32,11 +32,11 @@ class Launcher:
         if not config.binary_path.exists():
             raise BinaryNotFoundError(f"SyftBox binary not found at {config.binary_path}")
         
-        # Build command
+        # Build command - syftbox client doesn't need --config flag
+        # It will automatically look for config in default locations
         cmd = [
             str(config.binary_path),
             "client",
-            "--config", str(config.config_file),
         ]
         
         if background:
