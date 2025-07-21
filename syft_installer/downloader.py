@@ -82,14 +82,28 @@ class Downloader:
             with tarfile.open(tarball_path, "r:gz") as tar:
                 tar.extractall(extract_dir)
             
-            # Find the binary (should be named 'syftbox')
-            for item in Path(extract_dir).iterdir():
-                if item.name == "syftbox" and item.is_file():
-                    return item
+            # The tarball extracts to a directory named like syftbox_client_darwin_amd64
+            # Inside that directory is the syftbox binary
+            extract_path = Path(extract_dir)
+            
+            # Find the extracted directory (should be only one)
+            for item in extract_path.iterdir():
+                if item.is_dir():
+                    # Look for syftbox binary inside the directory
+                    binary_path = item / "syftbox"
+                    if binary_path.exists() and binary_path.is_file():
+                        return binary_path
+            
+            # Fallback: look for syftbox binary directly in extract_dir
+            direct_binary = extract_path / "syftbox"
+            if direct_binary.exists() and direct_binary.is_file():
+                return direct_binary
             
             raise DownloadError("Binary not found in tarball")
             
         except Exception as e:
+            if "Binary not found" in str(e):
+                raise
             raise DownloadError(f"Failed to extract binary: {str(e)}")
     
     def _install_binary(self, source: Path, dest: Path) -> None:
