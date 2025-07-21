@@ -146,7 +146,8 @@ class HybridInstaller(InstallerV2):
         """Start client with better control."""
         if background or self.runtime.is_notebook:
             # Start in background for notebooks
-            cmd = [str(self.syftbox_binary_path), "client"]
+            # Just run 'syftbox' (no subcommand)
+            cmd = [str(self.syftbox_binary_path)]
             subprocess.Popen(
                 cmd,
                 stdout=subprocess.DEVNULL,
@@ -161,7 +162,7 @@ class HybridInstaller(InstallerV2):
     def stop_client(self) -> None:
         """Stop the client."""
         try:
-            subprocess.run(["pkill", "-f", "syftbox client"], check=False)
+            subprocess.run(["pkill", "-f", "syftbox"], check=False)
             self.progress.update("SyftBox client stopped", 100)
         except Exception as e:
             self._debug(f"Failed to stop client: {e}")

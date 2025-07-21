@@ -32,11 +32,10 @@ class Launcher:
         if not config.binary_path.exists():
             raise BinaryNotFoundError(f"SyftBox binary not found at {config.binary_path}")
         
-        # Build command - syftbox client doesn't need --config flag
+        # Build command - just run syftbox (no subcommand needed)
         # It will automatically look for config in default locations
         cmd = [
             str(config.binary_path),
-            "client",
         ]
         
         if background:
@@ -77,12 +76,19 @@ class Launcher:
         
         # Also check for existing syftbox processes
         try:
+            # Check for syftbox process (not "syftbox client")
             result = subprocess.run(
-                ["pgrep", "-f", "syftbox client"],
+                ["pgrep", "-f", "syftbox"],
                 capture_output=True,
                 text=True,
             )
-            return result.returncode == 0
+            # Make sure we found a real syftbox process, not just our pgrep command
+            if result.returncode == 0:
+                pids = result.stdout.strip().split('\n')
+                # Filter out empty strings
+                pids = [p for p in pids if p]
+                return len(pids) > 0
+            return False
         except Exception:
             return False
     
