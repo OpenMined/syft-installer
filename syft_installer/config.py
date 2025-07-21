@@ -13,7 +13,8 @@ class Config(BaseModel):
     """SyftBox configuration."""
     email: str
     data_dir: str = Field(default_factory=lambda: RuntimeEnvironment().default_data_dir)
-    server_url: str = "https://syftbox.net"
+    server_url: str = "https://api.syftbox.com"
+    client_url: str = "http://localhost:7938"
     refresh_token: Optional[str] = None
     
     @property
@@ -38,7 +39,14 @@ class Config(BaseModel):
             self.config_dir.mkdir(parents=True, exist_ok=True)
             
             # Don't save access token (only refresh token)
-            data = self.model_dump(exclude={"access_token"})
+            # Use the exact field names expected by syftbox
+            data = {
+                "email": self.email,
+                "data_dir": self.data_dir,
+                "server_url": self.server_url,
+                "client_url": self.client_url,
+                "refresh_token": self.refresh_token
+            }
             
             with open(self.config_file, "w") as f:
                 json.dump(data, f, indent=2)

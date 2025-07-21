@@ -24,7 +24,7 @@ class HybridInstaller(InstallerV2):
     def __init__(
         self,
         email: Optional[str] = None,
-        server_url: str = "https://syftbox.net",
+        server_url: str = "https://api.syftbox.com",
         data_dir: Optional[str] = None,
         install_mode: str = "interactive",
         install_apps: Optional[str] = None,

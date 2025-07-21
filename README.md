@@ -2,6 +2,15 @@
 
 Python library for installing SyftBox - follows the official install.sh implementation while providing programmatic capabilities for notebooks and headless environments.
 
+## Architecture
+
+This installer provides a hybrid approach:
+
+1. **Terminal environments**: Delegates to `syftbox login` TUI (just like install.sh)
+2. **Notebook/headless environments**: Implements the OTP flow in Python, then creates the config.json that syftbox expects
+
+Both approaches result in the same outcome - a valid `~/.syftbox/config.json` file that the syftbox client can use.
+
 ## Installation
 
 ```bash
