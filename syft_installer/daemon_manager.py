@@ -15,6 +15,7 @@ class DaemonManager:
         Returns:
             List of dicts with process info (pid, command, user)
         """
+        print("🔍 DaemonManager: Looking for syftbox processes...")
         try:
             # Use ps to get detailed process info
             result = subprocess.run(
@@ -25,8 +26,12 @@ class DaemonManager:
             )
             
             processes = []
-            for line in result.stdout.strip().split('\n')[1:]:  # Skip header
+            lines = result.stdout.strip().split('\n')
+            print(f"   Found {len(lines)-1} total processes")
+            
+            for line in lines[1:]:  # Skip header
                 if 'syftbox' in line and 'grep' not in line:
+                    print(f"   Syftbox process found: {line[:80]}...")
                     parts = line.split(None, 10)  # Split into max 11 parts
                     if len(parts) >= 11:
                         processes.append({
@@ -39,8 +44,10 @@ class DaemonManager:
                             'command': parts[10]
                         })
             
+            print(f"   Found {len(processes)} syftbox processes")
             return processes
-        except Exception:
+        except Exception as e:
+            print(f"   Error finding daemons: {e}")
             return []
     
     def kill_daemon(self, pid: str, force: bool = False) -> bool:

@@ -65,7 +65,10 @@ class SyftBox:
     @property
     def is_running(self) -> bool:
         """Check if SyftBox client is running."""
-        return self._launcher.is_running()
+        print("\n📊 Checking SyftBox running status...")
+        result = self._launcher.is_running()
+        print(f"📊 Result: {result}\n")
+        return result
     
     @property
     def config(self) -> Optional[Config]:

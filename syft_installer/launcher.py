@@ -37,6 +37,9 @@ class Launcher:
             "daemon",
         ]
         
+        print(f"📌 Binary path: {config.binary_path}")
+        print(f"📌 Command to execute: {cmd}")
+        
         if background:
             # Start the process detached - no thread needed
             self._run_background(cmd)
@@ -90,6 +93,7 @@ class Launcher:
     def is_running(self) -> bool:
         """Check if SyftBox client is running."""
         # Always check for external processes, not just our own
+        print("🔍 Checking if SyftBox is running...")
         try:
             # Check for syftbox daemon process
             result = subprocess.run(
@@ -97,22 +101,39 @@ class Launcher:
                 capture_output=True,
                 text=True,
             )
+            print(f"   pgrep return code: {result.returncode}")
+            print(f"   pgrep stdout: {repr(result.stdout)}")
+            print(f"   pgrep stderr: {repr(result.stderr)}")
+            
             if result.returncode == 0:
                 pids = result.stdout.strip().split('\n')
                 # Filter out empty strings and our own pgrep
                 pids = [p for p in pids if p]
+                print(f"   Found PIDs: {pids}")
                 return len(pids) > 0
+            print("   No processes found via pgrep")
             return False
-        except Exception:
+        except Exception as e:
+            print(f"   pgrep failed with exception: {e}")
             # Fallback for systems without pgrep
             try:
+                print("   Trying ps aux fallback...")
                 result = subprocess.run(
                     ["ps", "aux"],
                     capture_output=True,
                     text=True,
                 )
-                return "syftbox daemon" in result.stdout
-            except Exception:
+                print(f"   ps aux return code: {result.returncode}")
+                found = "syftbox daemon" in result.stdout
+                if found:
+                    # Print the matching lines
+                    for line in result.stdout.split('\n'):
+                        if 'syftbox' in line and 'grep' not in line:
+                            print(f"   Found process: {line.strip()}")
+                print(f"   Result: {'Found' if found else 'Not found'} via ps aux")
+                return found
+            except Exception as e2:
+                print(f"   ps aux also failed: {e2}")
                 return False
     
     def get_status(self) -> dict:
@@ -132,10 +153,14 @@ class Launcher:
     
     def _run_background(self, cmd: list) -> None:
         """Run client in background thread."""
+        print(f"🚀 Launching daemon with command: {' '.join(cmd)}")
         try:
             # Use nohup and detach from current process completely
             import platform
-            if platform.system() == "Windows":
+            system = platform.system()
+            print(f"   Platform: {system}")
+            
+            if system == "Windows":
                 # Windows doesn't have nohup, use START instead
                 self.process = subprocess.Popen(
                     cmd,
@@ -145,17 +170,50 @@ class Launcher:
                 )
             else:
                 # Unix-like systems: use nohup and full detachment
+                # Create a temp file for stderr to debug issues
+                import tempfile
+                self.stderr_file = tempfile.NamedTemporaryFile(mode='w+', delete=False, prefix='syftbox_stderr_')
+                print(f"   Stderr will be logged to: {self.stderr_file.name}")
+                
                 self.process = subprocess.Popen(
                     cmd,
                     stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL,
+                    stderr=self.stderr_file,
                     stdin=subprocess.DEVNULL,
                     start_new_session=True,
                     preexec_fn=os.setpgrp  # Detach from process group
                 )
+            
+            print(f"   Process started with PID: {self.process.pid}")
+            
+            # Give it a moment to start
+            print("   Waiting 2 seconds for daemon to initialize...")
+            time.sleep(2)
+            
+            # Check if it started successfully
+            poll_result = self.process.poll()
+            if poll_result is not None:
+                print(f"   ❌ Process exited with code: {poll_result}")
+                # Read stderr to see what went wrong
+                if hasattr(self, 'stderr_file'):
+                    self.stderr_file.seek(0)
+                    stderr_content = self.stderr_file.read()
+                    print(f"   Stderr output: {stderr_content}")
+                raise RuntimeError(f"SyftBox daemon failed to start (exit code: {poll_result})")
+            else:
+                print("   ✅ Process appears to be running")
+                # Check stderr for any warnings
+                if hasattr(self, 'stderr_file'):
+                    self.stderr_file.seek(0)
+                    stderr_content = self.stderr_file.read()
+                    if stderr_content:
+                        print(f"   ⚠️  Stderr output (non-fatal): {stderr_content}")
                 # Don't wait - let it run independently
-        except Exception:
-            pass
+        except Exception as e:
+            print(f"   ❌ Failed to start daemon: {e}")
+            import traceback
+            traceback.print_exc()
+            raise
 
 
 # Module-level functions for convenience
