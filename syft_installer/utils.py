@@ -51,8 +51,15 @@ class InputHandler:
         """Get input using ipywidgets."""
         try:
             import ipywidgets as widgets
-            from IPython.display import display
+            from IPython.display import display, clear_output
             
+            # For OTP input, just use a simple text widget
+            if "OTP" in prompt:
+                print(prompt)
+                # Return empty string to indicate we're waiting for programmatic input
+                return ""
+            
+            # For other inputs, use the widget approach
             # Create widgets
             label = widgets.Label(value=prompt)
             text = widgets.Text(value=default or "", placeholder="Enter value")
@@ -69,6 +76,7 @@ class InputHandler:
                     print("✓ Submitted")
             
             button.on_click(on_submit)
+            text.on_submit(lambda x: on_submit(None))  # Submit on Enter
             
             # Display widgets
             display(widgets.VBox([label, text, button, output]))
