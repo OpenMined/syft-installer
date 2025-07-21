@@ -160,6 +160,27 @@ class SyftBox:
         else:
             console.print("❌ SyftBox not installed. Run .run() first.\n")
     
+    def start_if_stopped(self) -> bool:
+        """
+        Start SyftBox only if it's not already running.
+        
+        Returns:
+            True if started, False if already running or not installed
+        """
+        if not self.is_installed:
+            console.print("❌ SyftBox not installed. Run .run() first.\n")
+            return False
+        
+        if self.is_running:
+            console.print("✅ SyftBox already running!\n")
+            return False
+        
+        console.print("▶️  Starting SyftBox client...\n")
+        config = self.config
+        self._launcher.start(config, background=True)
+        console.print("✅ SyftBox client started!\n")
+        return True
+    
     def uninstall(self, confirm: bool = True) -> None:
         """
         Completely uninstall SyftBox.
@@ -336,6 +357,22 @@ def restart() -> None:
         >>> syftbox.restart()
     """
     _get_instance().restart()
+
+
+def start_if_stopped() -> bool:
+    """
+    Start SyftBox only if it's not already running.
+    
+    Returns:
+        True if started, False if already running or not installed
+        
+    Example:
+        >>> import syftbox
+        >>> syftbox.start_if_stopped()
+        ✅ SyftBox already running!
+        False
+    """
+    return _get_instance().start_if_stopped()
 
 
 def uninstall(confirm: bool = True) -> None:

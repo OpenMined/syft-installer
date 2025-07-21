@@ -29,11 +29,12 @@ That's it! This single command:
 ```python
 import syft_installer as si
 
-si.run()        # Install (if needed) and start
-si.status()     # Show current status
-si.stop()       # Stop the daemon
-si.restart()    # Restart the daemon
-si.uninstall()  # Remove everything
+si.run()              # Install (if needed) and start
+si.status()           # Show current status
+si.stop()             # Stop the daemon
+si.restart()          # Restart the daemon
+si.start_if_stopped() # Start only if not running
+si.uninstall()        # Remove everything
 
 # Quick checks
 si.is_installed()  # -> True/False
