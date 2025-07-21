@@ -8,7 +8,13 @@
       "Bash(python test:*)",
       "Bash(python3:*)",
       "Bash(pip install:*)",
-      "Bash(~/.local/bin/syftbox:*)"
+      "Bash(~/.local/bin/syftbox:*)",
+      "Bash(uv venv:*)",
+      "Bash(source:*)",
+      "Bash(uv pip install:*)",
+      "Bash(pytest:*)",
+      "Bash(mv:*)",
+      "Bash(chmod:*)"
     ],
     "deny": []
   }

@@ -6,6 +6,7 @@ from syft_installer.programmatic_installer import ProgrammaticInstaller, install
 from syft_installer.simple_installer import SimpleInstaller
 from syft_installer.config import load_config, is_installed
 from syft_installer.launcher import start_client, stop_client, is_running
+from syft_installer.daemon_manager import list_daemons, kill_daemon, kill_all_daemons, interactive_daemon_manager
 
 
 def install(**kwargs):
@@ -48,4 +49,8 @@ __all__ = [
     "start_client",
     "stop_client",
     "is_running",
+    "list_daemons",
+    "kill_daemon",
+    "kill_all_daemons",
+    "interactive_daemon_manager",
 ]

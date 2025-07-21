@@ -32,10 +32,11 @@ class Launcher:
         if not config.binary_path.exists():
             raise BinaryNotFoundError(f"SyftBox binary not found at {config.binary_path}")
         
-        # Build command - just run syftbox (no subcommand needed)
+        # Build command - run syftbox daemon to keep it running
         # It will automatically look for config in default locations
         cmd = [
             str(config.binary_path),
+            "daemon",
         ]
         
         if background:

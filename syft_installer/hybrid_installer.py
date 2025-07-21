@@ -146,8 +146,8 @@ class HybridInstaller(InstallerV2):
         """Start client with better control."""
         if background or self.runtime.is_notebook:
             # Start in background for notebooks
-            # Just run 'syftbox' (no subcommand)
-            cmd = [str(self.syftbox_binary_path)]
+            # Run 'syftbox daemon' to keep it running
+            cmd = [str(self.syftbox_binary_path), "daemon"]
             subprocess.Popen(
                 cmd,
                 stdout=subprocess.DEVNULL,
