@@ -42,10 +42,8 @@ syftbox.check.is_running    # -> True/False
 
 ## Examples
 
-See the [`examples/`](examples/) directory for:
-- Notebook tutorials
-- Command-line scripts
-- Advanced usage patterns
+- [**Jupyter Notebook Quickstart**](examples/quickstart.ipynb) - Interactive tutorial
+- [**CLI Quickstart**](examples/cli_quickstart.py) - Command-line example
 
 ## Advanced Usage
 
