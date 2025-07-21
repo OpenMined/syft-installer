@@ -1,0 +1,114 @@
+import hashlib
+import os
+import sys
+import tarfile
+import tempfile
+from pathlib import Path
+from typing import Optional
+
+import requests
+from rich.progress import Progress, DownloadColumn, TransferSpeedColumn
+
+from syft_installer.exceptions import DownloadError, PlatformError
+from syft_installer.platform import get_binary_url
+
+
+class Downloader:
+    """Handle binary downloads and installation."""
+    
+    def __init__(self, chunk_size: int = 8192):
+        self.chunk_size = chunk_size
+        self.session = requests.Session()
+    
+    def download_and_install(self, target_path: Path) -> None:
+        """
+        Download and install SyftBox binary.
+        
+        Args:
+            target_path: Where to install the binary
+        """
+        # Get download URL for current platform
+        url = get_binary_url()
+        
+        # Create target directory
+        target_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        with tempfile.TemporaryDirectory() as temp_dir:
+            # Download tarball
+            tarball_path = Path(temp_dir) / "syftbox.tar.gz"
+            self._download_file(url, tarball_path)
+            
+            # Extract binary
+            binary_path = self._extract_binary(tarball_path, temp_dir)
+            
+            # Install binary
+            self._install_binary(binary_path, target_path)
+    
+    def _download_file(self, url: str, dest: Path) -> None:
+        """Download file with progress bar."""
+        try:
+            response = self.session.get(url, stream=True)
+            response.raise_for_status()
+            
+            total_size = int(response.headers.get("content-length", 0))
+            
+            # Use rich progress bar if available and in terminal
+            if os.isatty(sys.stdout.fileno()):
+                with Progress(
+                    "[progress.description]{task.description}",
+                    DownloadColumn(),
+                    TransferSpeedColumn(),
+                ) as progress:
+                    task = progress.add_task("Downloading", total=total_size)
+                    
+                    with open(dest, "wb") as f:
+                        for chunk in response.iter_content(chunk_size=self.chunk_size):
+                            if chunk:
+                                f.write(chunk)
+                                progress.update(task, advance=len(chunk))
+            else:
+                # Simple download without progress
+                with open(dest, "wb") as f:
+                    for chunk in response.iter_content(chunk_size=self.chunk_size):
+                        if chunk:
+                            f.write(chunk)
+                            
+        except requests.exceptions.RequestException as e:
+            raise DownloadError(f"Failed to download binary: {str(e)}")
+    
+    def _extract_binary(self, tarball_path: Path, extract_dir: str) -> Path:
+        """Extract binary from tarball."""
+        try:
+            with tarfile.open(tarball_path, "r:gz") as tar:
+                tar.extractall(extract_dir)
+            
+            # Find the binary (should be named 'syftbox')
+            for item in Path(extract_dir).iterdir():
+                if item.name == "syftbox" and item.is_file():
+                    return item
+            
+            raise DownloadError("Binary not found in tarball")
+            
+        except Exception as e:
+            raise DownloadError(f"Failed to extract binary: {str(e)}")
+    
+    def _install_binary(self, source: Path, dest: Path) -> None:
+        """Install binary to target location."""
+        try:
+            # Copy binary
+            import shutil
+            shutil.copy2(source, dest)
+            
+            # Make executable
+            os.chmod(dest, 0o755)
+            
+        except Exception as e:
+            raise DownloadError(f"Failed to install binary: {str(e)}")
+    
+    def verify_checksum(self, file_path: Path, expected_checksum: str) -> bool:
+        """Verify file checksum."""
+        sha256_hash = hashlib.sha256()
+        with open(file_path, "rb") as f:
+            for byte_block in iter(lambda: f.read(4096), b""):
+                sha256_hash.update(byte_block)
+        return sha256_hash.hexdigest() == expected_checksum

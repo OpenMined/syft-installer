@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "WebFetch(domain:syftbox.net)"
+      "WebFetch(domain:syftbox.net)",
+      "Bash(git add:*)"
     ],
     "deny": []
   }
