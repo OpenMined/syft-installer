@@ -68,15 +68,66 @@ si.install_and_run_if_needed()</code></pre>
         </div>
     </section>
 
-    <!-- CTA Section - Apple Style -->
-    <section style="padding: 8rem 0; background: #f5f5f7;">
-        <div style="max-width: 600px; margin: 0 auto; text-align: center; padding: 0 2rem;">
-            <h2 style="font-size: 3rem; font-weight: 600; color: #1d1d1f; margin-bottom: 2rem; letter-spacing: -0.02em;">try it out</h2>
-            <p style="font-size: 1.3rem; color: #6e6e73; margin-bottom: 3rem;">experience syftbox installation in google colab</p>
-            <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" 
-               style="display: inline-block; background: #007aff; color: white; padding: 1rem 2rem; border-radius: 980px; text-decoration: none; font-size: 1.1rem; font-weight: 500; transition: all 0.2s; border: none;" 
-               onmouseover="this.style.background='#0051d5'" 
-               onmouseout="this.style.background='#007aff'">open in colab</a>
+    <!-- See It In Action -->
+    <section class="video-demo">
+        <div class="container">
+            <h2>See It In Action</h2>
+            <p class="section-subtitle">Watch automatic SyftBox installation across different environments</p>
+            
+            <div class="demo-tabs">
+                <div class="tab-nav">
+                    <button class="tab-btn active" data-tab="jupyter">Jupyter Notebook</button>
+                    <button class="tab-btn" data-tab="colab">Google Colab</button>
+                    <button class="tab-btn" data-tab="terminal">Terminal</button>
+                    <button class="tab-btn" data-tab="teardown">Automatic Teardown</button>
+                </div>
+                
+                <div class="tab-content">
+                    <div class="tab-pane active" id="jupyter">
+                        <div class="video-container">
+                            <h3>Jupyter Notebook Demo</h3>
+                            <p>Watch syft-installer automatically detect your environment and install SyftBox in a Jupyter notebook with rich interactive prompts.</p>
+                            <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                                    title="Jupyter Demo" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane" id="colab">
+                        <div class="video-container">
+                            <h3>Google Colab Demo</h3>
+                            <p>See how syft-installer automatically detects your Google account email and provides a seamless installation experience in Colab.</p>
+                            <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                                    title="Colab Demo" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane" id="terminal">
+                        <div class="video-container">
+                            <h3>Terminal Demo</h3>
+                            <p>Experience the clean terminal output and interactive OTP flow when installing SyftBox from the command line.</p>
+                            <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                                    title="Terminal Demo" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane" id="teardown">
+                        <div class="video-container">
+                            <h3>Automatic Teardown Demo</h3>
+                            <p>See how syft-installer can cleanly uninstall and remove all SyftBox components when no longer needed.</p>
+                            <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                                    title="Teardown Demo" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -84,7 +135,7 @@ si.install_and_run_if_needed()</code></pre>
     <section class="api-preview">
         <div class="container">
             <h2>The Complete API</h2>
-            <p class="section-subtitle">Everything you need to install and manage SyftBox</p>
+            <p class="section-subtitle">Everything you need to launch and teardown the syftbox daemon</p>
             
             <div class="api-examples">
                 <div class="api-example">
@@ -179,14 +230,15 @@ si.install_and_run("custom@email.com") # Specify email</code></pre>
         </div>
     </section>
 
-    <!-- Tutorial CTA Section -->
-    <section class="tutorial-cta gradient-feature">
-        <div class="container">
-            <h2>Try It Out</h2>
-            
-            <div class="cta-buttons">
-                <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" class="btn btn-primary btn-large">Try in Google Colab</a>
-            </div>
+    <!-- Try It Out - Apple Style -->
+    <section style="padding: 8rem 0; background: #f5f5f7;">
+        <div style="max-width: 600px; margin: 0 auto; text-align: center; padding: 0 2rem;">
+            <h2 style="font-size: 3rem; font-weight: 600; color: #1d1d1f; margin-bottom: 2rem; letter-spacing: -0.02em;">try it out</h2>
+            <p style="font-size: 1.3rem; color: #6e6e73; margin-bottom: 3rem;">experience syftbox installation in google colab</p>
+            <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" 
+               style="display: inline-block; background: #007aff; color: white; padding: 1rem 2rem; border-radius: 980px; text-decoration: none; font-size: 1.1rem; font-weight: 500; transition: all 0.2s; border: none;" 
+               onmouseover="this.style.background='#0051d5'" 
+               onmouseout="this.style.background='#007aff'">open in colab</a>
         </div>
     </section>
 
