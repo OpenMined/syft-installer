@@ -211,6 +211,15 @@ class _SyftBox:
         # Show welcome message
         display.show_welcome(version=__version__)
         
+        # Check if already running FIRST
+        if self.is_running:
+            config = self.config
+            if config:
+                display.show_already_running(config.email)
+            else:
+                print("✅ SyftBox is already running")
+            return
+        
         was_installed = self.is_installed
         
         if not was_installed:
@@ -229,50 +238,47 @@ class _SyftBox:
             display.show_error(f"Error loading configuration: {e}")
             return
         
-        # Start if not running
-        if not self.is_running:
-            # Only show progress if we didn't just install
-            if was_installed:
-                prog = progress_context()
-                
-                def progress_update(step, message):
-                    prog.update(step, message)
-                
-                prog.update(20, f"🚀 Starting SyftBox daemon for {config.email}")
-                prog.update(50, f"📌 Executing {config.binary_path} daemon")
-                
-                self._process_manager.start(config, background=background, progress_callback=progress_update)
-                
-                prog.update(95, "✅ SyftBox daemon started successfully")
-                prog.finish(f"✅ SyftBox installed and running for {config.email}")
-            else:
-                # After fresh install, create progress bar function
-                def show_progress(progress, message):
-                    progress = int(progress)
-                    width = 50
-                    filled = int(width * progress / 100)
-                    bar = '█' * filled + '░' * (width - filled)
-                    padded_message = message.ljust(40)
-                    sys.stdout.write(f'\r{padded_message} |{bar}| {progress:3d}%')
-                    sys.stdout.flush()
-                
-                # Show starting daemon at 95%
-                show_progress(95, "🚀 Starting SyftBox daemon...")
-                
-                # Start the daemon and get PID
-                pid = self._process_manager.start(config, background=background)
-                
-                # Show final running status with PID at 100%
-                if pid:
-                    final_message = f"✅ SyftBox is now running! (PID: {pid})"
-                else:
-                    final_message = "✅ SyftBox is now running!"
-                
-                show_progress(100, final_message)
-                sys.stdout.write(' ' * 20)  # Clear any trailing characters
-                print()  # New line after final message
+        # Start the daemon
+        if was_installed:
+            # Just starting existing installation
+            prog = progress_context()
+            
+            def progress_update(step, message):
+                prog.update(step, message)
+            
+            prog.update(20, f"🚀 Starting SyftBox daemon for {config.email}")
+            prog.update(50, f"📌 Executing {config.binary_path} daemon")
+            
+            self._process_manager.start(config, background=background, progress_callback=progress_update)
+            
+            prog.update(95, "✅ SyftBox daemon started successfully")
+            prog.finish(f"✅ SyftBox installed and running for {config.email}")
         else:
-            display.show_already_running(config.email)
+            # After fresh install, create progress bar function
+            def show_progress(progress, message):
+                progress = int(progress)
+                width = 50
+                filled = int(width * progress / 100)
+                bar = '█' * filled + '░' * (width - filled)
+                padded_message = message.ljust(40)
+                sys.stdout.write(f'\r{padded_message} |{bar}| {progress:3d}%')
+                sys.stdout.flush()
+            
+            # Show starting daemon at 95%
+            show_progress(95, "🚀 Starting SyftBox daemon...")
+            
+            # Start the daemon and get PID
+            pid = self._process_manager.start(config, background=background)
+            
+            # Show final running status with PID at 100%
+            if pid:
+                final_message = f"✅ SyftBox is now running!!! (PID: {pid})"
+            else:
+                final_message = "✅ SyftBox is now running!!!"
+            
+            show_progress(100, final_message)
+            sys.stdout.write(' ' * 20)  # Clear any trailing characters
+            print()  # New line after final message
     
     def stop(self, all: bool = False) -> None:
         """
