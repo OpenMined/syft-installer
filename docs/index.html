@@ -338,6 +338,16 @@ si.uninstall()
             const tabBtns = document.querySelectorAll('.tab-btn');
             const tabPanes = document.querySelectorAll('.tab-pane');
             
+            // Autoplay the default active video (Jupyter tab)
+            setTimeout(() => {
+                const defaultActiveVideo = document.querySelector('.tab-pane.active video');
+                if (defaultActiveVideo) {
+                    defaultActiveVideo.play().catch(e => {
+                        console.log('Autoplay prevented on page load:', e);
+                    });
+                }
+            }, 500); // Small delay to ensure video is loaded
+            
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
                     const targetTab = this.getAttribute('data-tab');
