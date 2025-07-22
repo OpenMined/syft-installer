@@ -10,14 +10,14 @@ import syft_installer as si
 
 # Example 1: Interactive mode with auto email detection (Colab only)
 # In Google Colab, this will automatically detect your email
-# si.install_and_run()  # No email needed in Colab!
+# si.install_and_run_if_needed()  # No email needed in Colab!
 
 # Example 2: Non-interactive mode with auto email detection (Colab only)
 # This is useful when building apps/services on top of syft-installer
 def install_with_custom_otp_handler():
     """Example of non-interactive installation with custom OTP handling."""
     # In Colab, email will be auto-detected
-    session = si.install_and_run(interactive=False)
+    session = si.install_and_run_if_needed(interactive=False)
     
     if session:
         print("Installation session started!")
@@ -51,4 +51,4 @@ else:
     print("📍 Not in Colab. You'll need to provide your email manually.")
 
 # Example 4: Standard usage (works everywhere)
-# si.install_and_run("your-email@example.com")  # Works in Colab and elsewhere
+# si.install_and_run_if_needed("your-email@example.com")  # Works in Colab and elsewhere
