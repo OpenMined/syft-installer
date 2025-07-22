@@ -20,7 +20,7 @@ si.install_and_run_if_needed()
 📚 **[Full Documentation](https://openmined.github.io/syft-installer/)**
 
 - [API Reference](https://openmined.github.io/syft-installer/api/)
-- [Try in Google Colab](https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb)
+- [Try in Google Colab](https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/syft_install_quickstart.ipynb)
 
 ## License
 
