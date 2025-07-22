@@ -22,6 +22,8 @@ import sys
 import time
 from pathlib import Path
 from typing import Optional, Dict, Any, Union
+from contextlib import contextmanager, redirect_stdout, redirect_stderr
+from io import StringIO
 from rich.console import Console
 
 from syft_installer._config import Config as _Config
@@ -31,6 +33,42 @@ from syft_installer._progress import progress_context
 
 
 _console = Console()
+_silent_mode = False
+
+
+@contextmanager
+def silence_output():
+    """Context manager to silence all output."""
+    global _silent_mode
+    old_silent = _silent_mode
+    _silent_mode = True
+    
+    # Capture stdout and stderr
+    old_stdout = sys.stdout
+    old_stderr = sys.stderr
+    stdout_buffer = StringIO()
+    stderr_buffer = StringIO()
+    
+    try:
+        sys.stdout = stdout_buffer
+        sys.stderr = stderr_buffer
+        yield
+    finally:
+        sys.stdout = old_stdout
+        sys.stderr = old_stderr
+        _silent_mode = old_silent
+
+
+def _print(*args, **kwargs):
+    """Print wrapper that respects silent mode."""
+    if not _silent_mode:
+        print(*args, **kwargs)
+
+
+def _console_print(*args, **kwargs):
+    """Console print wrapper that respects silent mode."""
+    if not _silent_mode:
+        _console.print(*args, **kwargs)
 
 
 class InstallerSession:
@@ -78,12 +116,12 @@ class InstallerSession:
                 "message": "Invalid OTP. Must be 8 uppercase alphanumeric characters."
             }
         
-        _console.print(f"🔐 Verifying OTP...")
+        _console_print(f"🔐 Verifying OTP...")
         
         try:
             # Verify OTP and get tokens
             tokens = self.auth.verify_otp(self.email, otp)
-            _console.print("✅ Authentication successful")
+            _console_print("✅ Authentication successful")
             
             # Create and save config
             config = _Config(
@@ -94,16 +132,16 @@ class InstallerSession:
                 refresh_token=tokens["refresh_token"]
             )
             config.save()
-            _console.print("✅ Configuration saved")
+            _console_print("✅ Configuration saved")
             
             self._installation_complete = True
-            _console.print("\n✅ Installation complete!")
+            _console_print("\n✅ Installation complete!")
             
             # Start the client if requested
             if self.background:
-                _console.print("\n▶️  Starting SyftBox client...")
+                _console_print("\n▶️  Starting SyftBox client...")
                 self.syftbox._process_manager.start(config, background=True)
-                _console.print("✅ SyftBox client started!\n")
+                _console_print("✅ SyftBox client started!\n")
                 self.syftbox.status()
             
             return {"status": "success", "message": "Installation complete"}
@@ -215,9 +253,9 @@ class _SyftBox:
         if self.is_running:
             config = self.config
             if config:
-                print(f"✅ SyftBox already running for {config.email}")
+                _print(f"✅ SyftBox already running for {config.email}")
             else:
-                print("✅ SyftBox is already running")
+                _print("✅ SyftBox is already running")
             return
         
         was_installed = self.is_installed
@@ -278,7 +316,7 @@ class _SyftBox:
             
             show_progress(100, final_message)
             sys.stdout.write(' ' * 20)  # Clear any trailing characters
-            print()  # New line after final message
+            _print()  # New line after final message
     
     def stop(self, all: bool = False) -> None:
         """
@@ -289,10 +327,10 @@ class _SyftBox:
         """
         if all:
             killed = self._process_manager.kill_all_daemons()
-            _console.print(f"\n⏹️  Stopped {killed} SyftBox daemon(s)\n")
+            _console_print(f"\n⏹️  Stopped {killed} SyftBox daemon(s)\n")
         else:
             self._process_manager.stop()
-            _console.print("\n⏹️  Stopped SyftBox client\n")
+            _console_print("\n⏹️  Stopped SyftBox client\n")
     
     def start_if_stopped(self) -> bool:
         """
@@ -302,17 +340,17 @@ class _SyftBox:
             True if started, False if already running or not installed
         """
         if not self.is_installed:
-            _console.print("❌ SyftBox not installed. Run .run() first.\n")
+            _console_print("❌ SyftBox not installed. Run .run() first.\n")
             return False
         
         if self.is_running:
-            _console.print("✅ SyftBox already running!\n")
+            _console_print("✅ SyftBox already running!\n")
             return False
         
-        _console.print("▶️  Starting SyftBox client...\n")
+        _console_print("▶️  Starting SyftBox client...\n")
         config = self.config
         self._process_manager.start(config, background=True)
-        _console.print("✅ SyftBox client started!\n")
+        _console_print("✅ SyftBox client started!\n")
         return True
     
     def uninstall(self, confirm: bool = True) -> None:
@@ -329,7 +367,7 @@ class _SyftBox:
             confirm: Ask for confirmation (default: True)
         """
         if confirm and not display.show_uninstall_warning():
-            _console.print("❌ Uninstall cancelled.")
+            _console_print("❌ Uninstall cancelled.")
             return
         
         # Stop all daemons quietly
@@ -512,29 +550,29 @@ class _SyftBox:
             InstallerSession object if installation needed, None if already installed
         """
         from syft_installer.__version__ import __version__
-        _console.print(f"\n[bold]🚀 Starting SyftBox... (syft-installer v{__version__})[/bold]\n")
+        _console_print(f"\n[bold]🚀 Starting SyftBox... (syft-installer v{__version__})[/bold]\n")
         
         if not self.is_installed:
-            _console.print("📦 SyftBox not installed. Starting installation...\n")
+            _console_print("📦 SyftBox not installed. Starting installation...\n")
             
             # Auto-detect email in Colab if not provided
             if not self.email:
                 from syft_installer._colab_utils import is_google_colab, get_colab_user_email
                 
                 if is_google_colab():
-                    _console.print("🔍 Detected Google Colab environment")
+                    _console_print("🔍 Detected Google Colab environment")
                     self.email = get_colab_user_email()
                     if not self.email:
-                        _console.print("❌ Could not detect email. Please provide it explicitly.")
+                        _console_print("❌ Could not detect email. Please provide it explicitly.")
                         return None
                 else:
-                    _console.print("❌ Email is required for non-interactive installation")
+                    _console_print("❌ Email is required for non-interactive installation")
                     return None
                 
             # Validate email
             from syft_installer._utils import validate_email
             if not validate_email(self.email):
-                _console.print(f"❌ Invalid email address: {self.email}")
+                _console_print(f"❌ Invalid email address: {self.email}")
                 return None
             
             # Create directories and download binary
@@ -548,45 +586,45 @@ class _SyftBox:
             
             # Download binary if needed
             if not binary_path.exists():
-                _console.print("📥 Downloading SyftBox binary...")
+                _console_print("📥 Downloading SyftBox binary...")
                 try:
                     from syft_installer._downloader import Downloader
                     downloader = Downloader()
                     downloader.download_and_install(binary_path)
-                    _console.print("✅ Binary downloaded successfully")
+                    _console_print("✅ Binary downloaded successfully")
                 except Exception as e:
-                    _console.print(f"❌ Download failed: {str(e)}")
+                    _console_print(f"❌ Download failed: {str(e)}")
                     return None
             else:
-                _console.print("✅ Binary already exists")
+                _console_print("✅ Binary already exists")
             
             # Request OTP
-            _console.print(f"\n📧 Requesting OTP for {self.email}...")
+            _console_print(f"\n📧 Requesting OTP for {self.email}...")
             try:
                 from syft_installer._auth import Authenticator
                 auth = Authenticator(self.server)
                 result = auth.request_otp(self.email)
-                _console.print("✅ OTP sent! Check your email (including spam folder)")
+                _console_print("✅ OTP sent! Check your email (including spam folder)")
                 
                 session = InstallerSession(self.email, self, auth, background)
-                _console.print("👉 Use session.submit_otp('YOUR_OTP') to complete installation\n")
+                _console_print("👉 Use session.submit_otp('YOUR_OTP') to complete installation\n")
                 return session
                 
             except Exception as e:
-                _console.print(f"❌ OTP request failed: {str(e)}")
+                _console_print(f"❌ OTP request failed: {str(e)}")
                 return None
         else:
             # Already installed, just run if not running
             config = self.config
             if config:
-                _console.print(f"✅ SyftBox already installed for [cyan]{config.email}[/cyan]")
+                _console_print(f"✅ SyftBox already installed for [cyan]{config.email}[/cyan]")
                 
             if not self.is_running:
-                _console.print("\n▶️  Starting SyftBox client...")
+                _console_print("\n▶️  Starting SyftBox client...")
                 self._process_manager.start(config, background=background)
-                _console.print("✅ SyftBox client started!\n")
+                _console_print("✅ SyftBox client started!\n")
             else:
-                _console.print("✅ SyftBox client already running!\n")
+                _console_print("✅ SyftBox client already running!\n")
                 
             self.status()
             return None
@@ -606,7 +644,7 @@ def _get_instance(**kwargs) -> _SyftBox:
 
 
 # Super simple API
-def install(email: Optional[str] = None, interactive: bool = True) -> Union[bool, Optional[InstallerSession]]:
+def install(email: Optional[str] = None, interactive: bool = True, silent: bool = False) -> Union[bool, Optional[InstallerSession]]:
     """
     Install SyftBox without starting it.
     
@@ -618,6 +656,7 @@ def install(email: Optional[str] = None, interactive: bool = True) -> Union[bool
                will attempt to detect it automatically from your Google account.
         interactive: If True, prompts for OTP input. If False, returns an InstallerSession
                     object for programmatic OTP submission (default: True)
+        silent: If True, suppresses all output (default: False)
         
     Returns:
         In interactive mode: True if installation successful, False otherwise
@@ -641,47 +680,52 @@ def install(email: Optional[str] = None, interactive: bool = True) -> Union[bool
         >>>     session.submit_otp("ABC12345")
         >>> si.run()  # Start later
     """
+    # Apply silent mode if requested
+    if silent:
+        with silence_output():
+            return install(email, interactive, silent=False)
+    
     # Auto-detect email in Colab if not provided
     if email is None:
         from syft_installer._colab_utils import is_google_colab, get_colab_user_email
         
         if is_google_colab():
-            _console.print("🔍 Detected Google Colab environment")
+            _console_print("🔍 Detected Google Colab environment")
             email = get_colab_user_email()
             if email is None:
-                _console.print("❌ Could not detect email. Please provide it explicitly.")
+                _console_print("❌ Could not detect email. Please provide it explicitly.")
                 return False if interactive else None
         else:
-            _console.print("❌ Email is required. In Google Colab, we can detect it automatically.")
+            _console_print("❌ Email is required. In Google Colab, we can detect it automatically.")
             return False if interactive else None
     
     instance = _get_instance(email=email)
     if instance.is_installed:
-        _console.print("✅ SyftBox is already installed")
+        _console_print("✅ SyftBox is already installed")
         config = instance.config
         if config:
-            _console.print(f"   Email: {config.email}")
+            _console_print(f"   Email: {config.email}")
         return True if interactive else None
     
     if interactive:
-        _console.print("\n📦 Installing SyftBox...\n")
+        _console_print("\n📦 Installing SyftBox...\n")
         instance._install()
         
         # Check if installation succeeded
         if instance.is_installed:
-            _console.print("\n✅ Installation complete!")
+            _console_print("\n✅ Installation complete!")
             return True
         else:
-            _console.print("\n❌ Installation failed")
+            _console_print("\n❌ Installation failed")
             return False
     else:
         # Non-interactive mode
-        _console.print("\n📦 Starting SyftBox installation...\n")
+        _console_print("\n📦 Starting SyftBox installation...\n")
         
         # Validate email
         from syft_installer._utils import validate_email
         if not validate_email(email):
-            _console.print(f"❌ Invalid email address: {email}")
+            _console_print(f"❌ Invalid email address: {email}")
             return None
         
         # Create directories and download binary
@@ -695,17 +739,17 @@ def install(email: Optional[str] = None, interactive: bool = True) -> Union[bool
         
         # Download binary if needed
         if not binary_path.exists():
-            _console.print("📥 Downloading SyftBox binary...")
+            _console_print("📥 Downloading SyftBox binary...")
             try:
                 from syft_installer._downloader import Downloader
                 downloader = Downloader()
                 downloader.download_and_install(binary_path)
-                _console.print("✅ Binary downloaded successfully")
+                _console_print("✅ Binary downloaded successfully")
             except Exception as e:
-                _console.print(f"❌ Download failed: {str(e)}")
+                _console_print(f"❌ Download failed: {str(e)}")
                 return None
         else:
-            _console.print("✅ Binary already exists")
+            _console_print("✅ Binary already exists")
         
         # Request OTP
         _console.print(f"\n📧 Requesting OTP for {email}...")
@@ -724,7 +768,7 @@ def install(email: Optional[str] = None, interactive: bool = True) -> Union[bool
             return None
 
 
-def run(background: bool = True) -> bool:
+def run(background: bool = True, silent: bool = False) -> bool:
     """
     Run SyftBox (must be installed first).
     
@@ -732,6 +776,7 @@ def run(background: bool = True) -> bool:
     
     Args:
         background: Run daemon in background (default: True)
+        silent: If True, suppresses all output (default: False)
         
     Returns:
         True if started successfully, False otherwise
@@ -740,32 +785,37 @@ def run(background: bool = True) -> bool:
         >>> import syft_installer as si
         >>> si.run()  # Assumes already installed
     """
+    # Apply silent mode if requested
+    if silent:
+        with silence_output():
+            return run(background, silent=False)
+    
     instance = _get_instance()
     
     if not instance.is_installed:
-        _console.print("❌ SyftBox not installed. Run install() first.")
+        _console_print("❌ SyftBox not installed. Run install() first.")
         return False
     
     if instance.is_running:
-        _console.print("✅ SyftBox is already running")
+        _console_print("✅ SyftBox is already running")
         return True
     
     try:
         config = instance.config
         if not config:
-            _console.print("❌ No configuration found")
+            _console_print("❌ No configuration found")
             return False
             
-        _console.print("▶️  Starting SyftBox client...")
+        _console_print("▶️  Starting SyftBox client...")
         instance._process_manager.start(config, background=background)
-        _console.print("✅ SyftBox client started!")
+        _console_print("✅ SyftBox client started!")
         return True
     except Exception as e:
-        _console.print(f"❌ Failed to start: {e}")
+        _console_print(f"❌ Failed to start: {e}")
         return False
 
 
-def install_and_run_if_needed(email: Optional[str] = None, background: bool = True, interactive: bool = True) -> Optional['InstallerSession']:
+def install_and_run_if_needed(email: Optional[str] = None, background: bool = True, interactive: bool = True, silent: bool = False) -> Optional['InstallerSession']:
     """
     Install (if needed) and run (if needed) SyftBox.
     
@@ -780,6 +830,7 @@ def install_and_run_if_needed(email: Optional[str] = None, background: bool = Tr
         background: Run daemon in background (default: True)
         interactive: If True, prompts for OTP input. If False, returns an InstallerSession
                     object for programmatic OTP submission (default: True)
+        silent: If True, suppresses all output (default: False)
         
     Returns:
         None in interactive mode, or InstallerSession object in non-interactive mode
@@ -801,6 +852,11 @@ def install_and_run_if_needed(email: Optional[str] = None, background: bool = Tr
         In interactive mode, enter this when prompted.
         In non-interactive mode, use the returned session object.
     """
+    # Apply silent mode if requested
+    if silent:
+        with silence_output():
+            return install_and_run_if_needed(email, background, interactive, silent=False)
+    
     instance = _get_instance(email=email)
     
     if interactive:
@@ -811,7 +867,7 @@ def install_and_run_if_needed(email: Optional[str] = None, background: bool = Tr
         return instance._run_non_interactive(background)
 
 
-def status(detailed: bool = False) -> Dict[str, Any]:
+def status(detailed: bool = False, silent: bool = False) -> Dict[str, Any]:
     """
     Check SyftBox status.
     
@@ -819,6 +875,7 @@ def status(detailed: bool = False) -> Dict[str, Any]:
     
     Args:
         detailed: Show detailed information including daemon processes
+        silent: If True, suppresses all output (default: False)
         
     Returns:
         Dict with status information
@@ -834,27 +891,37 @@ def status(detailed: bool = False) -> Dict[str, Any]:
         │ Data Dir   /home/user/SyftBox│
         ╰──────────────────────────────╯
     """
+    # Apply silent mode if requested
+    if silent:
+        with silence_output():
+            return _get_instance().status(detailed)
     return _get_instance().status(detailed)
 
 
 
 
-def stop(all: bool = False) -> None:
+def stop(all: bool = False, silent: bool = False) -> None:
     """
     Stop SyftBox daemon.
     
     Args:
         all: Stop ALL syftbox daemons on the system, not just the one started
              by this instance (default: False)
+        silent: If True, suppresses all output (default: False)
         
     Example:
         >>> import syft_installer as si
         >>> si.stop()
     """
-    _get_instance().stop(all)
+    # Apply silent mode if requested
+    if silent:
+        with silence_output():
+            _get_instance().stop(all)
+    else:
+        _get_instance().stop(all)
 
 
-def run_if_stopped() -> bool:
+def run_if_stopped(silent: bool = False) -> bool:
     """
     Start SyftBox only if it's not already running.
     
@@ -869,10 +936,14 @@ def run_if_stopped() -> bool:
         ✅ SyftBox already running!
         False
     """
+    # Apply silent mode if requested
+    if silent:
+        with silence_output():
+            return _get_instance().start_if_stopped()
     return _get_instance().start_if_stopped()
 
 
-def uninstall(confirm: bool = True) -> None:
+def uninstall(confirm: bool = True, silent: bool = False) -> None:
     """
     Completely uninstall SyftBox.
     
@@ -884,6 +955,7 @@ def uninstall(confirm: bool = True) -> None:
     Args:
         confirm: Ask for confirmation before deleting (default: True).
                  Set to False for automated/scripted usage.
+        silent: If True, suppresses all output (default: False)
         
     Example:
         >>> import syft_installer as si
@@ -892,4 +964,9 @@ def uninstall(confirm: bool = True) -> None:
     Warning:
         This action cannot be undone. All data will be permanently deleted.
     """
-    _get_instance().uninstall(confirm)
+    # Apply silent mode if requested
+    if silent:
+        with silence_output():
+            _get_instance().uninstall(confirm)
+    else:
+        _get_instance().uninstall(confirm)
