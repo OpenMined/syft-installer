@@ -274,8 +274,24 @@ class ProcessManager:
                     )
                 else:
                     # Regular Unix environment
+                    # Check if we're in a Jupyter/IPython environment
+                    in_jupyter = False
                     try:
-                        # Try with os.setsid for proper daemon behavior
+                        get_ipython()  # This is defined in IPython/Jupyter
+                        in_jupyter = True
+                    except NameError:
+                        pass
+                    
+                    if in_jupyter:
+                        # Jupyter environment - use simpler subprocess call
+                        self.process = subprocess.Popen(
+                            cmd,
+                            stdout=subprocess.DEVNULL,
+                            stderr=self.stderr_file,
+                            stdin=subprocess.DEVNULL
+                        )
+                    else:
+                        # Regular terminal - use full daemon mode
                         self.process = subprocess.Popen(
                             cmd,
                             stdout=subprocess.DEVNULL,
@@ -283,16 +299,6 @@ class ProcessManager:
                             stdin=subprocess.DEVNULL,
                             start_new_session=True,
                             preexec_fn=os.setsid
-                        )
-                    except (OSError, AttributeError):
-                        # Fall back to simpler approach if os.setsid fails
-                        # This can happen in some restricted environments
-                        self.process = subprocess.Popen(
-                            cmd,
-                            stdout=subprocess.DEVNULL,
-                            stderr=self.stderr_file,
-                            stdin=subprocess.DEVNULL,
-                            start_new_session=True
                         )
                 
                 # Give it a moment to start
