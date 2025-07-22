@@ -180,7 +180,20 @@ class _SyftBox:
         """Check if SyftBox is installed."""
         config = _Config.load()
         binary_path = Path.home() / ".local" / "bin" / "syftbox"
-        return config is not None and binary_path.exists()
+        
+        # Debug: Check individual conditions
+        config_exists = config is not None
+        binary_exists = binary_path.exists()
+        
+        # If binary exists but config doesn't, try loading config again
+        # (in case of race condition)
+        if binary_exists and not config_exists:
+            import time
+            time.sleep(0.1)  # Brief pause
+            config = _Config.load()
+            config_exists = config is not None
+        
+        return config_exists and binary_exists
     
     @property
     def is_running(self) -> bool:
@@ -202,30 +215,33 @@ class _SyftBox:
         Returns:
             Status dictionary
         """
+        is_installed = self.is_installed
+        is_running = self.is_running
+        
         status = {
-            "installed": self.is_installed,
-            "running": self.is_running,
+            "installed": is_installed,
+            "running": is_running,
             "config": None,
             "daemons": []
         }
         
-        config = None
-        if self.is_installed:
-            config = self.config
-            if config:
-                status["config"] = {
-                    "email": config.email,
-                    "server": config.server_url,
-                    "data_dir": config.data_dir
-                }
+        # Try to load config regardless of installation status
+        # (in case there's a race condition or partial installation)
+        config = self.config
+        if config:
+            status["config"] = {
+                "email": config.email,
+                "server": config.server_url,
+                "data_dir": config.data_dir
+            }
         
         if detailed or self.is_running:
             status["daemons"] = self._process_manager.find_daemons()
         
         # Show clean status display
         display.show_status(
-            installed=self.is_installed,
-            running=self.is_running,
+            installed=is_installed,
+            running=is_running,
             email=config.email if config else None,
             data_dir=config.data_dir if config else None
         )
