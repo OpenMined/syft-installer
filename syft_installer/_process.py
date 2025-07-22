@@ -18,7 +18,7 @@ class ProcessManager:
         self.stderr_file = None
         self.verbose = verbose
     
-    def start(self, config, background: bool = True) -> None:
+    def start(self, config, background: bool = True, progress_callback=None) -> None:
         """Start SyftBox client."""
         if self.is_running():
             return
@@ -30,11 +30,12 @@ class ProcessManager:
         # Build command
         cmd = [str(config.binary_path), "daemon"]
         
-        print(f"📌 Binary path: {config.binary_path}")
-        print(f"📌 Command to execute: {cmd}")
+        if self.verbose:
+            print(f"📌 Binary path: {config.binary_path}")
+            print(f"📌 Command to execute: {cmd}")
         
         if background:
-            self._run_background(cmd)
+            self._run_background(cmd, progress_callback)
         else:
             self._run_foreground(cmd)
     
@@ -211,13 +212,20 @@ class ProcessManager:
         except KeyboardInterrupt:
             self.stop()
     
-    def _run_background(self, cmd: list) -> None:
+    def _run_background(self, cmd: list, progress_callback=None) -> None:
         """Run client in background."""
-        print(f"🚀 Launching daemon with command: {' '.join(cmd)}")
+        if self.verbose:
+            print(f"🚀 Launching daemon with command: {' '.join(cmd)}")
+        
         try:
             import platform
             system = platform.system()
-            print(f"   Platform: {system}")
+            
+            if self.verbose:
+                print(f"   Platform: {system}")
+            
+            if progress_callback:
+                progress_callback(70, f"🔧 Detected {system} environment")
             
             if system == "Windows":
                 # Windows doesn't have nohup, use START instead

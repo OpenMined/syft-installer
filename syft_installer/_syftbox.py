@@ -25,6 +25,7 @@ from rich.console import Console
 from syft_installer._config import Config as _Config
 from syft_installer._process import ProcessManager as _ProcessManager
 from syft_installer._display import display
+from syft_installer._progress import progress_context
 
 
 _console = Console()
@@ -226,9 +227,18 @@ class _SyftBox:
         
         # Start if not running
         if not self.is_running:
-            with _console.status("[blue]Starting SyftBox...[/blue]", spinner="dots"):
-                self._process_manager.start(config, background=background)
-            display.show_success(config.email, config.data_dir)
+            prog = progress_context()
+            
+            def progress_update(step, message):
+                prog.update(step, message)
+            
+            prog.update(20, f"🚀 Starting SyftBox daemon for {config.email}")
+            prog.update(50, f"📌 Executing {config.binary_path} daemon")
+            
+            self._process_manager.start(config, background=background, progress_callback=progress_update)
+            
+            prog.update(95, "✅ SyftBox daemon started successfully")
+            prog.finish(f"✅ SyftBox installed and running for {config.email}")
         else:
             display.show_already_running(config.email)
     
@@ -307,7 +317,7 @@ class _SyftBox:
         display.show_uninstall_progress()
     
     def _install(self) -> None:
-        """Run installation flow with clean, inspiring progress display."""
+        """Run installation flow with single-line progress display."""
         # Auto-detect email in Colab if not provided
         email = self.email
         if email is None:
@@ -335,91 +345,84 @@ class _SyftBox:
             display.show_error(f"Invalid email address: {email}")
             return
         
-        # Show email detection/confirmation
-        from syft_installer._colab_utils import is_google_colab
-        display.show_email_detection(email, is_colab=is_google_colab())
+        # Start single-line installation progress
+        prog = progress_context()
         
-        # Start installation progress
-        with display.installation_progress(email) as progress:
-            try:
-                # Phase 1: Setup (10%)
-                progress.update_phase("📦 Setting up installation environment", 10)
+        try:
+            # Phase 1: Setup (10%)
+            prog.update(10, f"📦 Setting up installation environment for {email}")
+            
+            bin_dir = Path.home() / ".local" / "bin"
+            binary_path = bin_dir / "syftbox"
+            config_dir = Path.home() / ".syftbox"
+            
+            bin_dir.mkdir(parents=True, exist_ok=True)
+            config_dir.mkdir(parents=True, exist_ok=True)
+            self.data_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Phase 2: Download binary
+            if not binary_path.exists():
+                prog.update(20, "📥 Downloading SyftBox binary from syftbox.net")
                 
-                bin_dir = Path.home() / ".local" / "bin"
-                binary_path = bin_dir / "syftbox"
-                config_dir = Path.home() / ".syftbox"
+                from syft_installer._downloader import Downloader
+                downloader = Downloader()
                 
-                bin_dir.mkdir(parents=True, exist_ok=True)
-                config_dir.mkdir(parents=True, exist_ok=True)
-                self.data_dir.mkdir(parents=True, exist_ok=True)
-                
-                # Phase 2: Download binary (30%)
-                if not binary_path.exists():
-                    progress.update_phase("📥 Downloading SyftBox binary", 20)
-                    
-                    from syft_installer._downloader import Downloader
-                    downloader = Downloader()
-                    
-                    # This could be enhanced to show actual download progress
-                    downloader.download_and_install(binary_path)
-                    progress.update_phase("✅ SyftBox binary ready", 40)
-                else:
-                    progress.update_phase("✅ SyftBox binary ready", 40)
-                
-                # Phase 3: Request verification (50%)
-                progress.update_phase("📧 Requesting verification code", 50)
-                
-                from syft_installer._auth import Authenticator
-                auth = Authenticator(self.server)
-                auth.request_otp(email)
-                
-                progress.update_phase("✅ Verification code sent", 60)
-                
-            except Exception as e:
-                display.show_error(
-                    f"Installation failed: {str(e)}",
-                    "Check your internet connection and try again"
-                )
-                return
+                prog.update(35, "📥 Extracting SyftBox binary (~13MB)")
+                downloader.download_and_install(binary_path)
+                prog.update(50, "✅ SyftBox binary installed successfully")
+            else:
+                prog.update(50, "✅ SyftBox binary already exists")
+            
+            # Phase 3: Request verification
+            prog.update(60, f"📧 Requesting OTP verification for {email}")
+            
+            from syft_installer._auth import Authenticator
+            auth = Authenticator(self.server)
+            
+            prog.update(70, f"🌐 Connecting to {self.server}/auth/otp/request")
+            auth.request_otp(email)
+            
+            prog.update(80, "✅ Verification code sent to your email")
+            
+        except Exception as e:
+            prog.finish(f"❌ Installation failed: {str(e)}")
+            return
         
-        # Show OTP request message
-        display.show_otp_request(email)
-        
-        # Get OTP from user (outside progress context for clean input)
+        # Get OTP from user
+        prog.finish("📧 Verification code sent to your email")
         otp = display.get_otp_input()
         
-        # Verify OTP with final progress
-        with _console.status("[blue]🔐 Verifying your code...[/blue]", spinner="dots"):
-            from syft_installer._utils import sanitize_otp, validate_otp
-            otp = sanitize_otp(otp)
+        # Verify OTP with progress
+        prog = progress_context()
+        prog.update(10, f"🔐 Verifying code {otp} with server")
+        
+        from syft_installer._utils import sanitize_otp, validate_otp
+        otp = sanitize_otp(otp)
+        
+        if not validate_otp(otp):
+            prog.finish("❌ Invalid verification code - must be 8 digits")
+            return
+        
+        try:
+            prog.update(30, "🔐 Authenticating with SyftBox servers")
+            tokens = auth.verify_otp(email, otp)
             
-            if not validate_otp(otp):
-                display.show_error(
-                    "Invalid verification code",
-                    "Please enter the 8-digit code from your email"
-                )
-                return
+            prog.update(60, "💾 Saving configuration to ~/.syftbox/config.json")
+            config = _Config(
+                email=email,
+                data_dir=str(self.data_dir),
+                server_url=self.server,
+                client_url="http://localhost:7938",
+                refresh_token=tokens["refresh_token"]
+            )
+            config.save()
             
-            try:
-                # Verify OTP and get tokens
-                tokens = auth.verify_otp(email, otp)
-                
-                # Create and save config
-                config = _Config(
-                    email=email,
-                    data_dir=str(self.data_dir),
-                    server_url=self.server,
-                    client_url="http://localhost:7938",
-                    refresh_token=tokens["refresh_token"]
-                )
-                config.save()
-                
-            except Exception as e:
-                display.show_error(
-                    f"Verification failed: {str(e)}",
-                    "Double-check your code and try again"
-                )
-                return
+            prog.update(90, "✅ Configuration saved successfully")
+            prog.finish("✅ SyftBox installation complete!")
+            
+        except Exception as e:
+            prog.finish(f"❌ Verification failed: {str(e)}")
+            return
     
     def _run_non_interactive(self, background: bool = True) -> Optional[InstallerSession]:
         """
