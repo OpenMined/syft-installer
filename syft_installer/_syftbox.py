@@ -19,6 +19,7 @@ Usage:
 import os
 import shutil
 import sys
+import time
 from pathlib import Path
 from typing import Optional, Dict, Any, Union
 from rich.console import Console
@@ -389,15 +390,22 @@ class _SyftBox:
             prog.finish(f"❌ Installation failed: {str(e)}")
             return
         
-        # Update progress to show OTP is needed
-        prog.update(85, "📧 Verification code sent to your email")
+        # Update progress to maximum
+        prog.update(100, "📧 Verification code sent to your email")
         
-        # Clear the progress line and get OTP input on same line
+        # Small delay for visual feedback
+        time.sleep(0.5)
+        
+        # Clear the progress line completely
         sys.stdout.write('\r' + ' ' * 120 + '\r')
         sys.stdout.flush()
         
-        # Get OTP input
-        otp = _console.input("📧 Verification code sent to your email - OTP: ")
+        # Show the message and get OTP on same line
+        sys.stdout.write("📧 Verification code sent to your email - OTP: ")
+        sys.stdout.flush()
+        
+        # Get input without using rich console to avoid formatting issues
+        otp = input()
         
         # Verify OTP with progress
         prog = progress_context()
