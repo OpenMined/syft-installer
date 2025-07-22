@@ -355,8 +355,18 @@ class _SyftBox:
             killed = self._process_manager.kill_all_daemons()
             _console_print(f"\n⏹️  Stopped {killed} SyftBox daemon(s)\n")
         else:
+            # First try to stop the process we started
             self._process_manager.stop()
-            _console_print("\n⏹️  Stopped SyftBox client\n")
+            
+            # If there are still daemons running, stop them too
+            if self._process_manager.is_running():
+                killed = self._process_manager.kill_all_daemons()
+                if killed > 0:
+                    _console_print(f"\n⏹️  Stopped {killed} SyftBox daemon(s)\n")
+                else:
+                    _console_print("\n⚠️  Unable to stop SyftBox daemon\n")
+            else:
+                _console_print("\n⏹️  Stopped SyftBox client\n")
     
     def start_if_stopped(self) -> bool:
         """
