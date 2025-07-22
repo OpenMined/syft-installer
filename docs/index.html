@@ -332,25 +332,72 @@ si.uninstall()
             onFormReady: function(form) {
                 // Style the form to match our design
                 const formElement = form[0] || form;
+                
+                // Fix the name field layout
+                const firstNameField = formElement.querySelector('.hs_firstname');
+                const lastNameField = formElement.querySelector('.hs_lastname');
+                
+                if (firstNameField && lastNameField) {
+                    // Create a flex container for name fields
+                    const nameContainer = document.createElement('div');
+                    nameContainer.style.display = 'flex';
+                    nameContainer.style.gap = '1rem';
+                    nameContainer.style.marginBottom = '1rem';
+                    
+                    // Insert container before first name field
+                    firstNameField.parentNode.insertBefore(nameContainer, firstNameField);
+                    
+                    // Move fields into container
+                    nameContainer.appendChild(firstNameField);
+                    nameContainer.appendChild(lastNameField);
+                    
+                    // Style the fields
+                    [firstNameField, lastNameField].forEach(field => {
+                        field.style.flex = '1';
+                        field.style.margin = '0';
+                    });
+                }
+                
+                // Style all inputs
                 formElement.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(el => {
-                    el.classList.add('hubspot-input');
-                });
-                formElement.querySelectorAll('input[type="submit"]').forEach(el => {
-                    el.classList.add('hubspot-submit');
-                });
-                formElement.querySelectorAll('input[type="checkbox"]').forEach(el => {
-                    el.parentElement.classList.add('hubspot-checkbox-wrapper');
-                });
-                // Style all richtext consistently
-                formElement.querySelectorAll('.hs-richtext p, .hs-richtext li').forEach(el => {
-                    el.style.color = 'rgba(255, 255, 255, 0.6)';
-                    el.style.fontStyle = 'normal';
+                    el.style.width = '100%';
+                    el.style.padding = '12px 16px';
                     el.style.fontSize = '1rem';
-                    el.style.lineHeight = '1.6';
+                    el.style.border = '1px solid rgba(255, 255, 255, 0.2)';
+                    el.style.borderRadius = '12px';
+                    el.style.background = 'rgba(255, 255, 255, 0.05)';
+                    el.style.color = 'white';
+                    el.style.boxSizing = 'border-box';
                 });
-                // Remove any italics
-                formElement.querySelectorAll('.hs-richtext em, .hs-richtext i').forEach(el => {
-                    el.style.fontStyle = 'normal';
+                
+                // Style submit button
+                formElement.querySelectorAll('input[type="submit"]').forEach(el => {
+                    el.style.background = 'white';
+                    el.style.color = '#0a0a0a';
+                    el.style.border = 'none';
+                    el.style.padding = '12px 32px';
+                    el.style.borderRadius = '980px';
+                    el.style.fontSize = '1rem';
+                    el.style.fontWeight = '500';
+                    el.style.cursor = 'pointer';
+                });
+                
+                // Fix ALL text to be consistent
+                formElement.querySelectorAll('p, span, em, i, strong, b, label').forEach(el => {
+                    if (el.closest('.hs-richtext') || el.closest('.legal-consent-container')) {
+                        el.style.color = 'rgba(255, 255, 255, 0.6)';
+                        el.style.fontStyle = 'normal';
+                        el.style.fontWeight = 'normal';
+                        el.style.fontSize = '1rem';
+                        el.style.lineHeight = '1.6';
+                    }
+                });
+                
+                // Fix checkboxes
+                formElement.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                    el.style.marginRight = '8px';
+                    el.style.width = '16px';
+                    el.style.height = '16px';
                 });
             }
         });
