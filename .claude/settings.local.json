@@ -41,7 +41,8 @@
       "Bash(pkill:*)",
       "Bash(cp:*)",
       "Bash(sed:*)",
-      "WebFetch(domain:openmined.org)"
+      "WebFetch(domain:openmined.org)",
+      "Bash(brew install:*)"
     ],
     "deny": []
   }
