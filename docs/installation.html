@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Installation - SyftPerm Documentation</title>
-    <meta name="description" content="Install SyftPerm and get started with SyftBox file permission management in Python.">
+    <title>Installation - syft-installer Documentation</title>
+    <meta name="description" content="Install syft-installer and get SyftBox running with a simple Python API.">
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -24,7 +24,7 @@
             <div class="header-content">
                 <div class="logo-group">
                     <img src="images/syftbox-logo.svg" alt="SyftBox" class="syftbox-logo">
-                    <a href="index.html" class="logo">SyftPerm</a>
+                    <a href="index.html" class="logo">syft-installer</a>
                 </div>
                 <nav class="nav">
                     <a href="index.html" class="nav-link">Home</a>
@@ -32,7 +32,7 @@
                     <a href="quickstart.html" class="nav-link">Quick Start</a>
                     <a href="tutorials/index.html" class="nav-link">Tutorials</a>
                     <a href="api/index.html" class="nav-link">API Reference</a>
-                    <a href="https://github.com/OpenMined/syft-perm" class="nav-link">GitHub</a>
+                    <a href="https://github.com/OpenMined/syft-installer" class="nav-link">GitHub</a>
                 </nav>
             </div>
         </div>
@@ -45,80 +45,90 @@
             <section class="page-header">
                 <h1 class="page-title">Installation</h1>
                 <p class="page-subtitle">
-                    Get SyftPerm installed and configured on your system in just a few steps.
+                    Install syft-installer to get SyftBox up and running with minimal effort.
                 </p>
             </section>
 
             <!-- Quick Install -->
             <section style="margin-bottom: 3rem;">
                 <h2>Quick Install</h2>
-                <p>Install SyftPerm from PyPI with pip:</p>
+                <p>Install syft-installer from PyPI with pip:</p>
                 
-                <div class="code-block">pip install syft-perm</div>
+                <div class="code-block">pip install syft-installer</div>
                 
                 <div class="alert alert-success">
-                    <strong>✅ That's it!</strong> SyftPerm is now ready to use. Jump to the <a href="quickstart.html">Quick Start guide</a> to begin.
+                    <strong>✅ That's it!</strong> Now you can install and run SyftBox with just <code class="code-inline">si.run()</code>. Jump to the <a href="quickstart.html">Quick Start guide</a> to begin.
                 </div>
             </section>
 
             <!-- Installation Options -->
             <section style="margin-bottom: 3rem;">
-                <h2>Installation Options</h2>
+                <h2>What syft-installer Does</h2>
                 
                 <div class="grid grid-2">
                     <div class="card">
-                        <h3 class="card-title">🎯 Core Package</h3>
+                        <h3 class="card-title">🎯 One Command Setup</h3>
                         <div class="card-content">
-                            <p>Basic SyftPerm functionality for file permission management:</p>
-                            <div class="code-block">pip install syft-perm</div>
-                            <p><strong>Includes:</strong></p>
+                            <p>Install and run SyftBox with a single Python command:</p>
+                            <div class="code-block">import syft_installer as si
+si.run()  # That's it!</div>
+                            <p><strong>This handles:</strong></p>
                             <ul style="margin-left: 1.5rem;">
-                                <li>Core permission management</li>
-                                <li>Pattern matching system</li>
-                                <li>YAML configuration</li>
-                                <li>Debugging tools</li>
+                                <li>Platform detection (macOS/Linux)</li>
+                                <li>Binary download for your architecture</li>
+                                <li>Email-based authentication</li>
+                                <li>Directory setup and configuration</li>
+                                <li>Daemon process management</li>
                             </ul>
                         </div>
                     </div>
 
                     <div class="card">
-                        <h3 class="card-title">🚀 Full Package (Recommended)</h3>
+                        <h3 class="card-title">🚀 Perfect for Notebooks</h3>
                         <div class="card-content">
-                            <p>Complete SyftPerm experience with all optional features:</p>
-                            <div class="code-block">pip install "syft-perm[server,display]"</div>
-                            <p><strong>Includes everything above plus:</strong></p>
+                            <p>Optimized for Jupyter and Google Colab environments:</p>
+                            <div class="code-block"># Google Colab auto-detects your email
+si.run()  # Uses your Google account</div>
+                            <p><strong>Special features:</strong></p>
                             <ul style="margin-left: 1.5rem;">
-                                <li>Web-based permission editor</li>
-                                <li>Rich table display in Jupyter</li>
-                                <li>Interactive HTML representations</li>
-                                <li>FastAPI server for UI</li>
+                                <li>Rich terminal output formatting</li>
+                                <li>Interactive OTP prompts</li>
+                                <li>Progress bars for downloads</li>
+                                <li>Clean error messages</li>
+                                <li>Automatic environment detection</li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Individual Optional Dependencies -->
+            <!-- Usage Examples -->
             <section style="margin-bottom: 3rem;">
-                <h2>Optional Dependencies</h2>
-                <p>You can also install specific optional features individually:</p>
+                <h2>Usage Examples</h2>
+                <p>Common scenarios for using syft-installer:</p>
 
                 <div class="api-method">
-                    <div class="api-method-name">Server Features</div>
-                    <div class="code-block">pip install "syft-perm[server]"</div>
-                    <p>Adds the interactive web-based permission editor. Perfect for teams with non-technical members who need to manage permissions through a user-friendly interface.</p>
+                    <div class="api-method-name">Interactive Installation (Default)</div>
+                    <div class="code-block">import syft_installer as si
+si.run("your@email.com")  # Prompts for OTP interactively</div>
+                    <p>Best for manual installations where you can enter the OTP when prompted. The installer will wait for you to check your email and enter the code.</p>
                 </div>
 
                 <div class="api-method">
-                    <div class="api-method-name">Display Features</div>
-                    <div class="code-block">pip install "syft-perm[display]"</div>
-                    <p>Enhanced table formatting for Jupyter notebooks and terminals. Makes permission tables much more readable during development and debugging.</p>
+                    <div class="api-method-name">Non-Interactive Installation</div>
+                    <div class="code-block">session = si.install("your@email.com", interactive=False)
+# Later, when you receive the OTP:
+session.submit_otp("ABC123")</div>
+                    <p>Perfect for automation, CI/CD pipelines, or when you need to handle OTP submission programmatically.</p>
                 </div>
 
                 <div class="api-method">
-                    <div class="api-method-name">SyftBox Integration</div>
-                    <div class="code-block">pip install "syft-perm[syftbox]"</div>
-                    <p>Deep integration with SyftBox core libraries. Required only if you're extending SyftBox itself or building custom SyftBox applications.</p>
+                    <div class="api-method-name">Process Management</div>
+                    <div class="code-block">si.status()          # Check if running
+si.stop()            # Stop the daemon
+si.run_if_stopped()  # Start only if not running
+si.uninstall()       # Complete removal</div>
+                    <p>Full control over the SyftBox daemon lifecycle. Useful for managing SyftBox in production environments.</p>
                 </div>
             </section>
 
@@ -132,9 +142,10 @@
                         <div class="card-content">
                             <ul style="margin-left: 1.5rem;">
                                 <li><strong>Python:</strong> 3.9 or higher</li>
-                                <li><strong>Operating System:</strong> Windows, macOS, or Linux</li>
-                                <li><strong>Memory:</strong> 50MB RAM</li>
-                                <li><strong>Disk:</strong> 10MB storage</li>
+                                <li><strong>Operating System:</strong> macOS or Linux</li>
+                                <li><strong>Architecture:</strong> x86_64 or ARM64</li>
+                                <li><strong>Memory:</strong> 100MB RAM</li>
+                                <li><strong>Disk:</strong> 200MB storage</li>
                             </ul>
                         </div>
                     </div>
@@ -145,8 +156,8 @@
                             <ul style="margin-left: 1.5rem;">
                                 <li><strong>Python:</strong> 3.10+ for best performance</li>
                                 <li><strong>Package Manager:</strong> pip 21+ or uv</li>
-                                <li><strong>Environment:</strong> Virtual environment</li>
-                                <li><strong>Editor:</strong> Jupyter notebooks for tutorials</li>
+                                <li><strong>Environment:</strong> Jupyter or Google Colab</li>
+                                <li><strong>Network:</strong> Internet for OTP verification</li>
                             </ul>
                         </div>
                     </div>
@@ -156,7 +167,7 @@
             <!-- Development Installation -->
             <section style="margin-bottom: 3rem;">
                 <h2>Development Installation</h2>
-                <p>Want to contribute to SyftPerm or work with the source code? Follow these steps:</p>
+                <p>Want to contribute to syft-installer or work with the source code? Follow these steps:</p>
 
                 <div class="grid grid-2" style="margin-top: 2rem; margin-bottom: 2rem;">
                     <div class="card">
@@ -187,8 +198,8 @@
 
                 <div class="api-method">
                     <div class="api-method-name">Step 1: Clone the Repository</div>
-                    <div class="code-block">git clone https://github.com/OpenMined/syft-perm.git
-cd syft-perm</div>
+                    <div class="code-block">git clone https://github.com/OpenMined/syft-installer.git
+cd syft-installer</div>
                 </div>
 
                 <div class="api-method">
@@ -199,12 +210,14 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate</div>
 
                 <div class="api-method">
                     <div class="api-method-name">Step 3: Install in Development Mode</div>
-                    <div class="code-block">pip install -e ".[dev,server,display]"</div>
-                    <p>This installs SyftPerm in editable mode with all development dependencies including:</p>
+                    <div class="code-block">pip install -e ".[dev]"</div>
+                    <p>This installs syft-installer in editable mode with all development dependencies including:</p>
                     <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
-                        <li><strong>dev</strong>: Testing frameworks, linters, build tools, and notebook testing tools (nbformat, nbconvert, ipykernel)</li>
-                        <li><strong>server</strong>: Web UI dependencies</li>
-                        <li><strong>display</strong>: Enhanced table formatting</li>
+                        <li><strong>pytest</strong>: Testing framework</li>
+                        <li><strong>pytest-asyncio</strong>: Async test support</li>
+                        <li><strong>pytest-cov</strong>: Code coverage reporting</li>
+                        <li><strong>ruff</strong>: Fast Python linter</li>
+                        <li><strong>mypy</strong>: Type checking</li>
                     </ul>
                 </div>
 
@@ -255,30 +268,29 @@ make docs     # Build documentation</div>
             <!-- Verification -->
             <section style="margin-bottom: 3rem;">
                 <h2>Verify Installation</h2>
-                <p>Confirm that SyftPerm is installed correctly:</p>
+                <p>Confirm that syft-installer is installed correctly:</p>
 
-                <div class="code-block">python -c "import syft_perm; print(f'SyftPerm {syft_perm.__version__} installed successfully!')"</div>
+                <div class="code-block">python -c "import syft_installer; print(f'syft-installer {syft_installer.__version__} installed successfully!')"</div>
 
                 <p>You should see output like:</p>
-                <div class="code-block">SyftPerm 0.2.32 installed successfully!</div>
+                <div class="code-block">syft-installer 0.8.24 installed successfully!</div>
 
-                <p>Test basic functionality:</p>
-                <div class="code-block" style="padding: 1.5rem; line-height: 1.8;">import syft_perm
-import tempfile
-from pathlib import Path
+                <p>Test that the API is available:</p>
+                <div class="code-block" style="padding: 1.5rem; line-height: 1.8;">import syft_installer as si
 
-<span style="color: #6a737d;"># Create a test file</span>
-test_file = Path(tempfile.mktemp(suffix=".txt"))
-test_file.write_text("Hello SyftPerm!")
+<span style="color: #6a737d;"># Check available functions</span>
+print("Available functions:")
+for func in ['run', 'install', 'status', 'stop', 'uninstall']:
+    print(f"  - si.{func}()")
 
-<span style="color: #6a737d;"># Open with SyftPerm</span>
-syft_file = syft_perm.open(test_file)
-syft_file.grant_read_access("test@example.com")
-
-print("✅ SyftPerm is working correctly!")
-
-<span style="color: #6a737d;"># Cleanup</span>
-test_file.unlink()</div>
+<span style="color: #6a737d;"># Check installation status</span>
+if si.is_installed():
+    print("
+✅ SyftBox is already installed!")
+    print(f"Running: {si.is_running()}")
+else:
+    print("
+📦 SyftBox not installed yet. Run si.run() to install!")</div>
             </section>
 
             <!-- Troubleshooting -->
@@ -286,40 +298,40 @@ test_file.unlink()</div>
                 <h2>Troubleshooting</h2>
 
                 <div class="api-method">
-                    <div class="api-method-name">Python Version Error</div>
-                    <p><strong>Problem:</strong> <code class="code-inline">ERROR: Package requires Python >=3.9</code></p>
-                    <p><strong>Solution:</strong> Upgrade to Python 3.9 or higher. Check your version with <code class="code-inline">python --version</code>.</p>
+                    <div class="api-method-name">Platform Not Supported</div>
+                    <p><strong>Problem:</strong> <code class="code-inline">Platform Windows is not supported</code></p>
+                    <p><strong>Solution:</strong> syft-installer currently supports macOS and Linux only. Windows support is coming soon.</p>
                 </div>
 
                 <div class="api-method">
                     <div class="api-method-name">Import Error</div>
-                    <p><strong>Problem:</strong> <code class="code-inline">ModuleNotFoundError: No module named 'syft_perm'</code></p>
+                    <p><strong>Problem:</strong> <code class="code-inline">ModuleNotFoundError: No module named 'syft_installer'</code></p>
                     <p><strong>Solution:</strong> Ensure you're using the correct Python environment. If using virtual environments, activate it first.</p>
                 </div>
 
                 <div class="api-method">
-                    <div class="api-method-name">Permission Server Won't Start</div>
-                    <p><strong>Problem:</strong> Web editor fails to start with FastAPI errors</p>
-                    <p><strong>Solution:</strong> Install server dependencies: <code class="code-inline">pip install "syft-perm[server]"</code></p>
+                    <div class="api-method-name">OTP Not Received</div>
+                    <p><strong>Problem:</strong> Email with OTP code doesn't arrive</p>
+                    <p><strong>Solution:</strong> Check spam folder. The email comes from SyftBox authentication service. If still not received, try again with a different email.</p>
                 </div>
 
                 <div class="api-method">
-                    <div class="api-method-name">Table Display Issues</div>
-                    <p><strong>Problem:</strong> Permission tables show as raw text instead of formatted tables</p>
-                    <p><strong>Solution:</strong> Install display dependencies: <code class="code-inline">pip install "syft-perm[display]"</code></p>
+                    <div class="api-method-name">Daemon Won't Start</div>
+                    <p><strong>Problem:</strong> <code class="code-inline">Failed to start SyftBox daemon</code></p>
+                    <p><strong>Solution:</strong> Check if another instance is running with <code class="code-inline">si.status()</code>. Stop it with <code class="code-inline">si.stop()</code> before trying again.</p>
                 </div>
             </section>
 
             <!-- Next Steps -->
             <section>
                 <h2>Next Steps</h2>
-                <p>Now that SyftPerm is installed, here's what to do next:</p>
+                <p>Now that syft-installer is installed, here's what to do next:</p>
 
                 <div class="grid grid-2" style="margin-top: 2rem;">
                     <div class="card">
-                        <h3 class="card-title">🚀 Quick Start Tutorial</h3>
+                        <h3 class="card-title">🚀 Quick Start Guide</h3>
                         <div class="card-content">
-                            <p>Learn the essentials in 5 minutes with our hands-on quick start guide.</p>
+                            <p>Install and run SyftBox in under 2 minutes with our step-by-step guide.</p>
                         </div>
                         <div class="card-footer">
                             <a href="quickstart.html" class="btn btn-primary">Start Learning</a>
@@ -327,12 +339,12 @@ test_file.unlink()</div>
                     </div>
 
                     <div class="card">
-                        <h3 class="card-title">📚 Complete Tutorials</h3>
+                        <h3 class="card-title">📚 Try in Google Colab</h3>
                         <div class="card-content">
-                            <p>Master advanced features with our comprehensive tutorial series.</p>
+                            <p>Experience syft-installer in a ready-to-use Google Colab notebook.</p>
                         </div>
                         <div class="card-footer">
-                            <a href="tutorials/index.html" class="btn btn-secondary">View Tutorials</a>
+                            <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" class="btn btn-secondary">Open in Colab</a>
                         </div>
                     </div>
                 </div>
@@ -345,8 +357,8 @@ test_file.unlink()</div>
         <div class="container">
             <div class="grid grid-3">
                 <div>
-                    <h4 style="margin-bottom: 1rem;">SyftPerm</h4>
-                    <p>File permission management for SyftBox made simple.</p>
+                    <h4 style="margin-bottom: 1rem;">syft-installer</h4>
+                    <p>Simple Python API for SyftBox installation and management.</p>
                 </div>
                 <div>
                     <h4 style="margin-bottom: 1rem;">Documentation</h4>
@@ -360,7 +372,7 @@ test_file.unlink()</div>
                 <div>
                     <h4 style="margin-bottom: 1rem;">Community</h4>
                     <ul style="list-style: none;">
-                        <li style="margin-bottom: 0.5rem;"><a href="https://github.com/OpenMined/syft-perm">GitHub</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="https://github.com/OpenMined/syft-installer">GitHub</a></li>
                         <li style="margin-bottom: 0.5rem;"><a href="https://openmined.org/">OpenMined</a></li>
                         <li style="margin-bottom: 0.5rem;"><a href="https://syftbox.net/">SyftBox</a></li>
                     </ul>

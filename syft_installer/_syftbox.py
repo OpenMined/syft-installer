@@ -26,9 +26,7 @@ from rich.panel import Panel
 from rich import box
 
 from syft_installer._config import Config as _Config
-from syft_installer._simple_installer import SimpleInstaller as _SimpleInstaller
-from syft_installer._launcher import Launcher as _Launcher
-from syft_installer._daemon_manager import DaemonManager as _DaemonManager
+from syft_installer._process import ProcessManager as _ProcessManager
 
 
 _console = Console()
@@ -42,32 +40,22 @@ class InstallerSession:
     interactive=False, allowing you to submit the OTP programmatically.
     """
     
-    def __init__(self, installer: '_SimpleInstaller', syftbox: '_SyftBox', background: bool = True):
+    def __init__(self, email: str, syftbox: '_SyftBox', auth, background: bool = True):
         """
         Initialize installer session.
         
         Args:
-            installer: The SimpleInstaller instance
+            email: Email address for installation
             syftbox: The SyftBox instance  
+            auth: Authenticator instance
             background: Whether to run in background after installation
         """
-        self.installer = installer
+        self.email = email
         self.syftbox = syftbox
+        self.auth = auth
         self.background = background
-        self._otp_sent = False
+        self._otp_sent = True  # OTP is sent before creating session
         self._installation_complete = False
-        
-    def request_otp(self) -> Dict[str, Any]:
-        """
-        Request OTP to be sent to the email address.
-        
-        Returns:
-            Dict with status and message
-        """
-        result = self.installer.step1_download_and_request_otp()
-        if result.get("status") == "success":
-            self._otp_sent = True
-        return result
         
     def submit_otp(self, otp: str) -> Dict[str, Any]:
         """
@@ -79,28 +67,48 @@ class InstallerSession:
         Returns:
             Dict with status and message
         """
-        if not self._otp_sent:
+        from syft_installer._validators import sanitize_otp, validate_otp
+        
+        # Sanitize and validate OTP
+        otp = sanitize_otp(otp)
+        if not validate_otp(otp):
             return {
                 "status": "error",
-                "message": "OTP not requested yet. Call request_otp() first."
+                "message": "Invalid OTP. Must be 8 uppercase alphanumeric characters."
             }
-            
-        result = self.installer.step2_verify_otp(otp, start_client=False)
         
-        if result.get("status") == "success":
+        _console.print(f"🔐 Verifying OTP...")
+        
+        try:
+            # Verify OTP and get tokens
+            tokens = self.auth.verify_otp(self.email, otp)
+            _console.print("✅ Authentication successful")
+            
+            # Create and save config
+            config = _Config(
+                email=self.email,
+                data_dir=str(self.syftbox.data_dir),
+                server_url=self.syftbox.server,
+                client_url="http://localhost:7938",
+                refresh_token=tokens["refresh_token"]
+            )
+            config.save()
+            _console.print("✅ Configuration saved")
+            
             self._installation_complete = True
             _console.print("\n✅ Installation complete!")
             
             # Start the client if requested
             if self.background:
-                config = self.syftbox.config
-                if config:
-                    _console.print("\n▶️  Starting SyftBox client...")
-                    self.syftbox._launcher.start(config, background=True)
-                    _console.print("✅ SyftBox client started!\n")
-                    self.syftbox.status()
+                _console.print("\n▶️  Starting SyftBox client...")
+                self.syftbox._process_manager.start(config, background=True)
+                _console.print("✅ SyftBox client started!\n")
+                self.syftbox.status()
+            
+            return {"status": "success", "message": "Installation complete"}
                     
-        return result
+        except Exception as e:
+            return {"status": "error", "message": f"Verification failed: {str(e)}"}
         
     @property
     def is_complete(self) -> bool:
@@ -126,8 +134,7 @@ class _SyftBox:
         self.email = email
         self.server = server
         self.data_dir = Path(data_dir).expanduser() if data_dir else Path.home() / "SyftBox"
-        self._launcher = _Launcher()
-        self._daemon_manager = _DaemonManager()
+        self._process_manager = _ProcessManager()
     
     @property
     def is_installed(self) -> bool:
@@ -140,7 +147,7 @@ class _SyftBox:
     def is_running(self) -> bool:
         """Check if SyftBox client is running."""
         print("\n📊 Checking SyftBox running status...")
-        result = self._launcher.is_running()
+        result = self._process_manager.is_running()
         print(f"📊 Result: {result}\n")
         return result
     
@@ -175,7 +182,7 @@ class _SyftBox:
             }
         
         if detailed or self.is_running:
-            status["daemons"] = self._daemon_manager.find_daemons()
+            status["daemons"] = self._process_manager.find_daemons()
         
         # Pretty print status
         self._print_status(status)
@@ -226,7 +233,7 @@ class _SyftBox:
         
         if not self.is_running:
             _console.print("\n▶️  Starting SyftBox client...")
-            self._launcher.start(config, background=background)
+            self._process_manager.start(config, background=background)
             _console.print("✅ SyftBox client started!\n")
         else:
             _console.print("✅ SyftBox client already running!\n")
@@ -241,10 +248,10 @@ class _SyftBox:
             all: Stop all SyftBox daemons (not just the one we started)
         """
         if all:
-            killed = self._daemon_manager.kill_all_daemons()
+            killed = self._process_manager.kill_all_daemons()
             _console.print(f"\n⏹️  Stopped {killed} SyftBox daemon(s)\n")
         else:
-            self._launcher.stop()
+            self._process_manager.stop()
             _console.print("\n⏹️  Stopped SyftBox client\n")
     
     def start_if_stopped(self) -> bool:
@@ -264,7 +271,7 @@ class _SyftBox:
         
         _console.print("▶️  Starting SyftBox client...\n")
         config = self.config
-        self._launcher.start(config, background=True)
+        self._process_manager.start(config, background=True)
         _console.print("✅ SyftBox client started!\n")
         return True
     
@@ -297,7 +304,7 @@ class _SyftBox:
         _console.print("\n🗑️  Uninstalling SyftBox...\n")
         
         # Stop all daemons
-        killed = self._daemon_manager.kill_all_daemons()
+        killed = self._process_manager.kill_all_daemons()
         if killed > 0:
             _console.print(f"⏹️  Stopped {killed} daemon(s)")
         
@@ -339,29 +346,82 @@ class _SyftBox:
                 _console.print("❌ Email is required. In Google Colab, we can detect it automatically.")
                 return
         
-        installer = _SimpleInstaller(
-            email=email,
-            server_url=self.server
-        )
-        
-        # Step 1: Download and request OTP
-        result = installer.step1_download_and_request_otp()
-        
-        # Check if step 1 failed
-        if result.get("status") == "error":
-            _console.print(f"\n❌ Installation failed: {result.get('message', 'Unknown error')}")
+        # Validate email
+        from syft_installer._validators import validate_email
+        if not validate_email(email):
+            _console.print(f"❌ Invalid email address: {email}")
             return
         
-        # Step 2: Get OTP from user and verify
+        _console.print("🚀 Starting SyftBox installation...")
+        
+        # Create directories
+        bin_dir = Path.home() / ".local" / "bin"
+        binary_path = bin_dir / "syftbox"
+        config_dir = Path.home() / ".syftbox"
+        
+        bin_dir.mkdir(parents=True, exist_ok=True)
+        config_dir.mkdir(parents=True, exist_ok=True)
+        self.data_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Download binary if needed
+        if not binary_path.exists():
+            _console.print("📥 Downloading SyftBox binary...")
+            try:
+                from syft_installer._downloader import Downloader
+                downloader = Downloader()
+                downloader.download_and_install(binary_path)
+                _console.print("✅ Binary downloaded successfully")
+            except Exception as e:
+                _console.print(f"❌ Download failed: {str(e)}")
+                return
+        else:
+            _console.print("✅ Binary already exists")
+        
+        # Request OTP
+        _console.print(f"\n📧 Requesting OTP for {email}...")
+        try:
+            from syft_installer._auth import Authenticator
+            auth = Authenticator(self.server)
+            result = auth.request_otp(email)
+            _console.print("✅ OTP sent! Check your email (including spam folder)")
+        except Exception as e:
+            _console.print(f"❌ OTP request failed: {str(e)}")
+            return
+        
+        # Get OTP from user
         otp = _console.input("\n📧 Enter the OTP sent to your email: ")
-        result = installer.step2_verify_otp(otp, start_client=False)
         
-        # Check if step 2 failed
-        if result.get("status") == "error":
-            _console.print(f"\n❌ Verification failed: {result.get('message', 'Unknown error')}")
+        # Verify OTP
+        from syft_installer._validators import sanitize_otp, validate_otp
+        otp = sanitize_otp(otp)
+        if not validate_otp(otp):
+            _console.print("❌ Invalid OTP. Must be 8 uppercase alphanumeric characters.")
             return
         
-        _console.print("\n✅ Installation complete!")
+        _console.print(f"🔐 Verifying OTP...")
+        
+        try:
+            # Verify OTP and get tokens
+            tokens = auth.verify_otp(email, otp)
+            _console.print("✅ Authentication successful")
+            
+            # Create and save config
+            from syft_installer._runtime import RuntimeEnvironment
+            config = _Config(
+                email=email,
+                data_dir=str(self.data_dir),
+                server_url=self.server,
+                client_url="http://localhost:7938",
+                refresh_token=tokens["refresh_token"]
+            )
+            config.save()
+            _console.print("✅ Configuration saved")
+            
+            _console.print("\n✅ Installation complete!")
+            _console.print(f"📁 Data directory: {self.data_dir}")
+            
+        except Exception as e:
+            _console.print(f"❌ Verification failed: {str(e)}")
     
     def _run_non_interactive(self, background: bool = True) -> Optional[InstallerSession]:
         """
@@ -393,23 +453,50 @@ class _SyftBox:
                     _console.print("❌ Email is required for non-interactive installation")
                     return None
                 
-            installer = _SimpleInstaller(
-                email=self.email,
-                server_url=self.server
-            )
+            # Validate email
+            from syft_installer._validators import validate_email
+            if not validate_email(self.email):
+                _console.print(f"❌ Invalid email address: {self.email}")
+                return None
             
-            session = InstallerSession(installer, self, background)
+            # Create directories and download binary
+            bin_dir = Path.home() / ".local" / "bin"
+            binary_path = bin_dir / "syftbox"
+            config_dir = Path.home() / ".syftbox"
+            
+            bin_dir.mkdir(parents=True, exist_ok=True)
+            config_dir.mkdir(parents=True, exist_ok=True)
+            self.data_dir.mkdir(parents=True, exist_ok=True)
+            
+            # Download binary if needed
+            if not binary_path.exists():
+                _console.print("📥 Downloading SyftBox binary...")
+                try:
+                    from syft_installer._downloader import Downloader
+                    downloader = Downloader()
+                    downloader.download_and_install(binary_path)
+                    _console.print("✅ Binary downloaded successfully")
+                except Exception as e:
+                    _console.print(f"❌ Download failed: {str(e)}")
+                    return None
+            else:
+                _console.print("✅ Binary already exists")
             
             # Request OTP
-            result = session.request_otp()
-            if result.get("status") == "error":
-                _console.print(f"\n❌ Installation failed: {result.get('message', 'Unknown error')}")
-                return None
+            _console.print(f"\n📧 Requesting OTP for {self.email}...")
+            try:
+                from syft_installer._auth import Authenticator
+                auth = Authenticator(self.server)
+                result = auth.request_otp(self.email)
+                _console.print("✅ OTP sent! Check your email (including spam folder)")
                 
-            _console.print("\n📧 OTP sent! Check your email (including spam folder)")
-            _console.print("👉 Use session.submit_otp('YOUR_OTP') to complete installation\n")
-            
-            return session
+                session = InstallerSession(self.email, self, auth, background)
+                _console.print("👉 Use session.submit_otp('YOUR_OTP') to complete installation\n")
+                return session
+                
+            except Exception as e:
+                _console.print(f"❌ OTP request failed: {str(e)}")
+                return None
         else:
             # Already installed, just run if not running
             config = self.config
@@ -418,7 +505,7 @@ class _SyftBox:
                 
             if not self.is_running:
                 _console.print("\n▶️  Starting SyftBox client...")
-                self._launcher.start(config, background=background)
+                self._process_manager.start(config, background=background)
                 _console.print("✅ SyftBox client started!\n")
             else:
                 _console.print("✅ SyftBox client already running!\n")
@@ -542,23 +629,50 @@ def install(email: Optional[str] = None, interactive: bool = True) -> Union[bool
         # Non-interactive mode
         _console.print("\n📦 Starting SyftBox installation...\n")
         
-        installer = _SimpleInstaller(
-            email=email,
-            server_url=instance.server
-        )
+        # Validate email
+        from syft_installer._validators import validate_email
+        if not validate_email(email):
+            _console.print(f"❌ Invalid email address: {email}")
+            return None
         
-        session = InstallerSession(installer, instance, background=False)
+        # Create directories and download binary
+        bin_dir = Path.home() / ".local" / "bin"
+        binary_path = bin_dir / "syftbox"
+        config_dir = Path.home() / ".syftbox"
+        
+        bin_dir.mkdir(parents=True, exist_ok=True)
+        config_dir.mkdir(parents=True, exist_ok=True)
+        instance.data_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Download binary if needed
+        if not binary_path.exists():
+            _console.print("📥 Downloading SyftBox binary...")
+            try:
+                from syft_installer._downloader import Downloader
+                downloader = Downloader()
+                downloader.download_and_install(binary_path)
+                _console.print("✅ Binary downloaded successfully")
+            except Exception as e:
+                _console.print(f"❌ Download failed: {str(e)}")
+                return None
+        else:
+            _console.print("✅ Binary already exists")
         
         # Request OTP
-        result = session.request_otp()
-        if result.get("status") == "error":
-            _console.print(f"\n❌ Installation failed: {result.get('message', 'Unknown error')}")
-            return None
+        _console.print(f"\n📧 Requesting OTP for {email}...")
+        try:
+            from syft_installer._auth import Authenticator
+            auth = Authenticator(instance.server)
+            result = auth.request_otp(email)
+            _console.print("✅ OTP sent! Check your email (including spam folder)")
             
-        _console.print("\n📧 OTP sent! Check your email (including spam folder)")
-        _console.print("👉 Use session.submit_otp('YOUR_OTP') to complete installation\n")
-        
-        return session
+            session = InstallerSession(email, instance, auth, background=False)
+            _console.print("👉 Use session.submit_otp('YOUR_OTP') to complete installation\n")
+            return session
+            
+        except Exception as e:
+            _console.print(f"❌ OTP request failed: {str(e)}")
+            return None
 
 
 def run(background: bool = True) -> bool:
@@ -594,7 +708,7 @@ def run(background: bool = True) -> bool:
             return False
             
         _console.print("▶️  Starting SyftBox client...")
-        instance._launcher.start(config, background=background)
+        instance._process_manager.start(config, background=background)
         _console.print("✅ SyftBox client started!")
         return True
     except Exception as e:

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick Start - SyftPerm</title>
+    <title>Quick Start - syft-installer</title>
     <link rel="icon" type="image/svg+xml" href="images/syftbox-logo.svg">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -14,13 +14,13 @@
             <div class="nav-wrapper">
                 <div class="logo-group">
                     <img src="images/syftbox-logo.svg" alt="SyftBox" class="syftbox-logo">
-                    <a href="index.html" class="logo">SyftPerm</a>
+                    <a href="index.html" class="logo">syft-installer</a>
                 </div>
                 <div class="nav-links">
                     <a href="quickstart.html" class="active">Quick Start</a>
-                    <a href="permission-reasons.html">Permission Reasons</a>
+                    <a href="installation.html">Installation</a>
                     <a href="api/index.html">API</a>
-                    <a href="https://github.com/OpenMined/syft-perm" class="github-link">GitHub</a>
+                    <a href="https://github.com/OpenMined/syft-installer" class="github-link">GitHub</a>
                 </div>
             </div>
         </nav>
@@ -29,18 +29,18 @@
     <!-- Quick Start Content -->
     <section class="quickstart-hero">
         <div class="container">
-            <h1>1-Minute Quick Start</h1>
-            <p class="hero-subtitle">From zero to managing permissions like a pro.</p>
+            <h1>2-Minute Quick Start</h1>
+            <p class="hero-subtitle">From zero to running SyftBox in your notebook.</p>
         </div>
     </section>
 
     <!-- Step 1: Install -->
     <section class="quickstart-step">
         <div class="container">
-            <h2><span class="step-number">1</span> Install SyftPerm</h2>
+            <h2><span class="step-number">1</span> Install syft-installer</h2>
             <div class="install-command">
-                <code>pip install syft-perm</code>
-                <button class="copy-btn" data-copy="pip install syft-perm">Copy</button>
+                <code>pip install syft-installer</code>
+                <button class="copy-btn" data-copy="pip install syft-installer">Copy</button>
             </div>
         </div>
     </section>
@@ -48,74 +48,69 @@
     <!-- Step 2: Your First Permission -->
     <section class="quickstart-step alt-bg">
         <div class="container">
-            <h2><span class="step-number">2</span> Grant Your First Permission</h2>
-            <p>Open any file and grant access to a colleague:</p>
-            <pre><code class="language-python">import syft_perm
+            <h2><span class="step-number">2</span> Install and Run SyftBox</h2>
+            <p>One line to install and start SyftBox:</p>
+            <pre><code class="language-python">import syft_installer as si
 
-# Open a file
-file = syft_perm.open("research_data.csv")
+# Install and run SyftBox
+si.run()
 
-# Grant read access to a colleague
-file.grant_read_access("colleague@university.edu")
-
-# That's it! They can now read the file.</code></pre>
+# That's it! SyftBox is now running.
+# You'll be prompted for your email and OTP code.</code></pre>
         </div>
     </section>
 
     <!-- Step 3: Check Permissions -->
     <section class="quickstart-step">
         <div class="container">
-            <h2><span class="step-number">3</span> Check Who Has Access</h2>
-            <p>See who can access your files:</p>
-            <pre><code class="language-python"># Check if someone has access
-if file.has_read_access("reviewer@journal.org"):
-    print("Reviewer can read the file")
+            <h2><span class="step-number">3</span> Check Status</h2>
+            <p>See if SyftBox is running and get details:</p>
+            <pre><code class="language-python"># Check status
+si.status()
 
-# Explain why someone has/doesn't have access
-explanation = file.explain_permissions("reviewer@journal.org")
-print(explanation)</code></pre>
+# Check specific states
+if si.is_running():
+    print("SyftBox is running!")
+
+# Stop when needed
+si.stop()</code></pre>
         </div>
     </section>
 
     <!-- Step 4: Folder Permissions -->
     <section class="quickstart-step alt-bg">
         <div class="container">
-            <h2><span class="step-number">4</span> Manage Entire Projects</h2>
-            <p>Set permissions on folders - all files inside automatically inherit:</p>
-            <pre><code class="language-python"># Open a project folder
-project = syft_perm.open("ml_project/")
+            <h2><span class="step-number">4</span> Google Colab Magic</h2>
+            <p>In Google Colab, syft-installer automatically detects your email:</p>
+            <pre><code class="language-python"># In Google Colab
+import syft_installer as si
 
-# Grant different levels of access
-project.grant_read_access("intern@company.com")      # Can only read
-project.grant_write_access("engineer@company.com")   # Can read & write
-project.grant_admin_access("lead@company.com")       # Full control
+# Automatically uses your Google account email
+si.run()
 
-# All files in the folder now have these permissions!</code></pre>
+# Or specify a different email
+si.run("custom@email.com")</code></pre>
         </div>
     </section>
 
     <!-- Step 5: Advanced -->
     <section class="quickstart-step">
         <div class="container">
-            <h2><span class="step-number">5</span> Real-World Example</h2>
-            <p>Here's how a research team might use SyftPerm:</p>
-            <pre><code class="language-python"># Set up a clinical trial project
-trial = syft_perm.open("clinical_trial_2024/")
+            <h2><span class="step-number">5</span> Advanced Usage</h2>
+            <p>For automation and CI/CD pipelines:</p>
+            <pre><code class="language-python"># Non-interactive installation
+session = si.install("your@email.com", interactive=False)
 
-# External reviewers can only read
-trial.grant_read_access("ethics@hospital.org")
-trial.grant_read_access("reviewer@fda.gov")
+# Submit OTP programmatically
+session.submit_otp("ABC123")
 
-# Research assistants can add data
-trial.grant_write_access("assistant1@lab.edu")
-trial.grant_write_access("assistant2@lab.edu")
+# Check installation details
+print(f"Email: {session.email}")
+print(f"Server: {session.server}")
+print(f"Authenticated: {session.is_authenticated}")
 
-# PI has full control
-trial.grant_admin_access("pi@university.edu")
-
-# Make summary public (but not raw data!)
-summary = syft_perm.open("clinical_trial_2024/summary.pdf")
-summary.grant_read_access("*")  # Anyone can read the summary</code></pre>
+# Clean uninstall when needed
+si.uninstall()  # Removes everything</code></pre>
         </div>
     </section>
 
@@ -123,25 +118,25 @@ summary.grant_read_access("*")  # Anyone can read the summary</code></pre>
     <section class="next-steps">
         <div class="container">
             <h2>You're Ready! 🎉</h2>
-            <p>You now know everything you need to start using SyftPerm.</p>
+            <p>You now know everything you need to start using syft-installer.</p>
             
             <div class="next-links">
                 <div class="next-link">
-                    <h3>🚀 10-Minute Tutorial</h3>
-                    <p>Master SyftPerm with our comprehensive interactive tutorial.</p>
-                    <a href="https://github.com/OpenMined/syft-perm/blob/main/syft-perm-10-minute-tutorial.ipynb" class="btn btn-primary">Launch Tutorial</a>
+                    <h3>🚀 Try in Google Colab</h3>
+                    <p>Experience syft-installer in a ready-to-use notebook.</p>
+                    <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" class="btn btn-primary">Open in Colab</a>
                 </div>
                 
                 <div class="next-link">
                     <h3>📖 Full API Reference</h3>
-                    <p>Explore all available methods and options.</p>
+                    <p>Explore all available functions and options.</p>
                     <a href="api/index.html" class="btn btn-secondary">View API Docs</a>
                 </div>
                 
                 <div class="next-link">
-                    <h3>💬 Need Help?</h3>
-                    <p>Join the OpenMined community.</p>
-                    <a href="https://openmined.org" class="btn btn-secondary">Get Support</a>
+                    <h3>💬 Learn About SyftBox</h3>
+                    <p>Discover what you can do with SyftBox.</p>
+                    <a href="https://syftbox.net" class="btn btn-secondary">Visit SyftBox</a>
                 </div>
             </div>
         </div>
