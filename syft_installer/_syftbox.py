@@ -418,8 +418,8 @@ class _SyftBox:
         sys.stdout.write("📧 Verification code sent to your email - OTP: ")
         sys.stdout.flush()
         
-        # Get input without using rich console to avoid formatting issues
-        otp = input()
+        # Get input using readline to avoid automatic newline
+        otp = sys.stdin.readline().strip()
         
         # Move cursor up one line to overwrite the OTP input line
         sys.stdout.write('\033[1A\r' + ' ' * 120 + '\r')
