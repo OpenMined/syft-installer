@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "syft-installer"
-version = "0.8.23"
+version = "0.8.27"
 description = "Python installer for SyftBox - programmatic alternative to the TUI installer"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -27,7 +27,6 @@ classifiers = [
 
 dependencies = [
     "requests>=2.31.0",
-    "pydantic>=2.0.0",
     "rich>=13.0.0",
     "PyJWT>=2.8.0",
 ]
