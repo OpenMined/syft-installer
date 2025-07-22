@@ -76,8 +76,14 @@ class Config:
             # Ensure data_dir is set
             if "data_dir" not in data or not data["data_dir"]:
                 data["data_dir"] = RuntimeEnvironment().default_data_dir
-                
-            return cls(**data)
+            
+            # Filter out any fields that aren't in our dataclass
+            # This handles cases where the config file has extra fields
+            import inspect
+            valid_fields = {f.name for f in cls.__dataclass_fields__.values()}
+            filtered_data = {k: v for k, v in data.items() if k in valid_fields}
+            
+            return cls(**filtered_data)
         except Exception as e:
             # Return None instead of raising an exception
             # This could happen if the file is corrupted or has wrong format
