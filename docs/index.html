@@ -153,7 +153,7 @@ si.install_and_run_if_needed()</code></pre>
                 <div class="tab-content">
                     <div class="tab-pane active" id="jupyter">
                         <div class="video-container">
-                            <video width="100%" controls preload="metadata" poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KUGF0aCBkPSJNOCA1VjE5TDE5IDEyTDggNVoiIGZpbGw9IiM2NjY2NjYiLz4KPC9zdmc+Cg==">
+                            <video width="100%" controls preload="metadata" muted loop poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KUGF0aCBkPSJNOCA1VjE5TDE5IDEyTDggNVoiIGZpbGw9IiM2NjY2NjYiLz4KPC9zdmc+Cg==">
                                 <source src="videos/jupyter.mp4" type="video/mp4">
                                 <source src="videos/jupyter.mov" type="video/quicktime">
                                 <source src="https://raw.githubusercontent.com/OpenMined/syft-installer/main/docs/videos/jupyter.mp4" type="video/mp4">
@@ -164,7 +164,7 @@ si.install_and_run_if_needed()</code></pre>
                     
                     <div class="tab-pane" id="colab">
                         <div class="video-container">
-                            <video width="100%" controls preload="metadata" poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KUGF0aCBkPSJNOCA1VjE5TDE5IDEyTDggNVoiIGZpbGw9IiM2NjY2NjYiLz4KPC9zdmc+Cg==">
+                            <video width="100%" controls preload="metadata" muted loop poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KUGF0aCBkPSJNOCA1VjE5TDE5IDEyTDggNVoiIGZpbGw9IiM2NjY2NjYiLz4KPC9zdmc+Cg==">
                                 <source src="videos/colab.mp4" type="video/mp4">
                                 <source src="videos/colab.mov" type="video/quicktime">
                                 <source src="https://raw.githubusercontent.com/OpenMined/syft-installer/main/docs/videos/colab.mp4" type="video/mp4">
@@ -175,7 +175,7 @@ si.install_and_run_if_needed()</code></pre>
                     
                     <div class="tab-pane" id="terminal">
                         <div class="video-container">
-                            <video width="100%" height="600" controls preload="metadata" poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KUGF0aCBkPSJNOCA1VjE5TDE5IDEyTDggNVoiIGZpbGw9IiM2NjY2NjYiLz4KPC9zdmc+Cg==">
+                            <video width="100%" controls preload="metadata" muted loop poster="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KUGF0aCBkPSJNOCA1VjE5TDE5IDEyTDggNVoiIGZpbGw9IiM2NjY2NjYiLz4KPC9zdmc+Cg==">
                                 <source src="videos/terminal.mp4" type="video/mp4">
                                 <source src="videos/terminal.mov" type="video/quicktime">
                                 <source src="https://raw.githubusercontent.com/OpenMined/syft-installer/main/docs/videos/terminal.mp4" type="video/mp4">
@@ -341,32 +341,37 @@ si.uninstall()
                     const targetPane = document.getElementById(targetTab);
                     targetPane.classList.add('active');
                     
-                    // Special handling for Magic tab
+                    // Pause all videos first
+                    document.querySelectorAll('video').forEach(video => {
+                        video.pause();
+                    });
+                    
+                    // Pause magic video
+                    const magicIframe = document.getElementById('magic-video');
+                    if (magicIframe) {
+                        magicIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                    }
+                    
+                    // Handle autoplay for each tab
                     if (targetTab === 'magic') {
-                        // Pause all other videos first
-                        document.querySelectorAll('video').forEach(video => {
-                            video.pause();
-                        });
-                        
                         // Use postMessage to play the magic video
                         setTimeout(() => {
                             const iframe = document.getElementById('magic-video');
                             if (iframe) {
-                                // Send play command to YouTube iframe
                                 iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
                             }
                         }, 100);
                     } else {
-                        // Pause the magic video when switching away
-                        const magicIframe = document.getElementById('magic-video');
-                        if (magicIframe) {
-                            magicIframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+                        // Find and autoplay the video in the active tab
+                        const activeVideo = targetPane.querySelector('video');
+                        if (activeVideo) {
+                            setTimeout(() => {
+                                activeVideo.play().catch(e => {
+                                    // Autoplay failed, user needs to interact first
+                                    console.log('Autoplay prevented:', e);
+                                });
+                            }, 100);
                         }
-                        
-                        // Pause all videos when switching tabs
-                        document.querySelectorAll('video').forEach(video => {
-                            video.pause();
-                        });
                     }
                 });
             });
