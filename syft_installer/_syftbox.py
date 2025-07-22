@@ -252,12 +252,9 @@ class _SyftBox:
                 # Start the daemon
                 self._process_manager.start(config, background=background)
                 
-                # Finish the installation progress
-                if progress.is_active:
-                    progress.update(100, "✅ SyftBox daemon started successfully")
-                    progress.finish(f"✅ SyftBox installed and running for {config.email}")
-                else:
-                    print(f"✅ SyftBox installed and running for {config.email}")
+                # Finish with a single line message
+                sys.stdout.write(f"\r✅ SyftBox installed and running for {config.email}" + ' ' * 50 + '\n')
+                sys.stdout.flush()
         else:
             display.show_already_running(config.email)
     
@@ -424,22 +421,25 @@ class _SyftBox:
         # Get input without using rich console to avoid formatting issues
         otp = input()
         
-        # Verify OTP with progress
-        prog = progress_context()
-        prog.update(10, f"🔐 Verifying code {otp} with server")
+        # Move cursor up one line to overwrite the OTP input line
+        sys.stdout.write('\033[1A\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+        
+        # Show verifying message briefly
+        sys.stdout.write("🔐 Verifying code...")
+        sys.stdout.flush()
         
         from syft_installer._utils import sanitize_otp, validate_otp
         otp = sanitize_otp(otp)
         
         if not validate_otp(otp):
-            prog.finish("❌ Invalid verification code - must be 8 digits")
+            sys.stdout.write("\r❌ Invalid verification code - must be 8 digits\n")
+            sys.stdout.flush()
             return
         
         try:
-            prog.update(30, "🔐 Authenticating with SyftBox servers")
             tokens = auth.verify_otp(email, otp)
             
-            prog.update(60, "💾 Saving configuration to ~/.syftbox/config.json")
             config = _Config(
                 email=email,
                 data_dir=str(self.data_dir),
@@ -449,12 +449,13 @@ class _SyftBox:
             )
             config.save()
             
-            prog.update(90, "✅ Configuration saved successfully")
-            prog.update(95, "🚀 Starting SyftBox daemon...")
-            # Don't finish here - let the run method handle completion
+            # Clear the verifying message
+            sys.stdout.write('\r' + ' ' * 120 + '\r')
+            sys.stdout.flush()
             
         except Exception as e:
-            prog.finish(f"❌ Verification failed: {str(e)}")
+            sys.stdout.write(f"\r❌ Verification failed: {str(e)}\n")
+            sys.stdout.flush()
             return
     
     def _run_non_interactive(self, background: bool = True) -> Optional[InstallerSession]:
