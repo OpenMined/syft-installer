@@ -421,6 +421,57 @@ code {
     align-items: center;
 }
 
+/* API Preview Dark */
+.api-preview-dark {
+    padding: var(--space-20) 0;
+    color: white;
+    min-height: calc(100vh - 70px);
+    display: flex;
+    align-items: center;
+}
+
+.api-preview-dark h2 {
+    text-align: center;
+    color: white;
+    font-size: 3rem;
+    margin-bottom: var(--space-3);
+}
+
+.api-preview-dark .section-subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.25rem;
+    margin-bottom: var(--space-8);
+}
+
+.api-preview-dark .api-example {
+    background: rgba(255, 255, 255, 0.05);
+    padding: var(--space-4);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.api-preview-dark .api-example h3 {
+    font-size: 1.2rem;
+    margin-bottom: var(--space-2);
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+}
+
+.api-preview-dark .api-example pre {
+    margin: 0;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding: var(--space-3);
+    border-radius: 8px;
+}
+
+.api-preview-dark .api-example code {
+    color: rgba(255, 255, 255, 0.85);
+}
+
 .api-preview h2 {
     text-align: center;
 }
