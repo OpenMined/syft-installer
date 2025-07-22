@@ -43,7 +43,8 @@
       "Bash(sed:*)",
       "WebFetch(domain:openmined.org)",
       "Bash(brew install:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(ffmpeg:*)"
     ],
     "deny": []
   }
