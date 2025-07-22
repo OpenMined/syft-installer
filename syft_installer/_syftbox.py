@@ -388,9 +388,12 @@ class _SyftBox:
             prog.finish(f"❌ Installation failed: {str(e)}")
             return
         
-        # Get OTP from user
+        # Get OTP from user with single-line flow
+        prog.update(85, "📧 Verification code sent - enter OTP below")
         prog.finish("📧 Verification code sent to your email")
-        otp = display.get_otp_input()
+        
+        # Get OTP input on same line
+        otp = _console.input("OTP: ")
         
         # Verify OTP with progress
         prog = progress_context()
