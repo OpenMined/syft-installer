@@ -297,7 +297,7 @@ class _SyftBox:
                 progress = int(progress)
                 
                 # Fixed widths to match final message
-                message_width = 42  # Width of "✅ SyftBox is now running!!! (PID: 44028)"
+                message_width = 39  # Adjusted padding width
                 bar_width = 30      # Progress bar width
                 
                 # Pad message to fixed width
@@ -451,7 +451,7 @@ class _SyftBox:
             progress = int(progress)
             
             # Fixed widths to match final message
-            message_width = 42  # Width of "✅ SyftBox is now running!!! (PID: 44028)"
+            message_width = 39  # Adjusted padding width
             bar_width = 30      # Progress bar width
             
             # Pad message to fixed width
