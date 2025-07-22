@@ -691,14 +691,14 @@ def run(background: bool = True) -> bool:
         return False
 
 
-def install_and_run(email: Optional[str] = None, background: bool = True, interactive: bool = True) -> Optional['InstallerSession']:
+def install_and_run_if_needed(email: Optional[str] = None, background: bool = True, interactive: bool = True) -> Optional['InstallerSession']:
     """
-    Install (if needed) and run SyftBox.
+    Install (if needed) and run (if needed) SyftBox.
     
     This is the all-in-one function that handles everything:
     - Downloads and installs SyftBox binary if not installed
-    - Handles email verification via OTP
-    - Starts the SyftBox daemon in the background
+    - Handles email verification via OTP (only on first install)
+    - Starts the SyftBox daemon in the background (only if not already running)
     
     Args:
         email: Your email address for authentication. Required on first install.
@@ -713,12 +713,12 @@ def install_and_run(email: Optional[str] = None, background: bool = True, intera
     Examples:
         Interactive mode:
         >>> import syft_installer as si
-        >>> si.install_and_run("user@example.com")
+        >>> si.install_and_run_if_needed("user@example.com")
         # Enter OTP when prompted
         
         Non-interactive mode:
         >>> import syft_installer as si
-        >>> session = si.install_and_run("user@example.com", interactive=False)
+        >>> session = si.install_and_run_if_needed("user@example.com", interactive=False)
         >>> if session:
         >>>     session.submit_otp("ABC12345")
         

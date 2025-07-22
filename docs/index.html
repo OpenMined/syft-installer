@@ -179,12 +179,29 @@ si.install_and_run_if_needed()</code></pre>
             <h2>The Complete API</h2>
             <p class="section-subtitle">Everything you need to launch and teardown the syftbox daemon</p>
             
+            <style>
+                .api-examples {
+                    display: grid;
+                    grid-template-columns: repeat(2, 1fr);
+                    gap: 2rem;
+                }
+                .api-example {
+                    display: flex;
+                    flex-direction: column;
+                }
+                .api-example pre {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                }
+            </style>
+            
             <div class="api-examples">
                 <div class="api-example">
                     <h3>Quick Start</h3>
                     <pre><code class="language-python">import syft_installer as si
 
-si.install_and_run() # Install and start
+si.install_and_run_if_needed() # Install and start
 si.install()         # Install only
 si.run()             # Start if already installed</code></pre>
                 </div>
@@ -203,14 +220,15 @@ si.run_if_stopped()</code></pre>
                     <h3>Non-Interactive Mode</h3>
                     <pre><code class="language-python">session = si.install("email@example.com", interactive=False)
 session.submit_otp("ABC123")
-
-print(session.email)
 print(session.is_authenticated)</code></pre>
                 </div>
                 
                 <div class="api-example">
                     <h3>Clean Uninstall</h3>
-                    <pre><code class="language-python">si.uninstall()  # Removes everything</code></pre>
+                    <pre><code class="language-python"># Removes everything
+si.uninstall()
+
+# Confirms before deleting</code></pre>
                 </div>
             </div>
         </div>

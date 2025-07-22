@@ -556,7 +556,7 @@ code {
    ================================ */
 .gradient-feature {
     padding: var(--space-16) 0;
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+    background: linear-gradient(135deg, #2d3748 0%, #1a5f4a 25%, #1e4e7f 50%, #2d5a4f 75%, #3a4556 100%);
     color: white;
     position: relative;
     overflow: hidden;
