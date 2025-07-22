@@ -197,31 +197,13 @@ nav {
    Hero Section
    ================================ */
 .hero {
-    padding: var(--space-8) 0 calc(var(--space-8) + 100px) 0;
+    padding: var(--space-8) 0;
     text-align: center;
     background: var(--color-light-gray);
     min-height: calc(100vh - 70px);
     display: flex;
     align-items: center;
     position: relative;
-}
-
-.hero::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 100px;
-    background: white;
-    -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 C300,50 900,50 1200,0 L1200,100 L0,100 Z' fill='black'/%3E%3C/svg%3E");
-    mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 100' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 C300,50 900,50 1200,0 L1200,100 L0,100 Z' fill='black'/%3E%3C/svg%3E");
-    -webkit-mask-size: 100% 100%;
-    mask-size: 100% 100%;
-    -webkit-mask-repeat: no-repeat;
-    mask-repeat: no-repeat;
-    pointer-events: none;
-    z-index: 10;
 }
 
 .hero .container {
@@ -432,7 +414,8 @@ code {
    API Preview Section
    ================================ */
 .api-preview {
-    padding: var(--space-20) 0;
+    padding: calc(var(--space-20) - 60px) 0 var(--space-20) 0;
+    background: var(--color-light-gray);
     min-height: calc(100vh - 70px);
     display: flex;
     align-items: center;
@@ -469,6 +452,48 @@ code {
 
 .api-example pre {
     margin: 0;
+}
+
+/* ================================
+   Section Dividers - Hourglass Shape
+   ================================ */
+.section-divider {
+    position: relative;
+    height: 120px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.section-divider::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: var(--color-light-gray);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 60' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 Q300,30 600,30 T1200,0 L1200,60 L0,60 Z' fill='black'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 60' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,0 Q300,30 600,30 T1200,0 L1200,60 L0,60 Z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+}
+
+.section-divider::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: var(--color-white);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 60' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 Q300,30 600,30 T1200,60 L1200,0 L0,0 Z' fill='black'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 1200 60' preserveAspectRatio='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 Q300,30 600,30 T1200,60 L1200,0 L0,0 Z' fill='black'/%3E%3C/svg%3E");
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+}
+
+.section-divider-alt::after {
+    background: var(--color-light-gray);
 }
 
 /* ================================
@@ -526,7 +551,7 @@ code {
    Video Demo Section
    ================================ */
 .video-demo {
-    padding: var(--space-20) 0;
+    padding: calc(var(--space-20) - 60px) 0 var(--space-20) 0;
     background: var(--color-white);
     min-height: calc(100vh - 70px);
     display: flex;
