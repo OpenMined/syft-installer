@@ -297,7 +297,7 @@ class _SyftBox:
                 progress = int(progress)
                 
                 # Fixed widths to match final message
-                message_width = 39  # Adjusted padding width
+                message_width = 40  # Adjusted padding width
                 bar_width = 30      # Progress bar width
                 
                 # Pad message to fixed width
@@ -325,6 +325,7 @@ class _SyftBox:
                 final_message = "✅ SyftBox is now running!!!"
             
             show_progress(100, final_message)
+            sys.stdout.write(' ' * 10)  # Clear any trailing characters
             _print()  # New line after final message
     
     def stop(self, all: bool = False) -> None:
@@ -451,7 +452,7 @@ class _SyftBox:
             progress = int(progress)
             
             # Fixed widths to match final message
-            message_width = 39  # Adjusted padding width
+            message_width = 40  # Adjusted padding width
             bar_width = 30      # Progress bar width
             
             # Pad message to fixed width
