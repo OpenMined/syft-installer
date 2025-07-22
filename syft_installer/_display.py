@@ -82,12 +82,13 @@ class SyftDisplay:
     
     def show_status(self, installed: bool, running: bool, email: Optional[str] = None, data_dir: Optional[str] = None):
         """Show clean status summary."""
-        if not installed:
-            self.console.print("📦 SyftBox not installed")
-        elif not running:
+        if running:
+            # If it's running, it's effectively installed (even if config is temporarily missing)
+            self.console.print(f"✅ SyftBox running for {email}" if email else "✅ SyftBox running")
+        elif installed:
             self.console.print("⏸️ SyftBox installed but not running")
         else:
-            self.console.print(f"✅ SyftBox running for {email}" if email else "✅ SyftBox running")
+            self.console.print("📦 SyftBox not installed")
     
     def show_uninstall_warning(self) -> bool:
         """Show uninstall warning and get confirmation."""
