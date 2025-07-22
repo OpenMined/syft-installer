@@ -298,7 +298,7 @@ class _SyftBox:
                 
                 # Fixed widths to match final message
                 message_width = 40  # Adjusted padding width
-                bar_width = 30      # Progress bar width
+                bar_width = 33      # Progress bar width
                 
                 # Pad message to fixed width
                 padded_message = message[:message_width].ljust(message_width)
@@ -453,7 +453,7 @@ class _SyftBox:
             
             # Fixed widths to match final message
             message_width = 40  # Adjusted padding width
-            bar_width = 30      # Progress bar width
+            bar_width = 33      # Progress bar width
             
             # Pad message to fixed width
             padded_message = message[:message_width].ljust(message_width)
