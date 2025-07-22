@@ -1,5 +1,4 @@
 import json
-import os
 from pathlib import Path
 from typing import Dict, Optional
 
@@ -94,15 +93,3 @@ def is_installed() -> bool:
     return config.is_valid()
 
 
-def get_config_dir() -> Path:
-    """Get configuration directory path."""
-    return Path.home() / ".syftbox"
-
-
-def get_data_dir(config: Optional[Config] = None) -> Path:
-    """Get data directory path."""
-    if config:
-        return Path(config.data_dir).expanduser()
-    
-    # Use runtime default
-    return Path(RuntimeEnvironment().default_data_dir).expanduser()

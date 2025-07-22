@@ -1,5 +1,4 @@
-import json
-from typing import Dict, Optional
+from typing import Dict
 
 import jwt
 import requests
@@ -115,44 +114,6 @@ class Authenticator:
                     pass
             raise AuthenticationError(f"Failed to verify OTP: {str(e)}")
     
-    def refresh_access_token(self, refresh_token: str) -> Dict[str, str]:
-        """
-        Use refresh token to get new tokens.
-        
-        Args:
-            refresh_token: JWT refresh token
-            
-        Returns:
-            Dict with new access_token and refresh_token
-            
-        Raises:
-            AuthenticationError: If refresh fails
-        """
-        url = f"{self.server_url}/auth/refresh"
-        data = {"refreshToken": refresh_token}
-        
-        try:
-            response = self.session.post(url, json=data)
-            response.raise_for_status()
-            result = response.json()
-            
-            # Convert to snake_case
-            return {
-                "access_token": result["accessToken"],
-                "refresh_token": result["refreshToken"]
-            }
-        except requests.exceptions.RequestException as e:
-            if hasattr(e, 'response') and e.response is not None:
-                if e.response.status_code == 401:
-                    raise AuthenticationError("Refresh token expired or invalid")
-                try:
-                    error_data = e.response.json()
-                    error_msg = error_data.get('error', str(e))
-                    raise AuthenticationError(f"Failed to refresh token: {error_msg}")
-                except:
-                    pass
-            raise AuthenticationError(f"Failed to refresh token: {str(e)}")
-    
     @staticmethod
     def decode_token(token: str) -> Dict:
         """Decode JWT token without verification (for reading claims)."""
@@ -160,16 +121,3 @@ class Authenticator:
             return jwt.decode(token, options={"verify_signature": False})
         except Exception:
             return {}
-    
-    @staticmethod
-    def is_token_expired(token: str) -> bool:
-        """Check if JWT token is expired."""
-        try:
-            claims = Authenticator.decode_token(token)
-            if "exp" not in claims:
-                return True
-            
-            import time
-            return claims["exp"] < time.time()
-        except Exception:
-            return True

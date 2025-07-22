@@ -1,14 +1,39 @@
 #!/usr/bin/env python3
 """
-Convenience script to run the documentation development server.
+Simple static server for syft-installer documentation.
+Serves docs exactly as GitHub Pages would.
 """
 
-import subprocess
+import os
 import sys
-from pathlib import Path
+from http.server import HTTPServer, SimpleHTTPRequestHandler
 
-# Get the path to the actual server script
-docs_serve_script = Path(__file__).parent / "docs" / "serve_dev.py"
+def main():
+    # Change to docs directory
+    docs_dir = os.path.join(os.path.dirname(__file__), 'docs')
+    os.chdir(docs_dir)
+    
+    # Use port 8000 by default
+    port = 8000
+    if len(sys.argv) > 1:
+        try:
+            port = int(sys.argv[1])
+        except ValueError:
+            print(f"Invalid port: {sys.argv[1]}")
+            sys.exit(1)
+    
+    # Start server
+    server_address = ('', port)
+    httpd = HTTPServer(server_address, SimpleHTTPRequestHandler)
+    
+    print(f"\n📁 Serving docs from: {os.getcwd()}")
+    print(f"🌐 Server running at: http://localhost:{port}/")
+    print("\nPress Ctrl-C to stop\n")
+    
+    try:
+        httpd.serve_forever()
+    except KeyboardInterrupt:
+        print("\n\nServer stopped.")
 
-# Forward all arguments to the actual script
-subprocess.run([sys.executable, str(docs_serve_script)] + sys.argv[1:])
+if __name__ == '__main__':
+    main()

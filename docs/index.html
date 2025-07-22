@@ -3,405 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Syft Installer - Programmatic SyftBox Installation</title>
-    <meta name="description" content="Python library for installing SyftBox programmatically in notebooks and headless environments">
+    <title>syft-installer - SyftBox Installation Made Simple</title>
+    <link rel="icon" type="image/svg+xml" href="images/syftbox-logo.svg">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <div class="header-content">
-            <div class="logo">
-                <img src="images/syft-logo.svg" alt="Syft" class="logo-img">
-                <span class="logo-text">syft-installer</span>
+        <nav>
+            <div class="nav-wrapper">
+                <div class="logo-group">
+                    <img src="images/syftbox-logo.svg" alt="SyftBox" class="syftbox-logo">
+                    <a href="index.html" class="logo">syft-installer</a>
+                </div>
+                <div class="nav-links">
+                    <a href="quickstart.html">Quick Start</a>
+                    <a href="core-concept.html">Core Concepts</a>
+                    <a href="api/index.html">API</a>
+                    <a href="https://github.com/OpenMined/syft-installer" class="github-link">GitHub</a>
+                </div>
             </div>
-            <nav>
-                <a href="quickstart.html">Quick Start</a>
-                <a href="#why">Why We Built This</a>
-                <a href="api/">API</a>
-                <a href="https://github.com/OpenMined/syft-installer" target="_blank">GitHub</a>
-            </nav>
-        </div>
+        </nav>
     </header>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <h1>SyftBox Installation Made Simpler</h1>
-                <p class="hero-subtitle">Python library for programmatic SyftBox installation in notebooks and headless environments.</p>
-                
-                <div class="code-comparison">
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-label">❌ Before: Manual Installation</span>
-                        </div>
-                        <pre><code class="language-bash"># Download and run installer script
-curl -sSfL https://syftbox.openmined.org/install.sh | bash
+    <!-- Hero Section with Swoop -->
+    <div class="hero-swoop">
+        <svg viewBox="0 0 1440 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0,0 C480,100 960,100 1440,0 L1440,100 L0,100 Z" fill="#f8f9fa"></path>
+        </svg>
+    </div>
+    <section class="hero">
+        <div class="container">
+            <h1 class="hero-title">SyftBox Installation Made Simple</h1>
+            <p class="hero-subtitle">Install SyftBox programmatically in Python notebooks and headless environments</p>
+            
+            <!-- Problem/Solution Split -->
+            <div class="code-comparison">
+                <div class="code-before">
+                    <div class="code-label">🎯 One-line installation</div>
+                    <pre><code class="language-python"># Install and run SyftBox with a single command
+import syft_installer as si
+si.install_and_run("alice@example.com")
 
-# Manual OTP entry in terminal
-# Manual email confirmation
-# Manual process management</code></pre>
-                    </div>
-                    
-                    <div class="code-block">
-                        <div class="code-header">
-                            <span class="code-label">✅ After: Programmatic Control</span>
-                        </div>
-                        <pre><code class="language-python">import syft_installer as si
-
-# One-liner installation
-si.install()
-
-# Or full programmatic control
-installer = si.Installer(email="user@example.com")
-installer.request_otp()
-installer.verify_otp("ABCD1234")
-installer.start_client(background=True)</code></pre>
-                    </div>
-                </div>
-
-                <div class="install-command">
-                    <span class="install-label">Installation</span>
-                    <code>pip install syft-installer</code>
-                    <button class="copy-btn" data-copy="pip install syft-installer">📋</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Why We Built This -->
-        <section id="why" class="section">
-            <div class="section-content">
-                <h2>🤔 Why We Built This</h2>
-                <p>The official SyftBox installer works great for interactive terminal use, but falls short in programmatic environments like Jupyter notebooks, Google Colab, and CI/CD pipelines. This library bridges that gap by providing:</p>
-                
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <h3>📓 Notebook Support</h3>
-                        <p>Works seamlessly in Jupyter, Colab, and other notebook environments with widget-based inputs</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>🤖 Headless Mode</h3>
-                        <p>Perfect for CI/CD pipelines and automated deployments with programmatic OTP handling</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>🎯 Identical Flow</h3>
-                        <p>Follows the exact same logic as install.sh while providing Python-native control</p>
-                    </div>
-                    <div class="feature-card">
-                        <h3>🔧 Full Control</h3>
-                        <p>Break down the installation into individual steps for complete customization</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- See It In Action -->
-        <section id="demo" class="section demo-section">
-            <div class="section-content">
-                <h2>⚡ See It In Action</h2>
-                <p>Watch syft-installer work seamlessly in Google Colab:</p>
-                
-                <div class="demo-video-container">
-                    <div class="demo-video">
-                        <!-- Placeholder for demo GIF/video -->
-                        <img src="images/colab-demo.svg" alt="Syft Installer Demo in Google Colab" class="demo-gif">
-                    </div>
+# ✨ That's it! SyftBox is now running
+# 📧 Check your email for the OTP code
+# 🔐 Enter the code when prompted
+# 🚀 SyftBox starts automatically</code></pre>
                 </div>
                 
-                <div class="demo-features">
-                    <div class="demo-feature">
-                        <span class="demo-icon">🔬</span>
-                        <span>Research notebooks</span>
-                    </div>
-                    <div class="demo-feature">
-                        <span class="demo-icon">☁️</span>
-                        <span>Google Colab</span>
-                    </div>
-                    <div class="demo-feature">
-                        <span class="demo-icon">🚀</span>
-                        <span>CI/CD automation</span>
-                    </div>
-                    <div class="demo-feature">
-                        <span class="demo-icon">🐳</span>
-                        <span>Docker containers</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- API Preview -->
-        <section id="api" class="section">
-            <div class="section-content">
-                <h2>🛠️ The Whole API</h2>
-                <p>Simple yet powerful API that gives you complete control over the SyftBox installation process.</p>
+                <div class="code-arrow">+</div>
                 
-                <div class="api-grid">
-                    <div class="api-section">
-                        <h3>Core Installation</h3>
-                        <pre><code class="language-python"># One-liner
-si.install()
-
-# With configuration
-si.install(
-    install_mode="interactive",
-    install_apps="dataroom,whisper",
-    debug=True
-)</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3>Step-by-step Control</h3>
-                        <pre><code class="language-python">installer = si.Installer(
-    email="user@example.com"
-)
-installer.request_otp()
-installer.verify_otp("ABCD1234")
-installer.start_client()</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3>Installation Modes</h3>
-                        <pre><code class="language-python"># Download only
-si.install(install_mode="download-only")
-
-# Setup only
-si.install(install_mode="setup-only")
-
-# Interactive (default)
-si.install(install_mode="interactive")</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3>Environment Variables</h3>
-                        <pre><code class="language-bash">export INSTALL_MODE=download-only
-export INSTALL_APPS=app1,app2
-export DEBUG=true
-export ARTIFACT_BASE_URL=custom.url</code></pre>
-                    </div>
-                </div>
-                
-                <div class="api-cta">
-                    <a href="api/" class="btn btn-primary">View Full API Reference →</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Designed for Our Workflow -->
-        <section id="workflow" class="section">
-            <div class="section-content">
-                <h2>🎯 Designed for Your Workflow</h2>
-                <p>Whether you're a researcher, developer, or DevOps engineer, syft-installer adapts to your environment:</p>
-                
-                <div class="workflow-examples">
-                    <div class="workflow-item">
-                        <div class="workflow-icon">🔬</div>
-                        <div class="workflow-content">
-                            <h3>Research & Notebooks</h3>
-                            <p>Automatic detection of Jupyter/Colab environments with widget-based authentication</p>
-                        </div>
-                    </div>
-                    
-                    <div class="workflow-item">
-                        <div class="workflow-icon">🖥️</div>
-                        <div class="workflow-content">
-                            <h3>Terminal Usage</h3>
-                            <p>Falls back to the familiar syftbox login TUI when in terminal environments</p>
-                        </div>
-                    </div>
-                    
-                    <div class="workflow-item">
-                        <div class="workflow-icon">🤖</div>
-                        <div class="workflow-content">
-                            <h3>CI/CD Automation</h3>
-                            <p>Headless mode with programmatic OTP handling for deployment pipelines</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Under the Hood -->
-        <section id="architecture" class="section">
-            <div class="section-content">
-                <h2>⚙️ Under the Hood</h2>
-                <p>Built with modern Python practices and follows the official installer logic exactly:</p>
-                
-                <div class="tech-features">
-                    <div class="tech-item">
-                        <h3>🎯 Install.sh Compatible</h3>
-                        <p>Uses the same download URLs, verification steps, and configuration as the official installer</p>
-                    </div>
-                    
-                    <div class="tech-item">
-                        <h3>🌍 Environment Detection</h3>
-                        <p>Automatically detects terminal, Jupyter, Colab, and headless environments</p>
-                    </div>
-                    
-                    <div class="tech-item">
-                        <h3>🔐 Secure Authentication</h3>
-                        <p>JWT token handling with automatic refresh and secure storage</p>
-                    </div>
-                    
-                    <div class="tech-item">
-                        <h3>📦 Modern Python</h3>
-                        <p>Built with Pydantic models, type hints, and comprehensive error handling</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Get Started -->
-        <section id="quickstart" class="section cta-section">
-            <div class="section-content">
-                <h2>🚀 Get Started in Seconds</h2>
-                <p>Ready to streamline your SyftBox installations? Get started now:</p>
-                
-                <div class="quickstart-steps">
-                    <div class="step">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h3>Install</h3>
-                            <code>pip install syft-installer</code>
-                        </div>
-                    </div>
-                    
-                    <div class="step">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h3>Import & Run</h3>
-                            <code>import syft_installer as si; si.install()</code>
-                        </div>
-                    </div>
-                    
-                    <div class="step">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h3>You're Done!</h3>
-                            <p>SyftBox is now installed and running</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cta-buttons">
-                    <a href="quickstart.html" class="btn btn-primary btn-large">Quick Start Guide →</a>
-                    <a href="#examples" class="btn btn-secondary btn-large">View Examples</a>
-                </div>
-            </div>
-        </section>
-
-        <!-- Examples Section -->
-        <section id="examples" class="section">
-            <div class="section-content">
-                <h2>📚 Usage Examples</h2>
-                <p>Common patterns and use cases for different environments:</p>
-                
-                <div class="examples-tabs">
-                    <div class="tab-buttons">
-                        <button class="tab-btn active" data-tab="notebook">Jupyter/Colab</button>
-                        <button class="tab-btn" data-tab="headless">CI/CD</button>
-                        <button class="tab-btn" data-tab="advanced">Advanced</button>
-                    </div>
-                    
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="notebook">
-                            <pre><code class="language-python"># Perfect for Jupyter notebooks and Google Colab
+                <div class="code-after">
+                    <div class="code-label">🔧 Full control when needed</div>
+                    <pre><code class="language-python"># Or take control of each step
 import syft_installer as si
 
-# Simple installation with email prompt
-installer = si.Installer()
-installer.install()
+# Install without starting
+si.install("alice@example.com")
 
-# Pre-configure email to skip one prompt
-installer = si.Installer(email="researcher@university.edu")
-installer.install()  # Only prompts for OTP via widget</code></pre>
-                        </div>
-                        
-                        <div class="tab-pane" id="headless">
-                            <pre><code class="language-python"># For CI/CD and automated deployments
+# Check status anytime
+si.status()
+
+# Start/stop as needed
+si.run()
+si.stop()</code></pre>
+                </div>
+            </div>
+
+            <!-- Install Command -->
+            <div class="install-section">
+                <div class="install-command">
+                    <code>pip install syft-installer</code>
+                    <button class="copy-btn" data-copy="pip install syft-installer">Copy</button>
+                </div>
+                <p class="install-note">Works in Jupyter, Colab, scripts, and CI/CD • No GUI required</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why syft-installer -->
+    <section class="why-syftperm">
+        <div class="container">
+            <h2>Why We Built This</h2>
+            <p class="section-subtitle">The TUI installer is great for humans. This is for everything else.</p>
+            
+            <div class="value-props">
+                <div class="value-prop">
+                    <h3>📓 Notebook Native</h3>
+                    <p>Install SyftBox directly from Jupyter or Google Colab. Perfect for tutorials and workshops.</p>
+                </div>
+                <div class="value-prop">
+                    <h3>🤖 Automation Ready</h3>
+                    <p>Deploy SyftBox in CI/CD pipelines, Docker containers, or any headless environment.</p>
+                </div>
+                <div class="value-prop">
+                    <h3>🎛️ Full API Control</h3>
+                    <p>Programmatically manage installation, configuration, and lifecycle. No manual steps.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- See It In Action -->
+    <section class="video-demo">
+        <div class="container">
+            <h2>See It In Action</h2>
+            <p class="section-subtitle">Installing SyftBox in Google Colab with automatic email detection</p>
+            
+            <div class="demo-video-container">
+                <img src="images/colab-demo.gif" alt="SyftBox Installation in Google Colab" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            </div>
+        </div>
+    </section>
+
+    <!-- Complete API -->
+    <section class="api-preview">
+        <div class="container">
+            <h2>The Whole API</h2>
+            <p class="section-subtitle">Every single public function</p>
+            
+            <div class="api-examples">
+                <div class="api-example">
+                    <h3>Installation</h3>
+                    <pre><code class="language-python"># All-in-one installation
+si.install_and_run("user@example.com")
+
+# Step by step
+si.install("user@example.com")  # Just install
+si.run()                         # Start later</code></pre>
+                </div>
+                
+                <div class="api-example">
+                    <h3>Status & Control</h3>
+                    <pre><code class="language-python"># Check status
+si.status()           # Pretty status table
+si.status(detailed=True)  # Full details
+
+# Control daemon
+si.stop()             # Stop SyftBox
+si.run()              # Start again
+si.run_if_stopped()   # Conditional start</code></pre>
+                </div>
+                
+                <div class="api-example">
+                    <h3>Uninstall</h3>
+                    <pre><code class="language-python"># Complete removal
+si.uninstall()  # Removes everything</code></pre>
+                </div>
+                
+                <div class="api-example">
+                    <h3>Google Colab Magic</h3>
+                    <pre><code class="language-python"># In Google Colab - email auto-detected!
+import syft_installer as si
+si.install_and_run()  # No email needed!
+
+# Uses your Google account email
+# Perfect for workshops & tutorials</code></pre>
+                </div>
+                
+                <div class="api-example">
+                    <h3>Non-Interactive Mode</h3>
+                    <pre><code class="language-python"># For automation & CI/CD
+session = si.install("user@example.com", 
+                     interactive=False)
+
+# Submit OTP programmatically
+session.submit_otp("ABC12345")</code></pre>
+                </div>
+                
+                <div class="api-example">
+                    <h3>Environment Info</h3>
+                    <pre><code class="language-python"># Get version info
+import syft_installer
+print(syft_installer.__version__)
+
+# Installation paths
+status = si.status()
+print(status['config_dir'])
+print(status['binary_path'])</code></pre>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gradient Feature Section -->
+    <section class="gradient-feature">
+        <div class="container">
+            <h2>Built for Modern Workflows</h2>
+            <p class="section-subtitle">From notebook experiments to production deployments</p>
+            
+            <div class="feature-cards">
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <h3>Zero to Running in 30 Seconds</h3>
+                    <p>One command downloads, installs, authenticates, and starts SyftBox</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">🔄</div>
+                    <h3>Idempotent Operations</h3>
+                    <p>Run install multiple times safely. Already installed? It just starts the daemon.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">📦</div>
+                    <h3>Clean Uninstall</h3>
+                    <p>Completely removes SyftBox, config, and data when you're done</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Real Example -->
+    <section class="real-example">
+        <div class="container">
+            <h2>Real World Usage</h2>
+            <p style="text-align: center; margin-bottom: var(--space-6);">Here's how teams are using syft-installer in production:</p>
+            <pre><code class="language-python"># In your Docker container
+FROM python:3.9
+RUN pip install syft-installer
+
+# In your Python script
 import syft_installer as si
 import os
 
-# Get OTP from external system (email API, etc.)
-def get_otp_from_external():
-    # Your OTP retrieval logic here
-    return "ABCD1234"
+# Get email from environment
+email = os.environ.get('SYFTBOX_EMAIL')
+if not email:
+    raise ValueError("SYFTBOX_EMAIL environment variable required")
 
-# Fully automated installation
-installer = si.Installer(
-    email=os.getenv("SYFT_EMAIL"),
-    headless=True
-)
-installer.request_otp()
-otp = get_otp_from_external()
-installer.verify_otp(otp)
-installer.start_client(background=True)</code></pre>
-                        </div>
-                        
-                        <div class="tab-pane" id="advanced">
-                            <pre><code class="language-python"># Advanced usage with custom configuration
-import syft_installer as si
+# Install and run
+print(f"Installing SyftBox for {email}...")
+si.install_and_run(email)
 
-# Install with specific apps and debug mode
-si.install(
-    install_apps="dataroom,whisper,calculator",
-    debug=True,
-    install_mode="interactive"
-)
+# Your SyftBox app code here
+from syftbox.lib import SyftConfig
+config = SyftConfig.load()
+print(f"Running on datasite: {config.datasite_name}")</code></pre>
+        </div>
+    </section>
 
-# Download only (for custom setup)
-si.install(install_mode="download-only")
-
-# Setup only (binary already downloaded)
-si.install(install_mode="setup-only")</code></pre>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Documentation</h3>
-                <ul>
-                    <li><a href="quickstart.html">Quick Start</a></li>
-                    <li><a href="api/">API Reference</a></li>
-                    <li><a href="#examples">Examples</a></li>
-                    <li><a href="core-concept.html">Architecture</a></li>
-                </ul>
-            </div>
+    <!-- Tutorial CTA Section -->
+    <section class="tutorial-cta gradient-feature">
+        <div class="container">
+            <h2>Get Started Now</h2>
             
-            <div class="footer-section">
-                <h3>Community</h3>
-                <ul>
-                    <li><a href="https://github.com/OpenMined/syft-installer">GitHub</a></li>
-                    <li><a href="https://github.com/OpenMined/syft-installer/issues">Issues</a></li>
-                    <li><a href="https://openmined.org">OpenMined</a></li>
-                    <li><a href="https://slack.openmined.org">Slack</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Resources</h3>
-                <ul>
-                    <li><a href="https://syftbox.openmined.org">SyftBox</a></li>
-                    <li><a href="https://docs.syftbox.openmined.org">SyftBox Docs</a></li>
-                    <li><a href="tutorial.html">Tutorial Notebook</a></li>
-                    <li><a href="https://pypi.org/project/syft-installer/">PyPI</a></li>
-                </ul>
+            <div class="cta-buttons">
+                <a href="quickstart.html" class="btn btn-primary btn-large">Quick Start Guide</a>
+                <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" class="btn btn-primary btn-large">Try in Google Colab</a>
             </div>
         </div>
-        
-        <div class="footer-bottom">
+    </section>
+
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section">
+        <div class="container">
+            <div class="newsletter-content">
+                <h2>Stay Updated</h2>
+                <p>Get notified about new features and updates to syft-installer</p>
+                
+                <!-- HubSpot Form -->
+                <div id="hubspot-form-container"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
             <p>Built with ❤️ by <a href="https://openmined.org">OpenMined</a></p>
-            <p>Licensed under Apache 2.0</p>
         </div>
     </footer>
 
     <script src="js/main.js"></script>
+    
+    <!-- HubSpot Forms Script -->
+    <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
+    <script>
+        hbspt.forms.create({
+            region: "na1",
+            portalId: "6487402",
+            formId: "b7a08fdc-0fb5-4938-99e8-4a09e7bbc09e",
+            target: "#hubspot-form-container",
+            css: "",
+            cssClass: "newsletter-hubspot-form",
+            onFormReady: function(form) {
+                // Style the form to match our design
+                const formElement = form[0] || form;
+                formElement.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(el => {
+                    el.classList.add('hubspot-input');
+                });
+                formElement.querySelectorAll('input[type="submit"]').forEach(el => {
+                    el.classList.add('hubspot-submit');
+                });
+                formElement.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                    el.parentElement.classList.add('hubspot-checkbox-wrapper');
+                });
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,5 +1,4 @@
 import platform
-import sys
 from typing import Tuple
 
 from syft_installer._exceptions import PlatformError
@@ -57,13 +56,3 @@ def get_binary_url(base_url: str = "https://syftbox.net") -> str:
     return f"{base_url}/releases/{binary_name}.tar.gz"
 
 
-def get_python_version() -> str:
-    """Get Python version string."""
-    return f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
-
-
-def check_python_version(min_version: str = "3.8") -> bool:
-    """Check if Python version meets minimum requirement."""
-    current = sys.version_info[:2]
-    required = tuple(map(int, min_version.split(".")))
-    return current >= required

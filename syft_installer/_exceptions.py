@@ -28,11 +28,6 @@ class ConfigError(SyftInstallerError):
     pass
 
 
-class HeadlessError(SyftInstallerError):
-    """Raised when input is required in headless mode."""
-    pass
-
-
 class BinaryNotFoundError(SyftInstallerError):
     """Raised when SyftBox binary is not found."""
     pass

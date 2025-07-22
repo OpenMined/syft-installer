@@ -1,7 +1,5 @@
 import re
 from email.utils import parseaddr
-from typing import Optional
-from urllib.parse import urlparse
 
 
 def validate_email(email: str) -> bool:
@@ -34,21 +32,6 @@ def validate_otp(otp: str) -> bool:
     
     pattern = r"^[0-9A-Z]{8}$"
     return bool(re.match(pattern, otp))
-
-
-def validate_url(url: str) -> bool:
-    """
-    Validate URL.
-    - Must be a valid URL with http or https scheme
-    """
-    if not url:
-        return False
-    
-    try:
-        result = urlparse(url)
-        return all([result.scheme in ["http", "https"], result.netloc])
-    except Exception:
-        return False
 
 
 def sanitize_otp(otp: str) -> str:
