@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Core Concepts - Syft Installer</title>
+    <meta name="description" content="Understand the architecture and design principles behind syft-installer">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <img src="images/syft-logo.svg" alt="Syft" class="logo-img">
+                <a href="index.html" class="logo-text">syft-installer</a>
+            </div>
+            <nav>
+                <a href="index.html">Home</a>
+                <a href="quickstart.html">Quick Start</a>
+                <a href="#architecture">Architecture</a>
+                <a href="#design">Design</a>
+                <a href="https://github.com/OpenMined/syft-installer" target="_blank">GitHub</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>🏗️ Core Concepts</h1>
+                <p class="hero-subtitle">Understanding the architecture and design principles that make syft-installer flexible and reliable.</p>
+            </div>
+        </section>
+
+        <!-- Overview -->
+        <section class="section">
+            <div class="section-content">
+                <h2>🎯 Design Philosophy</h2>
+                <p>syft-installer was built around three core principles:</p>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>🎯 Install.sh Compatibility</h3>
+                        <p>Follow the exact same logic, URLs, and behavior as the official install.sh script to ensure consistency and reliability across different installation methods.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🌍 Environment Awareness</h3>
+                        <p>Automatically detect and adapt to different environments (terminal, Jupyter, Colab, CI/CD) without requiring manual configuration.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🔧 Programmatic Control</h3>
+                        <p>Provide both simple one-liner installation and granular step-by-step control for advanced use cases and automation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Architecture -->
+        <section id="architecture" class="section">
+            <div class="section-content">
+                <h2>🏗️ Architecture Overview</h2>
+                <p>syft-installer is organized into several key components working together:</p>
+                
+                <div class="demo-container">
+                    <div class="demo-code">
+                        <pre><code class="language-python"># High-level architecture
+syft_installer/
+├── installer.py      # Main Installer class
+├── hybrid_installer.py # Environment detection
+├── auth.py           # Authentication & OTP
+├── downloader.py     # Binary downloads
+├── launcher.py       # Process management
+├── config.py         # Configuration
+├── platform.py       # Platform detection
+├── runtime.py        # Environment detection
+└── exceptions.py     # Error handling</code></pre>
+                    </div>
+                    <div class="demo-benefits">
+                        <h3>Key Components:</h3>
+                        <ul>
+                            <li>🔐 <strong>Auth Module</strong> - JWT tokens & OTP</li>
+                            <li>⬇️ <strong>Downloader</strong> - Binary retrieval</li>
+                            <li>🚀 <strong>Launcher</strong> - Process management</li>
+                            <li>🌍 <strong>Runtime Detection</strong> - Environment awareness</li>
+                            <li>⚙️ <strong>Configuration</strong> - Settings & validation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Installation Flow -->
+        <section id="flow" class="section">
+            <div class="section-content">
+                <h2>🔄 Installation Flow</h2>
+                <p>Understanding how the installation process works step by step:</p>
+                
+                <div class="workflow-examples">
+                    <div class="workflow-item">
+                        <div class="workflow-icon">1️⃣</div>
+                        <div class="workflow-content">
+                            <h3>Environment Detection</h3>
+                            <p>Automatically detect the runtime environment (terminal, Jupyter, Colab, headless) and adapt the user interface accordingly.</p>
+                            <pre><code class="language-python"># Runtime detection logic
+if is_colab():
+    use_colab_widgets()
+elif is_jupyter():
+    use_ipywidgets()
+elif is_terminal():
+    delegate_to_syftbox_login()
+else:
+    use_headless_mode()</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-item">
+                        <div class="workflow-icon">2️⃣</div>
+                        <div class="workflow-content">
+                            <h3>Authentication</h3>
+                            <p>Handle email collection, OTP request, and verification with secure JWT token management.</p>
+                            <pre><code class="language-python"># Authentication flow
+auth.collect_email()    # Via prompt/widget/parameter
+auth.request_otp()      # Send OTP to email
+auth.verify_otp(code)   # Verify and get JWT
+auth.store_token()      # Secure token storage</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-item">
+                        <div class="workflow-icon">3️⃣</div>
+                        <div class="workflow-content">
+                            <h3>Binary Download</h3>
+                            <p>Download the appropriate SyftBox binary for the current platform with progress tracking and verification.</p>
+                            <pre><code class="language-python"># Download process
+platform = detect_platform()  # OS + arch
+url = get_download_url(platform)
+binary = download_with_progress(url)
+verify_checksum(binary)
+extract_to_install_dir(binary)</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-item">
+                        <div class="workflow-icon">4️⃣</div>
+                        <div class="workflow-content">
+                            <h3>Configuration & Launch</h3>
+                            <p>Set up configuration, install requested apps, and start the SyftBox client process.</p>
+                            <pre><code class="language-python"># Setup and launch
+config.create_config_files()
+apps.install_requested_apps()
+launcher.start_client(background=True)
+launcher.verify_running()</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Environment Detection -->
+        <section id="environments" class="section">
+            <div class="section-content">
+                <h2>🌍 Environment Detection</h2>
+                <p>How syft-installer adapts to different runtime environments:</p>
+                
+                <div class="api-grid">
+                    <div class="api-section">
+                        <h3>Terminal Environment</h3>
+                        <p>When running in a terminal, delegates to the official syftbox login TUI for a consistent experience.</p>
+                        <pre><code class="language-python"># Terminal detection
+def is_terminal():
+    return (
+        sys.stdin.isatty() and 
+        not is_jupyter() and 
+        not is_colab()
+    )
+
+# Delegate to TUI
+subprocess.run(['syftbox', 'login'])</code></pre>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h3>Jupyter Notebooks</h3>
+                        <p>Uses IPython widgets for a native notebook experience with interactive inputs.</p>
+                        <pre><code class="language-python"># Jupyter detection
+def is_jupyter():
+    try:
+        from IPython import get_ipython
+        return get_ipython() is not None
+    except ImportError:
+        return False
+
+# Use widgets for input
+from ipywidgets import widgets
+email_widget = widgets.Text()</code></pre>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h3>Google Colab</h3>
+                        <p>Special handling for Colab environment with optimized widget usage and authentication flow.</p>
+                        <pre><code class="language-python"># Colab detection
+def is_colab():
+    try:
+        import google.colab
+        return True
+    except ImportError:
+        return False
+
+# Colab-optimized widgets
+from google.colab import output
+output.use_widgets = True</code></pre>
+                    </div>
+                    
+                    <div class="api-section">
+                        <h3>Headless Mode</h3>
+                        <p>For CI/CD and automated environments where no user interaction is possible.</p>
+                        <pre><code class="language-python"># Headless mode
+def is_headless():
+    return (
+        os.getenv('CI') == 'true' or
+        os.getenv('HEADLESS') == 'true' or
+        not sys.stdin.isatty()
+    )
+
+# No interactive prompts
+email = os.getenv('SYFT_EMAIL')
+otp = get_otp_from_external_system()</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Design Patterns -->
+        <section id="design" class="section">
+            <div class="section-content">
+                <h2>🎨 Design Patterns</h2>
+                <p>Key design patterns used throughout syft-installer:</p>
+                
+                <div class="tech-features">
+                    <div class="tech-item">
+                        <h3>🏭 Factory Pattern</h3>
+                        <p>Different installer implementations based on environment:</p>
+                        <pre><code class="language-python">def create_installer(env):
+    if env == 'terminal':
+        return TerminalInstaller()
+    elif env == 'jupyter':
+        return JupyterInstaller()
+    elif env == 'colab':
+        return ColabInstaller()
+    else:
+        return HeadlessInstaller()</code></pre>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <h3>🎯 Strategy Pattern</h3>
+                        <p>Different authentication strategies per environment:</p>
+                        <pre><code class="language-python">class AuthStrategy:
+    def collect_email(self): pass
+    def collect_otp(self): pass
+
+class WidgetAuth(AuthStrategy):
+    # IPython widget-based auth
+
+class PromptAuth(AuthStrategy):
+    # Terminal prompt-based auth</code></pre>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <h3>🔗 Chain of Responsibility</h3>
+                        <p>Environment detection through a chain of checks:</p>
+                        <pre><code class="language-python">detectors = [
+    ColabDetector(),
+    JupyterDetector(),
+    TerminalDetector(),
+    HeadlessDetector()
+]
+
+for detector in detectors:
+    if detector.can_handle(context):
+        return detector.create_installer()</code></pre>
+                    </div>
+                    
+                    <div class="tech-item">
+                        <h3>🎭 Adapter Pattern</h3>
+                        <p>Adapt install.sh behavior to Python interfaces:</p>
+                        <pre><code class="language-python">class InstallShAdapter:
+    """Adapts install.sh logic to Python"""
+    
+    def download_binary(self):
+        # Replicate install.sh download logic
+        
+    def setup_paths(self):
+        # Replicate install.sh PATH setup</code></pre>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Error Handling -->
+        <section id="error-handling" class="section">
+            <div class="section-content">
+                <h2>⚠️ Error Handling Strategy</h2>
+                <p>How syft-installer handles errors gracefully across different environments:</p>
+                
+                <div class="workflow-examples">
+                    <div class="workflow-item">
+                        <div class="workflow-icon">🔍</div>
+                        <div class="workflow-content">
+                            <h3>Hierarchical Exceptions</h3>
+                            <p>Custom exception hierarchy for specific error handling:</p>
+                            <pre><code class="language-python">InstallationError
+├── AuthenticationError
+│   ├── InvalidEmailError
+│   └── InvalidOTPError
+├── DownloadError
+│   ├── NetworkError
+│   └── ChecksumError
+└── SetupError
+    ├── PermissionError
+    └── PathError</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-item">
+                        <div class="workflow-icon">🔄</div>
+                        <div class="workflow-content">
+                            <h3>Retry Logic</h3>
+                            <p>Built-in retry mechanisms for network operations:</p>
+                            <pre><code class="language-python">@retry(
+    stop=stop_after_attempt(3),
+    wait=wait_exponential(multiplier=1, min=4, max=10)
+)
+def download_binary(url):
+    response = requests.get(url, timeout=30)
+    response.raise_for_status()
+    return response.content</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-item">
+                        <div class="workflow-icon">🧹</div>
+                        <div class="workflow-content">
+                            <h3>Cleanup on Failure</h3>
+                            <p>Automatic cleanup of partial installations:</p>
+                            <pre><code class="language-python">try:
+    installer.install()
+except InstallationError:
+    # Clean up partial downloads
+    cleanup_temp_files()
+    cleanup_partial_config()
+    # Re-raise for user handling
+    raise</code></pre>
+                        </div>
+                    </div>
+                    
+                    <div class="workflow-item">
+                        <div class="workflow-icon">📝</div>
+                        <div class="workflow-content">
+                            <h3>Contextual Error Messages</h3>
+                            <p>Environment-appropriate error messaging:</p>
+                            <pre><code class="language-python">def format_error(error, env):
+    if env == 'jupyter':
+        return format_as_widget_error(error)
+    elif env == 'terminal':
+        return format_as_cli_error(error)
+    else:
+        return format_as_plain_text(error)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Security Considerations -->
+        <section id="security" class="section">
+            <div class="section-content">
+                <h2>🔐 Security Considerations</h2>
+                <p>How syft-installer maintains security across different environments:</p>
+                
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <h3>🔑 Token Security</h3>
+                        <p>JWT tokens are stored securely using platform-appropriate methods:</p>
+                        <ul>
+                            <li>macOS: Keychain access</li>
+                            <li>Windows: Windows Credential Store</li>
+                            <li>Linux: Encrypted file with proper permissions</li>
+                            <li>Notebooks: Session-only storage</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🌐 Network Security</h3>
+                        <p>All network communications use HTTPS with certificate validation:</p>
+                        <ul>
+                            <li>TLS 1.2+ for all API calls</li>
+                            <li>Certificate pinning for critical endpoints</li>
+                            <li>Request signing for sensitive operations</li>
+                            <li>Timeout and rate limiting</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🔍 Binary Verification</h3>
+                        <p>Downloaded binaries are cryptographically verified:</p>
+                        <ul>
+                            <li>SHA-256 checksum validation</li>
+                            <li>Digital signature verification</li>
+                            <li>Source URL validation</li>
+                            <li>Size and format checks</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h3>🚫 Input Validation</h3>
+                        <p>All user inputs are validated and sanitized:</p>
+                        <ul>
+                            <li>Email format validation</li>
+                            <li>OTP format and length checks</li>
+                            <li>Path traversal prevention</li>
+                            <li>Command injection protection</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Extensibility -->
+        <section id="extensibility" class="section cta-section">
+            <div class="section-content">
+                <h2>🔧 Extensibility</h2>
+                <p>syft-installer is designed to be extended and customized:</p>
+                
+                <div class="quickstart-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Custom Authenticators</h3>
+                            <p>Create custom authentication methods for enterprise environments</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Platform Support</h3>
+                            <p>Add support for new platforms and architectures</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Environment Detectors</h3>
+                            <p>Implement detection for new runtime environments</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="cta-buttons">
+                    <a href="https://github.com/OpenMined/syft-installer/blob/main/CONTRIBUTING.md" class="btn btn-primary btn-large">Contributing Guide →</a>
+                    <a href="api/" class="btn btn-secondary btn-large">API Reference</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Documentation</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="quickstart.html">Quick Start</a></li>
+                    <li><a href="api/">API Reference</a></li>
+                    <li><a href="#architecture">Architecture</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="https://github.com/OpenMined/syft-installer">GitHub</a></li>
+                    <li><a href="https://github.com/OpenMined/syft-installer/issues">Issues</a></li>
+                    <li><a href="https://openmined.org">OpenMined</a></li>
+                    <li><a href="https://slack.openmined.org">Slack</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="https://syftbox.openmined.org">SyftBox</a></li>
+                    <li><a href="https://docs.syftbox.openmined.org">SyftBox Docs</a></li>
+                    <li><a href="https://pypi.org/project/syft-installer/">PyPI</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>Built with ❤️ by <a href="https://openmined.org">OpenMined</a></p>
+            <p>Licensed under Apache 2.0</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
