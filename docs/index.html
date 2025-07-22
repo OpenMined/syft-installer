@@ -355,7 +355,7 @@ si.uninstall()
                     if (firstNameGroup && lastNameGroup) {
                         // Create a container for both name fields
                         const nameContainer = document.createElement('div');
-                        nameContainer.style.cssText = 'display: flex; gap: 1rem; margin-bottom: 1rem;';
+                        nameContainer.style.cssText = 'display: flex; gap: 1rem; margin-bottom: 0.5rem;';
                         
                         // Insert the container
                         firstNameGroup.parentNode.insertBefore(nameContainer, firstNameGroup);
@@ -415,7 +415,8 @@ si.uninstall()
                     // Fix email field group specifically
                     const emailGroup = formElement.querySelector('.hs_email');
                     if (emailGroup) {
-                        emailGroup.style.marginBottom = '1rem';
+                        emailGroup.style.marginBottom = '0.5rem';
+                        emailGroup.style.marginTop = '0';
                     }
                     
                     // Fix ALL text elements
