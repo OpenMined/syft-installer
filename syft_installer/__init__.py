@@ -1,5 +1,5 @@
 from syft_installer.__version__ import __version__
-from syft_installer.syftbox import (
+from syft_installer._syftbox import (
     install,
     run,
     install_and_run,

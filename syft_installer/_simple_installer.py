@@ -5,14 +5,14 @@ import os
 from pathlib import Path
 from typing import Optional, Dict
 
-from syft_installer.auth import Authenticator
-from syft_installer.config import Config
-from syft_installer.downloader import Downloader
-from syft_installer.exceptions import ValidationError, BinaryNotFoundError
-from syft_installer.launcher import Launcher
-from syft_installer.platform import get_platform_info
-from syft_installer.runtime import RuntimeEnvironment
-from syft_installer.validators import validate_email, validate_otp, sanitize_otp
+from syft_installer._auth import Authenticator
+from syft_installer._config import Config
+from syft_installer._downloader import Downloader
+from syft_installer._exceptions import ValidationError, BinaryNotFoundError
+from syft_installer._launcher import Launcher
+from syft_installer._platform import get_platform_info
+from syft_installer._runtime import RuntimeEnvironment
+from syft_installer._validators import validate_email, validate_otp, sanitize_otp
 
 
 class SimpleInstaller:

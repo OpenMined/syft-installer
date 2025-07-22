@@ -5,8 +5,8 @@ from typing import Dict, Optional
 
 from pydantic import BaseModel, Field
 
-from syft_installer.exceptions import ConfigError
-from syft_installer.runtime import RuntimeEnvironment
+from syft_installer._exceptions import ConfigError
+from syft_installer._runtime import RuntimeEnvironment
 
 
 class Config(BaseModel):

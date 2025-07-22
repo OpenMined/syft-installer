@@ -4,8 +4,8 @@ from typing import Dict, Optional
 import jwt
 import requests
 
-from syft_installer.exceptions import AuthenticationError, ValidationError
-from syft_installer.validators import validate_email, validate_otp, sanitize_otp
+from syft_installer._exceptions import AuthenticationError, ValidationError
+from syft_installer._validators import validate_email, validate_otp, sanitize_otp
 
 
 class Authenticator:

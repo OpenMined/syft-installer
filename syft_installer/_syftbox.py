@@ -25,10 +25,10 @@ from rich.table import Table
 from rich.panel import Panel
 from rich import box
 
-from syft_installer.config import _Config as __Config
-from syft_installer.simple_installer import _SimpleInstaller as __SimpleInstaller
-from syft_installer.launcher import _Launcher as __Launcher
-from syft_installer.daemon_manager import _DaemonManager as __DaemonManager
+from syft_installer._config import Config as _Config
+from syft_installer._simple_installer import SimpleInstaller as _SimpleInstaller
+from syft_installer._launcher import Launcher as _Launcher
+from syft_installer._daemon_manager import DaemonManager as _DaemonManager
 
 
 _console = Console()

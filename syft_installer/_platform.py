@@ -2,7 +2,7 @@ import platform
 import sys
 from typing import Tuple
 
-from syft_installer.exceptions import PlatformError
+from syft_installer._exceptions import PlatformError
 
 
 def get_platform_info() -> Tuple[str, str]:
