@@ -26,9 +26,9 @@ from rich.panel import Panel
 from rich import box
 
 from syft_installer.config import _Config as __Config
-from syft_installer.simple_installer import SimpleInstaller as _SimpleInstaller
-from syft_installer.launcher import Launcher as _Launcher
-from syft_installer.daemon_manager import DaemonManager as _DaemonManager
+from syft_installer.simple_installer import _SimpleInstaller as __SimpleInstaller
+from syft_installer.launcher import _Launcher as __Launcher
+from syft_installer.daemon_manager import _DaemonManager as __DaemonManager
 
 
 _console = Console()
@@ -52,8 +52,8 @@ class _SyftBox:
         self.email = email
         self.server = server
         self.data_dir = Path(data_dir).expanduser() if data_dir else Path.home() / "SyftBox"
-        self._launcher = Launcher()
-        self._daemon_manager = DaemonManager()
+        self._launcher = _Launcher()
+        self._daemon_manager = _DaemonManager()
     
     @property
     def is_installed(self) -> bool:
@@ -121,7 +121,7 @@ class _SyftBox:
             background: Run client in background (default: True)
         """
         from syft_installer.__version__ import __version__
-        __console.print(f"\n[bold]🚀 Starting SyftBox... (syft-installer v{__version__})[/bold]\n")
+        _console.print(f"\n[bold]🚀 Starting SyftBox... (syft-installer v{__version__})[/bold]\n")
         
         if not self.is_installed:
             _console.print("📦 SyftBox not installed. Installing now...\n")
@@ -259,7 +259,7 @@ class _SyftBox:
     
     def _install(self) -> None:
         """Run installation flow."""
-        installer = SimpleInstaller(
+        installer = _SimpleInstaller(
             email=self.email,
             server_url=self.server
         )
@@ -327,6 +327,112 @@ def _get_instance(**kwargs) -> _SyftBox:
 
 
 # Super simple API
+def install(email: str) -> bool:
+    """
+    Install SyftBox without starting it.
+    
+    Downloads the binary and completes authentication via OTP.
+    Useful when you want to install now but run later.
+    
+    Args:
+        email: Your email address for authentication (required)
+        
+    Returns:
+        True if installation successful, False otherwise
+        
+    Example:
+        >>> import syft_installer as si
+        >>> si.install("user@example.com")
+        # Enter OTP when prompted
+        >>> si.run()  # Start later
+    """
+    instance = _get_instance(email=email)
+    if instance.is_installed:
+        _console.print("✅ SyftBox is already installed")
+        config = instance.config
+        if config:
+            _console.print(f"   Email: {config.email}")
+        return True
+    
+    _console.print("\n📦 Installing SyftBox...\n")
+    instance._install()
+    
+    # Check if installation succeeded
+    if instance.is_installed:
+        _console.print("\n✅ Installation complete!")
+        return True
+    else:
+        _console.print("\n❌ Installation failed")
+        return False
+
+
+def run(background: bool = True) -> bool:
+    """
+    Run SyftBox (must be installed first).
+    
+    Starts the SyftBox daemon. Use install() first if not already installed.
+    
+    Args:
+        background: Run daemon in background (default: True)
+        
+    Returns:
+        True if started successfully, False otherwise
+        
+    Example:
+        >>> import syft_installer as si
+        >>> si.run()  # Assumes already installed
+    """
+    instance = _get_instance()
+    
+    if not instance.is_installed:
+        _console.print("❌ SyftBox not installed. Run install() first.")
+        return False
+    
+    if instance.is_running:
+        _console.print("✅ SyftBox is already running")
+        return True
+    
+    try:
+        config = instance.config
+        if not config:
+            _console.print("❌ No configuration found")
+            return False
+            
+        _console.print("▶️  Starting SyftBox client...")
+        instance._launcher.start(config, background=background)
+        _console.print("✅ SyftBox client started!")
+        return True
+    except Exception as e:
+        _console.print(f"❌ Failed to start: {e}")
+        return False
+
+
+def install_and_run(email: Optional[str] = None, background: bool = True) -> None:
+    """
+    Install (if needed) and run SyftBox.
+    
+    This is the all-in-one function that handles everything:
+    - Downloads and installs SyftBox binary if not installed
+    - Handles email verification via OTP
+    - Starts the SyftBox daemon in the background
+    
+    Args:
+        email: Your email address for authentication. Required on first install.
+               Will prompt if not provided.
+        background: Run daemon in background (default: True)
+        
+    Example:
+        >>> import syft_installer as si
+        >>> si.install_and_run("user@example.com")
+        
+    Note:
+        On first run, you'll receive an email with an 8-character OTP code.
+        Enter this when prompted to complete authentication.
+    """
+    instance = _get_instance(email=email)
+    instance.run(background)
+
+
 def status(detailed: bool = False) -> Dict[str, Any]:
     """
     Check SyftBox status.
@@ -353,30 +459,6 @@ def status(detailed: bool = False) -> Dict[str, Any]:
     return _get_instance().status(detailed)
 
 
-def run(email: Optional[str] = None, background: bool = True) -> None:
-    """
-    Install (if needed) and run SyftBox.
-    
-    This is the main entry point that handles everything:
-    - Downloads and installs SyftBox binary if not installed
-    - Handles email verification via OTP
-    - Starts the SyftBox daemon in the background
-    
-    Args:
-        email: Your email address for authentication. Required on first install.
-               Will prompt if not provided.
-        background: Run daemon in background (default: True)
-        
-    Example:
-        >>> import syft_installer as si
-        >>> si.install_and_run("user@example.com")
-        
-    Note:
-        On first run, you'll receive an email with an 8-character OTP code.
-        Enter this when prompted to complete authentication.
-    """
-    instance = _get_instance(email=email)
-    instance.run(background)
 
 
 def stop(all: bool = False) -> None:
