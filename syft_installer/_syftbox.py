@@ -19,7 +19,7 @@ Usage:
 import os
 import shutil
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Union
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -32,6 +32,80 @@ from syft_installer._daemon_manager import DaemonManager as _DaemonManager
 
 
 _console = Console()
+
+
+class InstallerSession:
+    """
+    Non-interactive installation session for programmatic OTP submission.
+    
+    This class is returned when using install_and_run() or install() with 
+    interactive=False, allowing you to submit the OTP programmatically.
+    """
+    
+    def __init__(self, installer: '_SimpleInstaller', syftbox: '_SyftBox', background: bool = True):
+        """
+        Initialize installer session.
+        
+        Args:
+            installer: The SimpleInstaller instance
+            syftbox: The SyftBox instance  
+            background: Whether to run in background after installation
+        """
+        self.installer = installer
+        self.syftbox = syftbox
+        self.background = background
+        self._otp_sent = False
+        self._installation_complete = False
+        
+    def request_otp(self) -> Dict[str, Any]:
+        """
+        Request OTP to be sent to the email address.
+        
+        Returns:
+            Dict with status and message
+        """
+        result = self.installer.step1_download_and_request_otp()
+        if result.get("status") == "success":
+            self._otp_sent = True
+        return result
+        
+    def submit_otp(self, otp: str) -> Dict[str, Any]:
+        """
+        Submit the OTP code to complete installation.
+        
+        Args:
+            otp: The OTP code received via email
+            
+        Returns:
+            Dict with status and message
+        """
+        if not self._otp_sent:
+            return {
+                "status": "error",
+                "message": "OTP not requested yet. Call request_otp() first."
+            }
+            
+        result = self.installer.step2_verify_otp(otp, start_client=False)
+        
+        if result.get("status") == "success":
+            self._installation_complete = True
+            _console.print("\n✅ Installation complete!")
+            
+            # Start the client if requested
+            if self.background:
+                config = self.syftbox.config
+                if config:
+                    _console.print("\n▶️  Starting SyftBox client...")
+                    self.syftbox._launcher.start(config, background=True)
+                    _console.print("✅ SyftBox client started!\n")
+                    self.syftbox.status()
+                    
+        return result
+        
+    @property
+    def is_complete(self) -> bool:
+        """Check if installation is complete."""
+        return self._installation_complete
 
 
 class _SyftBox:
@@ -283,6 +357,59 @@ class _SyftBox:
         
         _console.print("\n✅ Installation complete!")
     
+    def _run_non_interactive(self, background: bool = True) -> Optional[InstallerSession]:
+        """
+        Run installation in non-interactive mode.
+        
+        Args:
+            background: Run client in background after installation
+            
+        Returns:
+            InstallerSession object if installation needed, None if already installed
+        """
+        from syft_installer.__version__ import __version__
+        _console.print(f"\n[bold]🚀 Starting SyftBox... (syft-installer v{__version__})[/bold]\n")
+        
+        if not self.is_installed:
+            _console.print("📦 SyftBox not installed. Starting installation...\n")
+            
+            if not self.email:
+                _console.print("❌ Email is required for non-interactive installation")
+                return None
+                
+            installer = _SimpleInstaller(
+                email=self.email,
+                server_url=self.server
+            )
+            
+            session = InstallerSession(installer, self, background)
+            
+            # Request OTP
+            result = session.request_otp()
+            if result.get("status") == "error":
+                _console.print(f"\n❌ Installation failed: {result.get('message', 'Unknown error')}")
+                return None
+                
+            _console.print("\n📧 OTP sent! Check your email (including spam folder)")
+            _console.print("👉 Use session.submit_otp('YOUR_OTP') to complete installation\n")
+            
+            return session
+        else:
+            # Already installed, just run if not running
+            config = self.config
+            if config:
+                _console.print(f"✅ SyftBox already installed for [cyan]{config.email}[/cyan]")
+                
+            if not self.is_running:
+                _console.print("\n▶️  Starting SyftBox client...")
+                self._launcher.start(config, background=background)
+                _console.print("✅ SyftBox client started!\n")
+            else:
+                _console.print("✅ SyftBox client already running!\n")
+                
+            self.status()
+            return None
+    
     def _print_status(self, status: Dict[str, Any]) -> None:
         """Pretty print status information."""
         # Create status table
@@ -327,7 +454,7 @@ def _get_instance(**kwargs) -> _SyftBox:
 
 
 # Super simple API
-def install(email: str) -> bool:
+def install(email: str, interactive: bool = True) -> Union[bool, Optional[InstallerSession]]:
     """
     Install SyftBox without starting it.
     
@@ -336,14 +463,25 @@ def install(email: str) -> bool:
     
     Args:
         email: Your email address for authentication (required)
+        interactive: If True, prompts for OTP input. If False, returns an InstallerSession
+                    object for programmatic OTP submission (default: True)
         
     Returns:
-        True if installation successful, False otherwise
+        In interactive mode: True if installation successful, False otherwise
+        In non-interactive mode: InstallerSession object or None if already installed
         
-    Example:
+    Examples:
+        Interactive mode:
         >>> import syft_installer as si
         >>> si.install("user@example.com")
         # Enter OTP when prompted
+        >>> si.run()  # Start later
+        
+        Non-interactive mode:
+        >>> import syft_installer as si
+        >>> session = si.install("user@example.com", interactive=False)
+        >>> if session:
+        >>>     session.submit_otp("ABC12345")
         >>> si.run()  # Start later
     """
     instance = _get_instance(email=email)
@@ -352,18 +490,40 @@ def install(email: str) -> bool:
         config = instance.config
         if config:
             _console.print(f"   Email: {config.email}")
-        return True
+        return True if interactive else None
     
-    _console.print("\n📦 Installing SyftBox...\n")
-    instance._install()
-    
-    # Check if installation succeeded
-    if instance.is_installed:
-        _console.print("\n✅ Installation complete!")
-        return True
+    if interactive:
+        _console.print("\n📦 Installing SyftBox...\n")
+        instance._install()
+        
+        # Check if installation succeeded
+        if instance.is_installed:
+            _console.print("\n✅ Installation complete!")
+            return True
+        else:
+            _console.print("\n❌ Installation failed")
+            return False
     else:
-        _console.print("\n❌ Installation failed")
-        return False
+        # Non-interactive mode
+        _console.print("\n📦 Starting SyftBox installation...\n")
+        
+        installer = _SimpleInstaller(
+            email=email,
+            server_url=instance.server
+        )
+        
+        session = InstallerSession(installer, instance, background=False)
+        
+        # Request OTP
+        result = session.request_otp()
+        if result.get("status") == "error":
+            _console.print(f"\n❌ Installation failed: {result.get('message', 'Unknown error')}")
+            return None
+            
+        _console.print("\n📧 OTP sent! Check your email (including spam folder)")
+        _console.print("👉 Use session.submit_otp('YOUR_OTP') to complete installation\n")
+        
+        return session
 
 
 def run(background: bool = True) -> bool:
@@ -407,7 +567,7 @@ def run(background: bool = True) -> bool:
         return False
 
 
-def install_and_run(email: Optional[str] = None, background: bool = True) -> None:
+def install_and_run(email: Optional[str] = None, background: bool = True, interactive: bool = True) -> Optional['InstallerSession']:
     """
     Install (if needed) and run SyftBox.
     
@@ -418,19 +578,39 @@ def install_and_run(email: Optional[str] = None, background: bool = True) -> Non
     
     Args:
         email: Your email address for authentication. Required on first install.
-               Will prompt if not provided.
+               Will prompt if not provided in interactive mode.
         background: Run daemon in background (default: True)
+        interactive: If True, prompts for OTP input. If False, returns an InstallerSession
+                    object for programmatic OTP submission (default: True)
         
-    Example:
+    Returns:
+        None in interactive mode, or InstallerSession object in non-interactive mode
+        
+    Examples:
+        Interactive mode:
         >>> import syft_installer as si
         >>> si.install_and_run("user@example.com")
+        # Enter OTP when prompted
+        
+        Non-interactive mode:
+        >>> import syft_installer as si
+        >>> session = si.install_and_run("user@example.com", interactive=False)
+        >>> if session:
+        >>>     session.submit_otp("ABC12345")
         
     Note:
         On first run, you'll receive an email with an 8-character OTP code.
-        Enter this when prompted to complete authentication.
+        In interactive mode, enter this when prompted.
+        In non-interactive mode, use the returned session object.
     """
     instance = _get_instance(email=email)
-    instance.run(background)
+    
+    if interactive:
+        instance.run(background)
+        return None
+    else:
+        # Non-interactive mode - return session for OTP submission
+        return instance._run_non_interactive(background)
 
 
 def status(detailed: bool = False) -> Dict[str, Any]:

@@ -21,7 +21,16 @@
       "Bash(uv publish:*)",
       "Bash(curl:*)",
       "Bash(rg:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(ls:*)",
+      "Bash(ls:*)",
+      "Bash(__NEW_LINE__ mv auth.py _auth.py)",
+      "Bash(python -m pytest -xvs)",
+      "Bash(uv run:*)",
+      "Bash(uv run pytest:*)",
+      "Bash(git reset:*)",
+      "Bash(git restore:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": []
   }

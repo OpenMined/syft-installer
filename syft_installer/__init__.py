@@ -6,7 +6,8 @@ from syft_installer._syftbox import (
     status,
     stop,
     run_if_stopped,
-    uninstall
+    uninstall,
+    InstallerSession
 )
 
 
@@ -19,4 +20,5 @@ __all__ = [
     "stop",
     "run_if_stopped",
     "uninstall",
+    "InstallerSession",
 ]
