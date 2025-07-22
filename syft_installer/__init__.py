@@ -1,14 +1,22 @@
 from syft_installer.__version__ import __version__
-from syft_installer.syftbox import SyftBox, status, run, stop, restart, start_if_stopped, uninstall
+from syft_installer.syftbox import (
+    install,
+    run,
+    install_and_run,
+    status,
+    stop,
+    run_if_stopped,
+    uninstall
+)
 
 
 __all__ = [
     "__version__",
-    "SyftBox",
+    "install",
+    "run", 
+    "install_and_run",
     "status",
-    "run",
     "stop",
-    "restart", 
-    "start_if_stopped",
+    "run_if_stopped",
     "uninstall",
 ]

@@ -20,7 +20,8 @@
       "Bash(uv build:*)",
       "Bash(uv publish:*)",
       "Bash(curl:*)",
-      "Bash(rg:*)"
+      "Bash(rg:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

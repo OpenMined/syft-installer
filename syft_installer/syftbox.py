@@ -2,19 +2,19 @@
 Simple, intuitive API for SyftBox management.
 
 Usage:
-    import syftbox
+    import syft_installer as si
+    
+    # Install and run
+    si.install_and_run("user@example.com")
     
     # Check status
-    syftbox.status()
-    
-    # Install and start
-    syftbox.run()
+    si.status()
     
     # Stop
-    syftbox.stop()
+    si.stop()
     
     # Uninstall completely
-    syftbox.uninstall()
+    si.uninstall()
 """
 import os
 import shutil
@@ -25,16 +25,16 @@ from rich.table import Table
 from rich.panel import Panel
 from rich import box
 
-from syft_installer.config import Config
-from syft_installer.simple_installer import SimpleInstaller
-from syft_installer.launcher import Launcher
-from syft_installer.daemon_manager import DaemonManager
+from syft_installer.config import _Config as __Config
+from syft_installer.simple_installer import SimpleInstaller as _SimpleInstaller
+from syft_installer.launcher import Launcher as _Launcher
+from syft_installer.daemon_manager import DaemonManager as _DaemonManager
 
 
-console = Console()
+_console = Console()
 
 
-class SyftBox:
+class _SyftBox:
     """Dead simple SyftBox manager."""
     
     def __init__(self, 
@@ -58,7 +58,7 @@ class SyftBox:
     @property
     def is_installed(self) -> bool:
         """Check if SyftBox is installed."""
-        config = Config.load()
+        config = _Config.load()
         binary_path = Path.home() / ".local" / "bin" / "syftbox"
         return config is not None and binary_path.exists()
     
@@ -71,9 +71,9 @@ class SyftBox:
         return result
     
     @property
-    def config(self) -> Optional[Config]:
+    def config(self) -> Optional[_Config]:
         """Get current configuration."""
-        return Config.load()
+        return _Config.load()
     
     def status(self, detailed: bool = False) -> Dict[str, Any]:
         """
@@ -121,41 +121,41 @@ class SyftBox:
             background: Run client in background (default: True)
         """
         from syft_installer.__version__ import __version__
-        console.print(f"\n[bold]🚀 Starting SyftBox... (syft-installer v{__version__})[/bold]\n")
+        __console.print(f"\n[bold]🚀 Starting SyftBox... (syft-installer v{__version__})[/bold]\n")
         
         if not self.is_installed:
-            console.print("📦 SyftBox not installed. Installing now...\n")
+            _console.print("📦 SyftBox not installed. Installing now...\n")
             self._install()
         
         # Re-check after installation
         try:
             config = self.config
             if not config:
-                console.print("❌ Installation may have failed - no configuration found")
+                _console.print("❌ Installation may have failed - no configuration found")
                 # Try to diagnose the issue
                 config_file = Path.home() / ".syftbox" / "config.json"
                 if config_file.exists():
-                    console.print(f"Config file exists at {config_file}")
+                    _console.print(f"_Config file exists at {config_file}")
                     try:
                         with open(config_file, 'r') as f:
                             data = f.read()
-                            console.print(f"Config content: {data[:200]}...")
+                            _console.print(f"_Config content: {data[:200]}...")
                     except Exception as e:
-                        console.print(f"Failed to read config: {e}")
+                        _console.print(f"Failed to read config: {e}")
                 else:
-                    console.print(f"Config file not found at {config_file}")
+                    _console.print(f"_Config file not found at {config_file}")
                 return
-            console.print(f"✅ SyftBox installed for [cyan]{config.email}[/cyan]")
+            _console.print(f"✅ SyftBox installed for [cyan]{config.email}[/cyan]")
         except Exception as e:
-            console.print(f"❌ Error loading configuration: {e}")
+            _console.print(f"❌ Error loading configuration: {e}")
             return
         
         if not self.is_running:
-            console.print("\n▶️  Starting SyftBox client...")
+            _console.print("\n▶️  Starting SyftBox client...")
             self._launcher.start(config, background=background)
-            console.print("✅ SyftBox client started!\n")
+            _console.print("✅ SyftBox client started!\n")
         else:
-            console.print("✅ SyftBox client already running!\n")
+            _console.print("✅ SyftBox client already running!\n")
         
         self.status()
     
@@ -168,20 +168,20 @@ class SyftBox:
         """
         if all:
             killed = self._daemon_manager.kill_all_daemons()
-            console.print(f"\n⏹️  Stopped {killed} SyftBox daemon(s)\n")
+            _console.print(f"\n⏹️  Stopped {killed} SyftBox daemon(s)\n")
         else:
             self._launcher.stop()
-            console.print("\n⏹️  Stopped SyftBox client\n")
+            _console.print("\n⏹️  Stopped SyftBox client\n")
     
     def restart(self) -> None:
         """Restart SyftBox client."""
-        console.print("\n🔄 Restarting SyftBox client...\n")
+        _console.print("\n🔄 Restarting SyftBox client...\n")
         config = self.config
         if config:
             self._launcher.restart(config)
-            console.print("✅ SyftBox client restarted!\n")
+            _console.print("✅ SyftBox client restarted!\n")
         else:
-            console.print("❌ SyftBox not installed. Run .run() first.\n")
+            _console.print("❌ SyftBox not installed. Run .run() first.\n")
     
     def start_if_stopped(self) -> bool:
         """
@@ -191,17 +191,17 @@ class SyftBox:
             True if started, False if already running or not installed
         """
         if not self.is_installed:
-            console.print("❌ SyftBox not installed. Run .run() first.\n")
+            _console.print("❌ SyftBox not installed. Run .run() first.\n")
             return False
         
         if self.is_running:
-            console.print("✅ SyftBox already running!\n")
+            _console.print("✅ SyftBox already running!\n")
             return False
         
-        console.print("▶️  Starting SyftBox client...\n")
+        _console.print("▶️  Starting SyftBox client...\n")
         config = self.config
         self._launcher.start(config, background=True)
-        console.print("✅ SyftBox client started!\n")
+        _console.print("✅ SyftBox client started!\n")
         return True
     
     def uninstall(self, confirm: bool = True) -> None:
@@ -218,24 +218,24 @@ class SyftBox:
             confirm: Ask for confirmation (default: True)
         """
         if confirm:
-            console.print("\n[bold red]⚠️  WARNING: This will completely remove SyftBox![/bold red]")
-            console.print("\nThis will delete:")
-            console.print(f"  • [red]~/SyftBox[/red] (all your data)")
-            console.print(f"  • [red]~/.syftbox[/red] (configuration)")
-            console.print(f"  • [red]~/.local/bin/syftbox[/red] (binary)")
-            console.print()
+            _console.print("\n[bold red]⚠️  WARNING: This will completely remove SyftBox![/bold red]")
+            _console.print("\nThis will delete:")
+            _console.print(f"  • [red]~/SyftBox[/red] (all your data)")
+            _console.print(f"  • [red]~/.syftbox[/red] (configuration)")
+            _console.print(f"  • [red]~/.local/bin/syftbox[/red] (binary)")
+            _console.print()
             
-            response = console.input("Type 'yes' to confirm: ")
+            response = _console.input("Type 'yes' to confirm: ")
             if response.lower() != 'yes':
-                console.print("\n❌ Uninstall cancelled.\n")
+                _console.print("\n❌ Uninstall cancelled.\n")
                 return
         
-        console.print("\n🗑️  Uninstalling SyftBox...\n")
+        _console.print("\n🗑️  Uninstalling SyftBox...\n")
         
         # Stop all daemons
         killed = self._daemon_manager.kill_all_daemons()
         if killed > 0:
-            console.print(f"⏹️  Stopped {killed} daemon(s)")
+            _console.print(f"⏹️  Stopped {killed} daemon(s)")
         
         # Delete directories and files
         paths_to_delete = [
@@ -251,11 +251,11 @@ class SyftBox:
                         shutil.rmtree(path)
                     else:
                         path.unlink()
-                    console.print(f"🗑️  Deleted {path}")
+                    _console.print(f"🗑️  Deleted {path}")
                 except Exception as e:
-                    console.print(f"❌ Failed to delete {path}: {e}")
+                    _console.print(f"❌ Failed to delete {path}: {e}")
         
-        console.print("\n✅ SyftBox uninstalled completely!\n")
+        _console.print("\n✅ SyftBox uninstalled completely!\n")
     
     def _install(self) -> None:
         """Run installation flow."""
@@ -269,19 +269,19 @@ class SyftBox:
         
         # Check if step 1 failed
         if result.get("status") == "error":
-            console.print(f"\n❌ Installation failed: {result.get('message', 'Unknown error')}")
+            _console.print(f"\n❌ Installation failed: {result.get('message', 'Unknown error')}")
             return
         
         # Step 2: Get OTP from user and verify
-        otp = console.input("\n📧 Enter the OTP sent to your email: ")
+        otp = _console.input("\n📧 Enter the OTP sent to your email: ")
         result = installer.step2_verify_otp(otp, start_client=False)
         
         # Check if step 2 failed
         if result.get("status") == "error":
-            console.print(f"\n❌ Verification failed: {result.get('message', 'Unknown error')}")
+            _console.print(f"\n❌ Verification failed: {result.get('message', 'Unknown error')}")
             return
         
-        console.print("\n✅ Installation complete!")
+        _console.print("\n✅ Installation complete!")
     
     def _print_status(self, status: Dict[str, Any]) -> None:
         """Pretty print status information."""
@@ -297,7 +297,7 @@ class SyftBox:
         table.add_row("Installed", f"{installed_icon} {status['installed']}")
         table.add_row("Running", f"{running_icon} {status['running']}")
         
-        # Config info
+        # _Config info
         if status["config"]:
             table.add_row("Email", status["config"]["email"])
             table.add_row("Server", status["config"]["server"])
@@ -311,18 +311,18 @@ class SyftBox:
         
         # Print in a nice panel
         panel = Panel(table, title="[bold]SyftBox Status[/bold]", border_style="green")
-        console.print(panel)
+        _console.print(panel)
 
 
 # Module-level instance for super simple API
 _instance = None
 
 
-def _get_instance(**kwargs) -> SyftBox:
+def _get_instance(**kwargs) -> _SyftBox:
     """Get or create the global SyftBox instance."""
     global _instance
     if _instance is None or kwargs:
-        _instance = SyftBox(**kwargs)
+        _instance = _SyftBox(**kwargs)
     return _instance
 
 
@@ -331,9 +331,17 @@ def status(detailed: bool = False) -> Dict[str, Any]:
     """
     Check SyftBox status.
     
+    Shows whether SyftBox is installed, running, and configuration details.
+    
+    Args:
+        detailed: Show detailed information including daemon processes
+        
+    Returns:
+        Dict with status information
+    
     Example:
-        >>> import syftbox
-        >>> syftbox.status()
+        >>> import syft_installer as si
+        >>> si.status()
         ╭─────── SyftBox Status ───────╮
         │ Installed  ✅ True           │
         │ Running    ✅ True           │
@@ -349,18 +357,23 @@ def run(email: Optional[str] = None, background: bool = True) -> None:
     """
     Install (if needed) and run SyftBox.
     
-    This handles everything:
-    - Installs SyftBox if not installed
-    - Handles OTP authentication
-    - Starts the client
+    This is the main entry point that handles everything:
+    - Downloads and installs SyftBox binary if not installed
+    - Handles email verification via OTP
+    - Starts the SyftBox daemon in the background
     
     Args:
-        email: Your email (optional - will prompt if needed)
-        background: Run in background (default: True)
+        email: Your email address for authentication. Required on first install.
+               Will prompt if not provided.
+        background: Run daemon in background (default: True)
         
     Example:
-        >>> import syftbox
-        >>> syftbox.run()  # That's it!
+        >>> import syft_installer as si
+        >>> si.install_and_run("user@example.com")
+        
+    Note:
+        On first run, you'll receive an email with an 8-character OTP code.
+        Enter this when prompted to complete authentication.
     """
     instance = _get_instance(email=email)
     instance.run(background)
@@ -368,39 +381,31 @@ def run(email: Optional[str] = None, background: bool = True) -> None:
 
 def stop(all: bool = False) -> None:
     """
-    Stop SyftBox.
+    Stop SyftBox daemon.
     
     Args:
-        all: Stop ALL syftbox daemons (default: False)
+        all: Stop ALL syftbox daemons on the system, not just the one started
+             by this instance (default: False)
         
     Example:
-        >>> import syftbox
-        >>> syftbox.stop()
+        >>> import syft_installer as si
+        >>> si.stop()
     """
     _get_instance().stop(all)
 
 
-def restart() -> None:
-    """
-    Restart SyftBox.
-    
-    Example:
-        >>> import syftbox
-        >>> syftbox.restart()
-    """
-    _get_instance().restart()
-
-
-def start_if_stopped() -> bool:
+def run_if_stopped() -> bool:
     """
     Start SyftBox only if it's not already running.
+    
+    Useful for ensuring SyftBox is running without restarting if already active.
     
     Returns:
         True if started, False if already running or not installed
         
     Example:
-        >>> import syftbox
-        >>> syftbox.start_if_stopped()
+        >>> import syft_installer as si
+        >>> si.run_if_stopped()
         ✅ SyftBox already running!
         False
     """
@@ -411,35 +416,20 @@ def uninstall(confirm: bool = True) -> None:
     """
     Completely uninstall SyftBox.
     
-    WARNING: This deletes:
-    - ~/SyftBox (all data)
-    - ~/.syftbox (config)  
+    This will permanently delete:
+    - ~/SyftBox (all your data and apps)
+    - ~/.syftbox (configuration)  
     - ~/.local/bin/syftbox (binary)
     
     Args:
-        confirm: Ask for confirmation (default: True)
+        confirm: Ask for confirmation before deleting (default: True).
+                 Set to False for automated/scripted usage.
         
     Example:
-        >>> import syftbox
-        >>> syftbox.uninstall()
+        >>> import syft_installer as si
+        >>> si.uninstall()
+        
+    Warning:
+        This action cannot be undone. All data will be permanently deleted.
     """
     _get_instance().uninstall(confirm)
-
-
-# Properties for easy access
-@property
-def is_installed() -> bool:
-    """Check if SyftBox is installed."""
-    return _get_instance().is_installed
-
-
-@property  
-def is_running() -> bool:
-    """Check if SyftBox is running."""
-    return _get_instance().is_running
-
-
-@property
-def config() -> Optional[Config]:
-    """Get current configuration."""
-    return _get_instance().config
