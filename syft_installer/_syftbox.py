@@ -21,12 +21,10 @@ import shutil
 from pathlib import Path
 from typing import Optional, Dict, Any, Union
 from rich.console import Console
-from rich.table import Table
-from rich.panel import Panel
-from rich import box
 
 from syft_installer._config import Config as _Config
 from syft_installer._process import ProcessManager as _ProcessManager
+from syft_installer._display import display
 
 
 _console = Console()
@@ -134,7 +132,7 @@ class _SyftBox:
         self.email = email
         self.server = server
         self.data_dir = Path(data_dir).expanduser() if data_dir else Path.home() / "SyftBox"
-        self._process_manager = _ProcessManager()
+        self._process_manager = _ProcessManager(verbose=False)
     
     @property
     def is_installed(self) -> bool:
@@ -146,10 +144,7 @@ class _SyftBox:
     @property
     def is_running(self) -> bool:
         """Check if SyftBox client is running."""
-        print("\n📊 Checking SyftBox running status...")
-        result = self._process_manager.is_running()
-        print(f"📊 Result: {result}\n")
-        return result
+        return self._process_manager.is_running()
     
     @property
     def config(self) -> Optional[_Config]:
@@ -173,19 +168,26 @@ class _SyftBox:
             "daemons": []
         }
         
+        config = None
         if self.is_installed:
             config = self.config
-            status["config"] = {
-                "email": config.email,
-                "server": config.server_url,
-                "data_dir": config.data_dir
-            }
+            if config:
+                status["config"] = {
+                    "email": config.email,
+                    "server": config.server_url,
+                    "data_dir": config.data_dir
+                }
         
         if detailed or self.is_running:
             status["daemons"] = self._process_manager.find_daemons()
         
-        # Pretty print status
-        self._print_status(status)
+        # Show clean status display
+        display.show_status(
+            installed=self.is_installed,
+            running=self.is_running,
+            email=config.email if config else None,
+            data_dir=config.data_dir if config else None
+        )
         
         return status
     
@@ -202,43 +204,33 @@ class _SyftBox:
             background: Run client in background (default: True)
         """
         from syft_installer.__version__ import __version__
-        _console.print(f"\n[bold]🚀 Starting SyftBox... (syft-installer v{__version__})[/bold]\n")
+        
+        # Show welcome message
+        display.show_welcome(version=__version__)
         
         if not self.is_installed:
-            _console.print("📦 SyftBox not installed. Installing now...\n")
             self._install()
         
-        # Re-check after installation
+        # Check configuration
         try:
             config = self.config
             if not config:
-                _console.print("❌ Installation may have failed - no configuration found")
-                # Try to diagnose the issue
-                config_file = Path.home() / ".syftbox" / "config.json"
-                if config_file.exists():
-                    _console.print(f"_Config file exists at {config_file}")
-                    try:
-                        with open(config_file, 'r') as f:
-                            data = f.read()
-                            _console.print(f"_Config content: {data[:200]}...")
-                    except Exception as e:
-                        _console.print(f"Failed to read config: {e}")
-                else:
-                    _console.print(f"_Config file not found at {config_file}")
+                display.show_error(
+                    "Installation may have failed - no configuration found",
+                    "Try running si.install() again or check your internet connection"
+                )
                 return
-            _console.print(f"✅ SyftBox installed for [cyan]{config.email}[/cyan]")
         except Exception as e:
-            _console.print(f"❌ Error loading configuration: {e}")
+            display.show_error(f"Error loading configuration: {e}")
             return
         
+        # Start if not running
         if not self.is_running:
-            _console.print("\n▶️  Starting SyftBox client...")
-            self._process_manager.start(config, background=background)
-            _console.print("✅ SyftBox client started!\n")
+            with _console.status("[blue]Starting SyftBox...[/blue]", spinner="dots"):
+                self._process_manager.start(config, background=background)
+            display.show_success(config.email, config.data_dir)
         else:
-            _console.print("✅ SyftBox client already running!\n")
-        
-        self.status()
+            display.show_already_running(config.email)
     
     def stop(self, all: bool = False) -> None:
         """
@@ -288,25 +280,12 @@ class _SyftBox:
         Args:
             confirm: Ask for confirmation (default: True)
         """
-        if confirm:
-            _console.print("\n[bold red]⚠️  WARNING: This will completely remove SyftBox![/bold red]")
-            _console.print("\nThis will delete:")
-            _console.print(f"  • [red]~/SyftBox[/red] (all your data)")
-            _console.print(f"  • [red]~/.syftbox[/red] (configuration)")
-            _console.print(f"  • [red]~/.local/bin/syftbox[/red] (binary)")
-            _console.print()
-            
-            response = _console.input("Type 'yes' to confirm: ")
-            if response.lower() != 'yes':
-                _console.print("\n❌ Uninstall cancelled.\n")
-                return
+        if confirm and not display.show_uninstall_warning():
+            _console.print("❌ Uninstall cancelled.")
+            return
         
-        _console.print("\n🗑️  Uninstalling SyftBox...\n")
-        
-        # Stop all daemons
-        killed = self._process_manager.kill_all_daemons()
-        if killed > 0:
-            _console.print(f"⏹️  Stopped {killed} daemon(s)")
+        # Stop all daemons quietly
+        self._process_manager.kill_all_daemons()
         
         # Delete directories and files
         paths_to_delete = [
@@ -322,106 +301,125 @@ class _SyftBox:
                         shutil.rmtree(path)
                     else:
                         path.unlink()
-                    _console.print(f"🗑️  Deleted {path}")
-                except Exception as e:
-                    _console.print(f"❌ Failed to delete {path}: {e}")
+                except Exception:
+                    pass  # Silently continue if deletion fails
         
-        _console.print("\n✅ SyftBox uninstalled completely!\n")
+        display.show_uninstall_progress()
     
     def _install(self) -> None:
-        """Run installation flow."""
+        """Run installation flow with clean, inspiring progress display."""
         # Auto-detect email in Colab if not provided
         email = self.email
         if email is None:
             from syft_installer._colab_utils import is_google_colab, get_colab_user_email
             
             if is_google_colab():
-                _console.print("🔍 Detected Google Colab environment")
                 email = get_colab_user_email()
                 if email is None:
-                    _console.print("❌ Could not detect email. Please provide it explicitly.")
+                    display.show_error(
+                        "Could not detect your Google account email",
+                        "Please provide your email explicitly: si.install('your@email.com')"
+                    )
                     return
-                self.email = email  # Store for later use
+                self.email = email
             else:
-                _console.print("❌ Email is required. In Google Colab, we can detect it automatically.")
+                display.show_error(
+                    "Email is required for installation",
+                    "In Google Colab, we can detect it automatically. Otherwise, provide it: si.install('your@email.com')"
+                )
                 return
         
         # Validate email
         from syft_installer._utils import validate_email
         if not validate_email(email):
-            _console.print(f"❌ Invalid email address: {email}")
+            display.show_error(f"Invalid email address: {email}")
             return
         
-        _console.print("🚀 Starting SyftBox installation...")
+        # Show email detection/confirmation
+        from syft_installer._colab_utils import is_google_colab
+        display.show_email_detection(email, is_colab=is_google_colab())
         
-        # Create directories
-        bin_dir = Path.home() / ".local" / "bin"
-        binary_path = bin_dir / "syftbox"
-        config_dir = Path.home() / ".syftbox"
-        
-        bin_dir.mkdir(parents=True, exist_ok=True)
-        config_dir.mkdir(parents=True, exist_ok=True)
-        self.data_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Download binary if needed
-        if not binary_path.exists():
-            _console.print("📥 Downloading SyftBox binary...")
+        # Start installation progress
+        with display.installation_progress(email) as progress:
             try:
-                from syft_installer._downloader import Downloader
-                downloader = Downloader()
-                downloader.download_and_install(binary_path)
-                _console.print("✅ Binary downloaded successfully")
+                # Phase 1: Setup (10%)
+                progress.update_phase("📦 Setting up installation environment", 10)
+                
+                bin_dir = Path.home() / ".local" / "bin"
+                binary_path = bin_dir / "syftbox"
+                config_dir = Path.home() / ".syftbox"
+                
+                bin_dir.mkdir(parents=True, exist_ok=True)
+                config_dir.mkdir(parents=True, exist_ok=True)
+                self.data_dir.mkdir(parents=True, exist_ok=True)
+                
+                # Phase 2: Download binary (30%)
+                if not binary_path.exists():
+                    progress.update_phase("📥 Downloading SyftBox binary", 20)
+                    
+                    from syft_installer._downloader import Downloader
+                    downloader = Downloader()
+                    
+                    # This could be enhanced to show actual download progress
+                    downloader.download_and_install(binary_path)
+                    progress.update_phase("✅ SyftBox binary ready", 40)
+                else:
+                    progress.update_phase("✅ SyftBox binary ready", 40)
+                
+                # Phase 3: Request verification (50%)
+                progress.update_phase("📧 Requesting verification code", 50)
+                
+                from syft_installer._auth import Authenticator
+                auth = Authenticator(self.server)
+                auth.request_otp(email)
+                
+                progress.update_phase("✅ Verification code sent", 60)
+                
             except Exception as e:
-                _console.print(f"❌ Download failed: {str(e)}")
+                display.show_error(
+                    f"Installation failed: {str(e)}",
+                    "Check your internet connection and try again"
+                )
                 return
-        else:
-            _console.print("✅ Binary already exists")
         
-        # Request OTP
-        _console.print(f"\n📧 Requesting OTP for {email}...")
-        try:
-            from syft_installer._auth import Authenticator
-            auth = Authenticator(self.server)
-            result = auth.request_otp(email)
-            _console.print("✅ OTP sent! Check your email (including spam folder)")
-        except Exception as e:
-            _console.print(f"❌ OTP request failed: {str(e)}")
-            return
+        # Show OTP request message
+        display.show_otp_request(email)
         
-        # Get OTP from user
-        otp = _console.input("\n📧 Enter the OTP sent to your email: ")
+        # Get OTP from user (outside progress context for clean input)
+        otp = display.get_otp_input()
         
-        # Verify OTP
-        from syft_installer._utils import sanitize_otp, validate_otp
-        otp = sanitize_otp(otp)
-        if not validate_otp(otp):
-            _console.print("❌ Invalid OTP. Must be 8 uppercase alphanumeric characters.")
-            return
-        
-        _console.print(f"🔐 Verifying OTP...")
-        
-        try:
-            # Verify OTP and get tokens
-            tokens = auth.verify_otp(email, otp)
-            _console.print("✅ Authentication successful")
+        # Verify OTP with final progress
+        with _console.status("[blue]🔐 Verifying your code...[/blue]", spinner="dots"):
+            from syft_installer._utils import sanitize_otp, validate_otp
+            otp = sanitize_otp(otp)
             
-            # Create and save config
-            from syft_installer._utils import RuntimeEnvironment
-            config = _Config(
-                email=email,
-                data_dir=str(self.data_dir),
-                server_url=self.server,
-                client_url="http://localhost:7938",
-                refresh_token=tokens["refresh_token"]
-            )
-            config.save()
-            _console.print("✅ Configuration saved")
+            if not validate_otp(otp):
+                display.show_error(
+                    "Invalid verification code",
+                    "Please enter the 8-digit code from your email"
+                )
+                return
             
-            _console.print("\n✅ Installation complete!")
-            _console.print(f"📁 Data directory: {self.data_dir}")
-            
-        except Exception as e:
-            _console.print(f"❌ Verification failed: {str(e)}")
+            try:
+                # Verify OTP and get tokens
+                tokens = auth.verify_otp(email, otp)
+                
+                # Create and save config
+                config = _Config(
+                    email=email,
+                    data_dir=str(self.data_dir),
+                    server_url=self.server,
+                    client_url="http://localhost:7938",
+                    refresh_token=tokens["refresh_token"]
+                )
+                config.save()
+                
+            except Exception as e:
+                display.show_error(
+                    f"Verification failed: {str(e)}",
+                    "Double-check your code and try again"
+                )
+                return
     
     def _run_non_interactive(self, background: bool = True) -> Optional[InstallerSession]:
         """
@@ -513,35 +511,6 @@ class _SyftBox:
             self.status()
             return None
     
-    def _print_status(self, status: Dict[str, Any]) -> None:
-        """Pretty print status information."""
-        # Create status table
-        table = Table(show_header=False, box=box.SIMPLE)
-        table.add_column("Property", style="cyan")
-        table.add_column("Value")
-        
-        # Basic status
-        installed_icon = "✅" if status["installed"] else "❌"
-        running_icon = "✅" if status["running"] else "❌"
-        
-        table.add_row("Installed", f"{installed_icon} {status['installed']}")
-        table.add_row("Running", f"{running_icon} {status['running']}")
-        
-        # _Config info
-        if status["config"]:
-            table.add_row("Email", status["config"]["email"])
-            table.add_row("Server", status["config"]["server"])
-            table.add_row("Data Dir", status["config"]["data_dir"])
-        
-        # Daemon info
-        if status["daemons"]:
-            daemon_count = len(status["daemons"])
-            pids = ", ".join(d["pid"] for d in status["daemons"])
-            table.add_row("Daemons", f"{daemon_count} running (PIDs: {pids})")
-        
-        # Print in a nice panel
-        panel = Panel(table, title="[bold]SyftBox Status[/bold]", border_style="green")
-        _console.print(panel)
 
 
 # Module-level instance for super simple API

@@ -13,9 +13,10 @@ from syft_installer._utils import BinaryNotFoundError
 class ProcessManager:
     """Manages SyftBox daemon processes - both starting and finding/killing."""
     
-    def __init__(self):
+    def __init__(self, verbose: bool = False):
         self.process: Optional[subprocess.Popen] = None
         self.stderr_file = None
+        self.verbose = verbose
     
     def start(self, config, background: bool = True) -> None:
         """Start SyftBox client."""
@@ -62,7 +63,7 @@ class ProcessManager:
                     try:
                         with open(self.stderr_file.name, 'r') as f:
                             stderr_content = f.read().strip()
-                            if stderr_content:
+                            if stderr_content and self.verbose:
                                 print(f"   Process stderr: {stderr_content}")
                     except:
                         pass
@@ -72,7 +73,9 @@ class ProcessManager:
     
     def is_running(self) -> bool:
         """Check if SyftBox client is running."""
-        print("🔍 Checking if SyftBox is running...")
+        if self.verbose:
+            print("🔍 Checking if SyftBox is running...")
+        
         try:
             # Check for syftbox daemon process
             result = subprocess.run(
@@ -80,42 +83,62 @@ class ProcessManager:
                 capture_output=True,
                 text=True,
             )
-            print(f"   pgrep return code: {result.returncode}")
-            print(f"   pgrep stdout: {repr(result.stdout)}")
-            print(f"   pgrep stderr: {repr(result.stderr)}")
+            
+            if self.verbose:
+                print(f"   pgrep return code: {result.returncode}")
+                print(f"   pgrep stdout: {repr(result.stdout)}")
+                print(f"   pgrep stderr: {repr(result.stderr)}")
             
             if result.returncode == 0:
                 pids = result.stdout.strip().split('\n')
                 pids = [p for p in pids if p]
-                print(f"   Found PIDs: {pids}")
+                if self.verbose:
+                    print(f"   Found PIDs: {pids}")
                 return len(pids) > 0
-            print("   No processes found via pgrep")
+            
+            if self.verbose:
+                print("   No processes found via pgrep")
             return False
+            
         except Exception as e:
-            print(f"   pgrep failed with exception: {e}")
+            if self.verbose:
+                print(f"   pgrep failed with exception: {e}")
+            
             # Fallback for systems without pgrep
             try:
-                print("   Trying ps aux fallback...")
+                if self.verbose:
+                    print("   Trying ps aux fallback...")
+                
                 result = subprocess.run(
                     ["ps", "aux"],
                     capture_output=True,
                     text=True,
                 )
-                print(f"   ps aux return code: {result.returncode}")
+                
+                if self.verbose:
+                    print(f"   ps aux return code: {result.returncode}")
+                
                 found = "syftbox daemon" in result.stdout
-                if found:
+                if found and self.verbose:
                     for line in result.stdout.split('\n'):
                         if 'syftbox' in line and 'grep' not in line:
                             print(f"   Found process: {line.strip()}")
-                print(f"   Result: {'Found' if found else 'Not found'} via ps aux")
+                
+                if self.verbose:
+                    print(f"   Result: {'Found' if found else 'Not found'} via ps aux")
+                
                 return found
+                
             except Exception as e2:
-                print(f"   ps aux also failed: {e2}")
+                if self.verbose:
+                    print(f"   ps aux also failed: {e2}")
                 return False
     
     def find_daemons(self) -> List[Dict[str, str]]:
         """Find all running syftbox processes."""
-        print("🔍 Looking for syftbox processes...")
+        if self.verbose:
+            print("🔍 Looking for syftbox processes...")
+        
         try:
             result = subprocess.run(
                 ["ps", "aux"],
@@ -126,11 +149,15 @@ class ProcessManager:
             
             processes = []
             lines = result.stdout.strip().split('\n')
-            print(f"   Found {len(lines)-1} total processes")
+            
+            if self.verbose:
+                print(f"   Found {len(lines)-1} total processes")
             
             for line in lines[1:]:  # Skip header
                 if 'syftbox' in line and 'grep' not in line:
-                    print(f"   Syftbox process found: {line[:80]}...")
+                    if self.verbose:
+                        print(f"   Syftbox process found: {line[:80]}...")
+                    
                     parts = line.split(None, 10)  # Split into max 11 parts
                     if len(parts) >= 11:
                         processes.append({
@@ -143,10 +170,14 @@ class ProcessManager:
                             'command': parts[10]
                         })
             
-            print(f"   Found {len(processes)} syftbox processes")
+            if self.verbose:
+                print(f"   Found {len(processes)} syftbox processes")
+            
             return processes
+            
         except Exception as e:
-            print(f"   Error finding daemons: {e}")
+            if self.verbose:
+                print(f"   Error finding daemons: {e}")
             return []
     
     def kill_daemon(self, pid: str, force: bool = False) -> bool:

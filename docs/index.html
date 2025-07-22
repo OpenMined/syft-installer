@@ -17,7 +17,7 @@
                     <a href="index.html" class="logo">syft-installer</a>
                 </div>
                 <div class="nav-links">
-                    <a href="quickstart.html">Quick Start</a>
+                    <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" target="_blank">Try in Colab</a>
                     <a href="api/index.html">API</a>
                     <a href="https://github.com/OpenMined/syft-installer" class="github-link">GitHub</a>
                 </div>
@@ -37,18 +37,17 @@
             <p class="hero-subtitle">A Python API for installing and managing the SyftBox daemon — perfect for notebooks and automation</p>
             
             <!-- Code Example -->
-            <div class="code-comparison">
-                <div class="code-before" style="width: 100%; max-width: 600px; margin: 0 auto;">
+            <div class="code-comparison" style="display: flex; justify-content: center;">
+                <div class="code-before" style="width: 100%; max-width: 600px; text-align: center;">
                     <div class="code-label">🚀 ONE-LINE installation</div>
-                    <pre><code class="language-python"># In Jupyter/Colab notebooks - automatic setup
-import syft_installer as si
-si.run()  # That's it!
+                    <pre><code class="language-python">
 
-# What happens:
-# ✓ Downloads SyftBox for your platform
-# ✓ Handles email authentication via OTP
-# ✓ Starts the SyftBox daemon
-# ✓ Ready to use!</code></pre>
+
+import syft_installer as si
+si.run()
+
+
+</code></pre>
                 </div>
             </div>
 
@@ -67,20 +66,20 @@ si.run()  # That's it!
     <section class="why-syftperm">
         <div class="container">
             <h2>Why We Built This</h2>
-            <p class="section-subtitle">Installing SyftBox manually can be complex. Syft-installer makes it a one-liner, especially for notebooks.</p>
+            <p class="section-subtitle">Build SyftBox-based APIs, apps, and libraries that "just work" for your users — no manual SyftBox setup required.</p>
             
             <div class="value-props">
                 <div class="value-prop">
-                    <h3>📓 Notebook-First Design</h3>
-                    <p>Built specifically for Jupyter and Google Colab. Automatic email detection in Colab, interactive OTP prompts, and clean output.</p>
+                    <h3>🚀 Zero-Setup Experience</h3>
+                    <p>Your users import your library and it works instantly. No "install SyftBox first" instructions, no separate daemon management, no confusing setup guides.</p>
                 </div>
                 <div class="value-prop">
-                    <h3>🔄 Smart Process Management</h3>
-                    <p>Detects running instances, handles restarts gracefully, and manages the daemon lifecycle without manual intervention.</p>
+                    <h3>🛠️ Eliminate Error Handling</h3>
+                    <p>No more awkward "SyftBox not running" errors when users try your API. The SyftBox network starts automatically when needed, seamlessly in the background.</p>
                 </div>
                 <div class="value-prop">
-                    <h3>🛡️ Secure Authentication</h3>
-                    <p>Email-based OTP authentication with JWT tokens. No passwords to manage, just verify your email and you're in.</p>
+                    <h3>📓 Perfect for Builders</h3>
+                    <p>Focus on your application logic, not infrastructure setup. Include syft-installer in your package and your users get the full SyftBox experience effortlessly.</p>
                 </div>
             </div>
         </div>
@@ -90,25 +89,61 @@ si.run()  # That's it!
     <section class="video-demo">
         <div class="container">
             <h2>See It In Action</h2>
-            <p class="section-subtitle">Watch how easy it is to install SyftBox with syft-installer</p>
+            <p class="section-subtitle">Watch automatic SyftBox installation across different environments</p>
             
-            <div class="demo-video-container">
-                <pre><code class="language-python"># In Google Colab
-import syft_installer as si
-si.run()
-
-# Output:
-# 🏠 SyftBox Installation
-# ━━━━━━━━━━━━━━━━━━━━━━━
-# Detected email: user@gmail.com
-# ⬇  Downloading SyftBox v0.8.7 for Darwin x86_64...
-# ✅ Download complete!
-# 
-# 📧 Enter the OTP sent to user@gmail.com: ABC123
-# ✅ Authentication successful!
-# 
-# 🚀 Starting SyftBox daemon...
-# ✅ SyftBox is running!</code></pre>
+            <div class="demo-tabs">
+                <div class="tab-nav">
+                    <button class="tab-btn active" data-tab="jupyter">Jupyter Notebook</button>
+                    <button class="tab-btn" data-tab="colab">Google Colab</button>
+                    <button class="tab-btn" data-tab="terminal">Terminal</button>
+                    <button class="tab-btn" data-tab="teardown">Automatic Teardown</button>
+                </div>
+                
+                <div class="tab-content">
+                    <div class="tab-pane active" id="jupyter">
+                        <div class="video-container">
+                            <h3>Jupyter Notebook Demo</h3>
+                            <p>Watch syft-installer automatically detect your environment and install SyftBox in a Jupyter notebook with rich interactive prompts.</p>
+                            <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                                    title="Jupyter Demo" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane" id="colab">
+                        <div class="video-container">
+                            <h3>Google Colab Demo</h3>
+                            <p>See how syft-installer automatically detects your Google account email and provides a seamless installation experience in Colab.</p>
+                            <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                                    title="Colab Demo" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane" id="terminal">
+                        <div class="video-container">
+                            <h3>Terminal Demo</h3>
+                            <p>Experience the clean terminal output and interactive OTP flow when installing SyftBox from the command line.</p>
+                            <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                                    title="Terminal Demo" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-pane" id="teardown">
+                        <div class="video-container">
+                            <h3>Automatic Teardown Demo</h3>
+                            <p>See how syft-installer can cleanly uninstall and remove all SyftBox components when no longer needed.</p>
+                            <iframe width="100%" height="400" src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                                    title="Teardown Demo" frameborder="0" 
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                    allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -122,74 +157,41 @@ si.run()
             <div class="api-examples">
                 <div class="api-example">
                     <h3>Quick Start</h3>
-                    <pre><code class="language-python"># Install and run in one line
-import syft_installer as si
-si.run()  # Installs (if needed) and starts SyftBox
+                    <pre><code class="language-python">import syft_installer as si
 
-# Or separate install and run steps
-si.install()        # Just install
+si.run()             # Install and start
+si.install()         # Install only
 si.install_and_run() # Explicit install + run</code></pre>
                 </div>
                 
                 <div class="api-example">
                     <h3>Status & Control</h3>
-                    <pre><code class="language-python"># Check status
-si.status()         # Show detailed status
-si.is_installed()   # Returns True/False
-si.is_running()     # Returns True/False
+                    <pre><code class="language-python">si.status()
+si.is_installed()
+si.is_running()
 
-# Control the daemon
-si.stop()           # Stop SyftBox
-si.run_if_stopped() # Start only if not running</code></pre>
+si.stop()
+si.run_if_stopped()</code></pre>
                 </div>
                 
                 <div class="api-example">
                     <h3>Non-Interactive Mode</h3>
-                    <pre><code class="language-python"># For automation and scripts
-session = si.install("email@example.com", interactive=False)
-# Returns InstallerSession object
-
-# Submit OTP programmatically
+                    <pre><code class="language-python">session = si.install("email@example.com", interactive=False)
 session.submit_otp("ABC123")
 
-# Session provides installation state
 print(session.email)
 print(session.is_authenticated)</code></pre>
                 </div>
                 
                 <div class="api-example">
                     <h3>Google Colab Integration</h3>
-                    <pre><code class="language-python"># Auto-detects Colab environment
-si.run()  # Automatically uses Google account email
-
-# Or specify email explicitly
-si.run("custom@email.com")
-
-# Colab-optimized UI with rich formatting</code></pre>
+                    <pre><code class="language-python">si.run()                    # Auto-detects Google email
+si.run("custom@email.com") # Specify email</code></pre>
                 </div>
                 
                 <div class="api-example">
                     <h3>Clean Uninstall</h3>
-                    <pre><code class="language-python"># Remove SyftBox completely
-si.uninstall()
-
-# Removes:
-# - SyftBox binary
-# - Configuration files
-# - Data directories (~/SyftBox)
-# - Authentication tokens</code></pre>
-                </div>
-                
-                <div class="api-example">
-                    <h3>Platform Support</h3>
-                    <pre><code class="language-python"># Automatic platform detection
-# Supports:
-# - macOS (Intel & Apple Silicon)
-# - Linux (x86_64 & ARM64)
-# - Google Colab
-# - Jupyter environments
-
-# Downloads the right binary automatically</code></pre>
+                    <pre><code class="language-python">si.uninstall()  # Removes everything</code></pre>
                 </div>
             </div>
         </div>
@@ -227,31 +229,30 @@ si.uninstall()
     <section class="real-example">
         <div class="container">
             <h2>Under the Hood</h2>
-            <p style="text-align: center; margin-bottom: var(--space-6);">Here's what syft-installer does behind the scenes:</p>
-            <pre><code class="language-python"># When you run si.run(), it:
+            <p style="text-align: center; margin-bottom: var(--space-6);">Here's what SyftBox daemon creates when installed:</p>
+            <pre><code class="language-python"># SyftBox creates a complete local environment:
 
-1. Detects your platform (macOS/Linux, Intel/ARM)
-2. Downloads the correct SyftBox binary
-3. Sends OTP to your email for verification  
-4. Creates necessary directories:
-   - ~/SyftBox (data directory)
-   - ~/.syftbox (config directory)
-   - ~/.local/bin/syftbox (binary location)
-5. Saves authentication tokens securely
-6. Starts the SyftBox daemon in background
-7. Monitors the process for successful startup
+~/.syftbox/
+  ├── config.json          # Authentication and server settings
+  ├── logs/                 # Daemon and application logs
+  └── cache/                # Downloaded binaries and temp files
 
-# All handled automatically with proper error handling!</code></pre>
+~/SyftBox/
+  ├── apps/                 # Installed SyftBox applications
+  ├── datasites/            # Connected data sources and sites
+  ├── apis/                 # API endpoints and services  
+  └── sync/                 # Synchronized data and files
+
+# Plus the daemon binary at ~/.local/bin/syftbox</code></pre>
         </div>
     </section>
 
     <!-- Tutorial CTA Section -->
     <section class="tutorial-cta gradient-feature">
         <div class="container">
-            <h2>Get Started Now</h2>
+            <h2>Try It Out</h2>
             
             <div class="cta-buttons">
-                <a href="quickstart.html" class="btn btn-primary btn-large">Quick Start Guide</a>
                 <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" class="btn btn-primary btn-large">Try in Google Colab</a>
             </div>
         </div>
@@ -279,6 +280,27 @@ si.uninstall()
     </footer>
 
     <script src="js/main.js"></script>
+    <script>
+        // Tab functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+            
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const targetTab = this.getAttribute('data-tab');
+                    
+                    // Remove active class from all buttons and panes
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabPanes.forEach(p => p.classList.remove('active'));
+                    
+                    // Add active class to clicked button and corresponding pane
+                    this.classList.add('active');
+                    document.getElementById(targetTab).classList.add('active');
+                });
+            });
+        });
+    </script>
     
     <!-- HubSpot Forms Script -->
     <script charset="utf-8" type="text/javascript" src="//js.hsforms.net/forms/embed/v2.js"></script>
