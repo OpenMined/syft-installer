@@ -246,11 +246,17 @@ class _SyftBox:
                 prog.update(95, "✅ SyftBox daemon started successfully")
                 prog.finish(f"✅ SyftBox installed and running for {config.email}")
             else:
-                # After fresh install, just start the daemon quietly
+                # After fresh install, continue with the same progress bar
+                # Start the daemon
                 self._process_manager.start(config, background=background)
                 
-                # Final status message
-                print(f"✅ SyftBox is now running for {config.email}")
+                # Show final running status
+                # Use the same progress bar format as in _install
+                bar = '█' * 50  # Full bar
+                padded_message = f"✅ SyftBox is now running!".ljust(40)
+                sys.stdout.write(f'\r{padded_message} |{bar}| 100%')
+                sys.stdout.write(' ' * 20)  # Clear any trailing characters
+                print()  # New line after final message
         else:
             display.show_already_running(config.email)
     
@@ -358,8 +364,6 @@ class _SyftBox:
             return
         
         # FIRST: Request OTP before doing anything else
-        print(f"📧 Requesting verification code for {email}...")
-        
         from syft_installer._auth import Authenticator
         auth = Authenticator(self.server)
         
@@ -369,8 +373,8 @@ class _SyftBox:
             display.show_error(f"Failed to request verification code: {str(e)}")
             return
         
-        # Get OTP input
-        otp = input("Enter Code from Email: ").strip()
+        # Get OTP input on same line
+        otp = input(f"📧 Enter code sent to {email}: ").strip()
         
         # Progress bar function
         def update_progress_bar(progress, width=50, message=""):
@@ -380,14 +384,18 @@ class _SyftBox:
             filled = int(width * progress / 100)
             bar = '█' * filled + '░' * (width - filled)
             
+            # Pad message to fixed width to prevent bar from jumping
+            message_width = 40
+            if message:
+                padded_message = message.ljust(message_width)
+            else:
+                padded_message = "Progress:".ljust(message_width)
+            
             # For Jupyter, use \r to return to beginning of line
             sys.stdout.write('\r')
             
-            # Write the progress bar
-            if message:
-                sys.stdout.write(f"{message} |{bar}| {progress:3.0f}%")
-            else:
-                sys.stdout.write(f"Progress: |{bar}| {progress:3.0f}%")
+            # Write the progress bar with consistent formatting
+            sys.stdout.write(f"{padded_message} |{bar}| {progress:3d}%")
             
             sys.stdout.flush()
         
@@ -460,6 +468,8 @@ class _SyftBox:
             
             # Final message
             update_progress_bar(100, message="✅ SyftBox installation complete!")
+            # Clear any remaining characters and move to new line
+            sys.stdout.write(' ' * 20)  # Clear any trailing characters
             print()  # New line after progress bar
             
         except Exception as e:
