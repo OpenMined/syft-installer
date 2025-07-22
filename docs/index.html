@@ -234,14 +234,16 @@ si.uninstall()
         </div>
     </section>
 
-    <!-- Under the Hood -->
-    <section class="under-the-hood">
-        <div class="container">
-            <h2>Under the Hood</h2>
-            <p class="section-subtitle">Here's what SyftBox daemon creates when installed</p>
-            
-            <div class="code-showcase">
-                <pre><code class="language-python"># SyftBox creates a complete local environment:
+    <!-- Dark Section Wrapper - Contains all dark sections with roaming spotlights -->
+    <div class="dark-section-wrapper">
+        <!-- Under the Hood -->
+        <section class="under-the-hood">
+            <div class="container">
+                <h2>Under the Hood</h2>
+                <p class="section-subtitle">Here's what SyftBox daemon creates when installed</p>
+                
+                <div class="code-showcase">
+                    <pre><code class="language-python"># SyftBox creates a complete local environment:
 
 ~/.syftbox/
   ├── config.json          # Authentication and server settings
@@ -255,43 +257,44 @@ si.uninstall()
   └── sync/                 # Synchronized data and files
 
 # Plus the daemon binary at ~/.local/bin/syftbox</code></pre>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-
-    <!-- Try It Out - Apple Style -->
-    <section style="padding: 8rem 0; background: #f5f5f7;">
-        <div style="max-width: 600px; margin: 0 auto; text-align: center; padding: 0 2rem;">
-            <h2 style="font-size: 3rem; font-weight: 600; color: #1d1d1f; margin-bottom: 2rem; letter-spacing: -0.02em;">try it out</h2>
-            <p style="font-size: 1.3rem; color: #6e6e73; margin-bottom: 3rem;">experience syftbox installation in google colab</p>
-            <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" 
-               style="display: inline-block; background: #007aff; color: white; padding: 1rem 2rem; border-radius: 980px; text-decoration: none; font-size: 1.1rem; font-weight: 500; transition: all 0.2s; border: none;" 
-               onmouseover="this.style.background='#0051d5'" 
-               onmouseout="this.style.background='#007aff'">open in colab</a>
-        </div>
-    </section>
-
-
-    <!-- Newsletter Section -->
-    <section class="newsletter-section">
-        <div class="container">
-            <div class="newsletter-content">
-                <h2>Stay Updated</h2>
-                <p>Get notified about new features and updates to syft-installer</p>
-                
-                <!-- HubSpot Form -->
-                <div id="hubspot-form-container"></div>
+        <!-- Try It Out - Apple Style -->
+        <section class="try-it-out">
+            <div class="container">
+                <div style="max-width: 600px; margin: 0 auto; text-align: center;">
+                    <h2 style="font-size: 3rem; font-weight: 600; color: white; margin-bottom: 2rem; letter-spacing: -0.02em;">try it out</h2>
+                    <p style="font-size: 1.3rem; color: rgba(255, 255, 255, 0.8); margin-bottom: 3rem;">experience syftbox installation in google colab</p>
+                    <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" 
+                       style="display: inline-block; background: white; color: #0a0a0a; padding: 1rem 2rem; border-radius: 980px; text-decoration: none; font-size: 1.1rem; font-weight: 500; transition: all 0.2s; border: none;" 
+                       onmouseover="this.style.background='rgba(255,255,255,0.9)'" 
+                       onmouseout="this.style.background='white'">open in colab</a>
+                </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>Built with ❤️ by <a href="https://openmined.org">OpenMined</a></p>
-        </div>
-    </footer>
+        <!-- Newsletter Section -->
+        <section class="newsletter-section-dark">
+            <div class="container">
+                <div class="newsletter-content">
+                    <h2>Stay Updated</h2>
+                    <p>Get notified about new features and updates to syft-installer</p>
+                    
+                    <!-- HubSpot Form -->
+                    <div id="hubspot-form-container"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer-dark">
+            <div class="container">
+                <p>Built with ❤️ by <a href="https://openmined.org">OpenMined</a></p>
+            </div>
+        </footer>
+    </div>
 
     <script src="js/main.js"></script>
     <script>
