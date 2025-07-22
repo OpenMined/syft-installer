@@ -58,25 +58,11 @@ class Downloader:
                 # In some environments (like Colab), stdout may not have fileno
                 is_terminal = False
             
-            if is_terminal:
-                with Progress(
-                    "[progress.description]{task.description}",
-                    DownloadColumn(),
-                    TransferSpeedColumn(),
-                ) as progress:
-                    task = progress.add_task("Downloading", total=total_size)
-                    
-                    with open(dest, "wb") as f:
-                        for chunk in response.iter_content(chunk_size=self.chunk_size):
-                            if chunk:
-                                f.write(chunk)
-                                progress.update(task, advance=len(chunk))
-            else:
-                # Simple download without progress
-                with open(dest, "wb") as f:
-                    for chunk in response.iter_content(chunk_size=self.chunk_size):
-                        if chunk:
-                            f.write(chunk)
+            # Always use silent download for clean experience
+            with open(dest, "wb") as f:
+                for chunk in response.iter_content(chunk_size=self.chunk_size):
+                    if chunk:
+                        f.write(chunk)
                             
         except requests.exceptions.RequestException as e:
             raise DownloadError(f"Failed to download binary: {str(e)}")

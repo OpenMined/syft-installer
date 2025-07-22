@@ -6,7 +6,7 @@
 
 ```python
 import syft_installer as si
-si.run()
+si.install_and_run()
 ```
 
 ## Why We Built This
@@ -41,7 +41,7 @@ Forget about infrastructure — focus on your data science. The entire Syft netw
 import syft_installer as si
 
 # Quick Start
-si.run()             # Install and start
+si.install_and_run() # Install and start
 si.install()         # Install only
 si.install_and_run() # Explicit install + run
 
@@ -53,8 +53,8 @@ si.stop()
 si.run_if_stopped()
 
 # Google Colab Integration
-si.run()                    # Auto-detects Google email
-si.run("custom@email.com") # Specify email
+si.install_and_run()                    # Auto-detects Google email
+si.install_and_run("custom@email.com") # Specify email
 
 # Non-Interactive Mode
 session = si.install("email@example.com", interactive=False)

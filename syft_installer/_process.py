@@ -230,19 +230,34 @@ class ProcessManager:
             else:
                 # Unix-like systems
                 self.stderr_file = tempfile.NamedTemporaryFile(mode='w+', delete=False, prefix='syftbox_stderr_')
-                print(f"   Stderr will be logged to: {self.stderr_file.name}")
                 
-                # Check if we're in Google Colab
-                in_colab = False
+                if self.verbose:
+                    print(f"   Stderr will be logged to: {self.stderr_file.name}")
+                
+                # Check if we're in a restricted environment (Colab, Jupyter, etc.)
+                restricted_env = False
                 try:
                     import google.colab
-                    in_colab = True
+                    restricted_env = True
                 except ImportError:
-                    pass
+                    # Test if preexec_fn works - it fails in some notebook environments
+                    try:
+                        # Quick test to see if preexec_fn works
+                        test_proc = subprocess.Popen(
+                            ['echo', 'test'], 
+                            stdout=subprocess.DEVNULL, 
+                            stderr=subprocess.DEVNULL,
+                            preexec_fn=lambda: None
+                        )
+                        test_proc.wait()
+                    except (OSError, AttributeError, TypeError):
+                        restricted_env = True
                 
-                if in_colab:
-                    print("   ⚠️  Detected Google Colab environment - using simple subprocess")
-                    # In Colab, use minimal subprocess options
+                if self.verbose and restricted_env:
+                    print("   ⚠️  Detected restricted environment - using simple subprocess")
+                
+                if restricted_env:
+                    # In restricted environments, use minimal subprocess options
                     self.process = subprocess.Popen(
                         cmd,
                         stdout=subprocess.DEVNULL,

@@ -44,7 +44,7 @@
 
 
 import syft_installer as si
-si.run()
+si.install_and_run()
 
 
 </code></pre>
@@ -159,7 +159,7 @@ si.run()
                     <h3>Quick Start</h3>
                     <pre><code class="language-python">import syft_installer as si
 
-si.run()             # Install and start
+si.install_and_run() # Install and start
 si.install()         # Install only
 si.install_and_run() # Explicit install + run</code></pre>
                 </div>
@@ -185,8 +185,8 @@ print(session.is_authenticated)</code></pre>
                 
                 <div class="api-example">
                     <h3>Google Colab Integration</h3>
-                    <pre><code class="language-python">si.run()                    # Auto-detects Google email
-si.run("custom@email.com") # Specify email</code></pre>
+                    <pre><code class="language-python">si.install_and_run()                    # Auto-detects Google email
+si.install_and_run("custom@email.com") # Specify email</code></pre>
                 </div>
                 
                 <div class="api-example">
