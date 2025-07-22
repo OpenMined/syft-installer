@@ -954,6 +954,127 @@ code {
     align-items: center;
 }
 
+.newsletter-section-dark h2 {
+    font-size: 3rem;
+    font-weight: 600;
+    margin-bottom: var(--space-3);
+    letter-spacing: -0.02em;
+    color: white;
+}
+
+.newsletter-section-dark p {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: var(--space-8);
+}
+
+/* HubSpot Form Styling for Dark Theme */
+.newsletter-section-dark .hs-form-field label {
+    display: none !important;
+}
+
+.newsletter-section-dark .hs-form-field input[type="text"],
+.newsletter-section-dark .hs-form-field input[type="email"],
+.newsletter-section-dark .hs-form-field textarea {
+    width: 100%;
+    padding: var(--space-3) var(--space-4);
+    font-size: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    color: white;
+    transition: all 0.2s ease;
+}
+
+.newsletter-section-dark .hs-form-field input::placeholder,
+.newsletter-section-dark .hs-form-field textarea::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.newsletter-section-dark .hs-form-field input:focus,
+.newsletter-section-dark .hs-form-field textarea:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.newsletter-section-dark .hs-submit input[type="submit"] {
+    background: white;
+    color: #0a0a0a;
+    border: none;
+    padding: var(--space-2) var(--space-6);
+    border-radius: 980px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: var(--space-4);
+}
+
+.newsletter-section-dark .hs-submit input[type="submit"]:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+}
+
+.newsletter-section-dark .hs-richtext {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.newsletter-section-dark .hs-richtext a {
+    color: white;
+    text-decoration: underline;
+}
+
+.newsletter-section-dark .hs-error-msgs {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-1) 0 0 0;
+}
+
+.newsletter-section-dark .hs-error-msg {
+    color: #ff6b6b;
+    font-size: 0.875rem;
+}
+
+/* Hide unnecessary HubSpot elements */
+.newsletter-section-dark .hs-form-required,
+.newsletter-section-dark .submitted-message {
+    display: none !important;
+}
+
+/* Center and constrain the HubSpot form container */
+.newsletter-section-dark #hubspot-form-container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.newsletter-section-dark .hs-form {
+    text-align: left;
+}
+
+.newsletter-section-dark .hs-form-field {
+    margin-bottom: var(--space-3);
+}
+
+.newsletter-section-dark .hs-input {
+    font-family: var(--font-sans);
+}
+
+/* Checkbox styling */
+.newsletter-section-dark input[type="checkbox"] {
+    margin-right: var(--space-1);
+}
+
+.newsletter-section-dark .hs-form-booleancheckbox label {
+    display: inline !important;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.875rem;
+}
+
 .newsletter-section::before {
     content: '';
     position: absolute;
@@ -1083,6 +1204,33 @@ footer a {
 
 footer a:hover {
     text-decoration: underline;
+}
+
+/* Footer Dark Theme */
+.footer-dark {
+    padding: var(--space-6) 0;
+    background: transparent;
+    color: var(--color-white);
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-dark p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+}
+
+.footer-dark a {
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.footer-dark a:hover {
+    color: white;
+    text-decoration: none;
 }
 
 /* ================================
