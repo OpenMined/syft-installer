@@ -46,14 +46,22 @@ class LiveReloadHandler(SimpleHTTPRequestHandler):
             
             # Keep connection open and wait for reload signal
             try:
-                while True:
+                timeout_counter = 0
+                while timeout_counter < 300:  # 30 second timeout
                     if hasattr(self.server, 'reload_flag') and self.server.reload_flag:
                         self.wfile.write(b'data: reload\n\n')
                         self.wfile.flush()
                         self.server.reload_flag = False
                         break
+                    
+                    # Send heartbeat every 10 seconds
+                    if timeout_counter % 100 == 0:
+                        self.wfile.write(b': heartbeat\n\n')
+                        self.wfile.flush()
+                    
                     time.sleep(0.1)
-            except (BrokenPipeError, ConnectionResetError):
+                    timeout_counter += 1
+            except (BrokenPipeError, ConnectionResetError, OSError):
                 pass
             return
         
@@ -73,15 +81,45 @@ class LiveReloadHandler(SimpleHTTPRequestHandler):
                 live_reload_script = """
 <script>
 (function() {
-    const source = new EventSource('/livereload');
-    source.onmessage = function(e) {
-        if (e.data === 'reload') {
-            location.reload();
+    let reconnectTimer = null;
+    
+    function connect() {
+        const source = new EventSource('/livereload');
+        
+        source.onmessage = function(e) {
+            if (e.data === 'reload') {
+                source.close();
+                location.reload();
+            }
+        };
+        
+        source.onerror = function(e) {
+            source.close();
+            // Only try to reconnect if the page is still visible
+            if (document.visibilityState === 'visible') {
+                clearTimeout(reconnectTimer);
+                reconnectTimer = setTimeout(connect, 1000);
+            }
+        };
+        
+        // Clean up on page unload
+        window.addEventListener('beforeunload', function() {
+            source.close();
+            clearTimeout(reconnectTimer);
+        });
+    }
+    
+    // Only connect if page is visible
+    if (document.visibilityState === 'visible') {
+        connect();
+    }
+    
+    // Reconnect when page becomes visible
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            connect();
         }
-    };
-    source.onerror = function() {
-        setTimeout(() => location.reload(), 1000);
-    };
+    });
 })();
 </script>
 </body>"""
