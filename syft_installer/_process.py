@@ -301,15 +301,27 @@ class ProcessManager:
                             stdin=subprocess.DEVNULL
                         )
                     else:
-                        # Regular terminal - use full daemon mode
-                        self.process = subprocess.Popen(
-                            cmd,
-                            stdout=subprocess.DEVNULL,
-                            stderr=self.stderr_file,
-                            stdin=subprocess.DEVNULL,
-                            start_new_session=True,
-                            preexec_fn=os.setsid
-                        )
+                        # Regular terminal - try full daemon mode, fallback if needed
+                        try:
+                            self.process = subprocess.Popen(
+                                cmd,
+                                stdout=subprocess.DEVNULL,
+                                stderr=self.stderr_file,
+                                stdin=subprocess.DEVNULL,
+                                start_new_session=True,
+                                preexec_fn=os.setsid
+                            )
+                        except (OSError, subprocess.SubprocessError) as e:
+                            if self.verbose:
+                                print(f"   ⚠️  Full daemon mode failed ({e}), using simple mode")
+                            # Fallback to simpler subprocess without preexec_fn
+                            self.process = subprocess.Popen(
+                                cmd,
+                                stdout=subprocess.DEVNULL,
+                                stderr=self.stderr_file,
+                                stdin=subprocess.DEVNULL,
+                                start_new_session=True
+                            )
                 
                 # Give it a moment to start
                 time.sleep(1)
