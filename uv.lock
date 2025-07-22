@@ -638,7 +638,7 @@ wheels = [
 
 [[package]]
 name = "syft-installer"
-version = "0.8.21"
+version = "0.8.23"
 source = { editable = "." }
 dependencies = [
     { name = "pydantic" },
