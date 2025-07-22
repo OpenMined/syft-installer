@@ -737,36 +737,39 @@ code {
 .dark-section-wrapper::before {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: 
-        radial-gradient(800px 800px at 20% 10%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
-        radial-gradient(600px 600px at 80% 30%, rgba(118, 75, 162, 0.12) 0%, transparent 50%),
-        radial-gradient(700px 700px at 60% 70%, rgba(240, 147, 251, 0.10) 0%, transparent 50%),
-        radial-gradient(900px 900px at 10% 80%, rgba(252, 203, 144, 0.08) 0%, transparent 50%);
-    filter: blur(40px);
+        radial-gradient(circle 600px at 20% 10%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+        radial-gradient(circle 500px at 80% 30%, rgba(118, 75, 162, 0.12) 0%, transparent 50%),
+        radial-gradient(circle 450px at 50% 40%, rgba(240, 147, 251, 0.10) 0%, transparent 50%),
+        radial-gradient(circle 700px at 10% 80%, rgba(252, 203, 144, 0.08) 0%, transparent 50%),
+        radial-gradient(circle 400px at 40% 60%, rgba(213, 126, 235, 0.12) 0%, transparent 50%),
+        radial-gradient(circle 550px at 70% 70%, rgba(102, 126, 234, 0.10) 0%, transparent 50%),
+        radial-gradient(circle 500px at 30% 30%, rgba(240, 147, 251, 0.08) 0%, transparent 50%),
+        radial-gradient(circle 600px at 90% 60%, rgba(252, 203, 144, 0.06) 0%, transparent 50%);
     animation: spotlightRoam 35s ease-in-out infinite;
     pointer-events: none;
-    transform-origin: center;
 }
 
 .dark-section-wrapper::after {
     content: '';
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     background: 
-        radial-gradient(750px 750px at 90% 20%, rgba(213, 126, 235, 0.12) 0%, transparent 50%),
-        radial-gradient(650px 650px at 30% 50%, rgba(102, 126, 234, 0.10) 0%, transparent 50%),
-        radial-gradient(800px 800px at 50% 90%, rgba(240, 147, 251, 0.08) 0%, transparent 50%);
-    filter: blur(50px);
+        radial-gradient(circle 550px at 90% 20%, rgba(213, 126, 235, 0.12) 0%, transparent 50%),
+        radial-gradient(circle 480px at 30% 50%, rgba(102, 126, 234, 0.10) 0%, transparent 50%),
+        radial-gradient(circle 600px at 60% 50%, rgba(240, 147, 251, 0.08) 0%, transparent 50%),
+        radial-gradient(circle 450px at 15% 40%, rgba(252, 203, 144, 0.10) 0%, transparent 50%),
+        radial-gradient(circle 500px at 75% 80%, rgba(118, 75, 162, 0.08) 0%, transparent 50%),
+        radial-gradient(circle 400px at 45% 20%, rgba(240, 147, 251, 0.06) 0%, transparent 50%);
     animation: spotlightRoam2 30s ease-in-out infinite reverse;
     pointer-events: none;
-    transform-origin: center;
 }
 
 @keyframes spotlightRoam {
