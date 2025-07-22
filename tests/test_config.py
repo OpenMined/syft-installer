@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 from unittest.mock import patch, Mock
 
-from syft_installer.config import Config
+from syft_installer._config import Config
 
 
 class TestConfig:

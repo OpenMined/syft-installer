@@ -6,8 +6,8 @@ This script tests the OTP authentication flow step by step.
 
 import sys
 import time
-from syft_installer.auth import Authenticator
-from syft_installer.validators import validate_email, validate_otp
+from syft_installer._auth import Authenticator
+from syft_installer._validators import validate_email, validate_otp
 
 def test_auth_flow():
     """Test the authentication flow interactively."""

@@ -4,9 +4,9 @@ from unittest.mock import Mock, patch, MagicMock, call
 import subprocess
 from pathlib import Path
 
-from syft_installer.launcher import Launcher, start_client, stop_client, restart_client, is_running
-from syft_installer.config import Config
-from syft_installer.exceptions import BinaryNotFoundError
+from syft_installer._launcher import Launcher, start_client, stop_client, restart_client, is_running
+from syft_installer._config import Config
+from syft_installer._exceptions import BinaryNotFoundError
 
 
 class TestLauncher:
@@ -223,8 +223,8 @@ class TestLauncher:
 class TestModuleFunctions:
     """Test module-level convenience functions."""
     
-    @patch('syft_installer.launcher._launcher.start')
-    @patch('syft_installer.config.Config.load')
+    @patch('syft_installer._launcher._launcher.start')
+    @patch('syft_installer._config.Config.load')
     def test_start_client_with_config(self, mock_load, mock_start):
         """Test start_client with provided config."""
         config = Config(
@@ -238,8 +238,8 @@ class TestModuleFunctions:
         mock_load.assert_not_called()
         mock_start.assert_called_once_with(config, True)
     
-    @patch('syft_installer.launcher._launcher.start')
-    @patch('syft_installer.config.Config.load')
+    @patch('syft_installer._launcher._launcher.start')
+    @patch('syft_installer._config.Config.load')
     def test_start_client_load_config(self, mock_load, mock_start):
         """Test start_client loading config."""
         config = Config(
@@ -254,7 +254,7 @@ class TestModuleFunctions:
         mock_load.assert_called_once()
         mock_start.assert_called_once_with(config, False)
     
-    @patch('syft_installer.config.Config.load')
+    @patch('syft_installer._config.Config.load')
     def test_start_client_no_config(self, mock_load):
         """Test start_client with no config found."""
         mock_load.return_value = None
@@ -262,14 +262,14 @@ class TestModuleFunctions:
         with pytest.raises(ValueError, match="No configuration found"):
             start_client()
     
-    @patch('syft_installer.launcher._launcher.stop')
+    @patch('syft_installer._launcher._launcher.stop')
     def test_stop_client(self, mock_stop):
         """Test stop_client."""
         stop_client()
         mock_stop.assert_called_once()
     
-    @patch('syft_installer.launcher._launcher.restart')
-    @patch('syft_installer.config.Config.load')
+    @patch('syft_installer._launcher._launcher.restart')
+    @patch('syft_installer._config.Config.load')
     def test_restart_client(self, mock_load, mock_restart):
         """Test restart_client."""
         config = Config(
@@ -284,7 +284,7 @@ class TestModuleFunctions:
         mock_load.assert_called_once()
         mock_restart.assert_called_once_with(config)
     
-    @patch('syft_installer.launcher._launcher.is_running')
+    @patch('syft_installer._launcher._launcher.is_running')
     def test_is_running_function(self, mock_is_running):
         """Test is_running function."""
         mock_is_running.return_value = True

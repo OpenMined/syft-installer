@@ -1,7 +1,7 @@
 """Unit tests for validators module."""
 import pytest
 
-from syft_installer.validators import (
+from syft_installer._validators import (
     validate_email,
     validate_otp,
     sanitize_otp,
