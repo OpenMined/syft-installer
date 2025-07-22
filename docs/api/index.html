@@ -3,577 +3,1239 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>API Reference - Syft Installer</title>
-    <meta name="description" content="Complete API reference for syft-installer - all classes, methods, and parameters">
+    <title>API Reference - SyftPerm</title>
+    <link rel="icon" type="image/svg+xml" href="../images/syftbox-logo.svg">
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .api-method {
+            background: white;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 12px;
+            padding: var(--space-5);
+            margin-bottom: var(--space-5);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .api-method:hover {
+            box-shadow: var(--shadow-md);
+        }
+        
+        .method-signature {
+            background: var(--color-dark);
+            color: white;
+            padding: var(--space-3) var(--space-4);
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 1.2rem;
+            margin-bottom: var(--space-4);
+            display: inline-block;
+        }
+        
+        .method-description {
+            font-size: 1.1rem;
+            color: var(--color-gray);
+            margin-bottom: var(--space-4);
+            line-height: 1.6;
+        }
+        
+        .params-section,
+        .returns-section {
+            background: var(--color-light-gray);
+            border-radius: 8px;
+            padding: var(--space-3);
+            margin-bottom: var(--space-3);
+        }
+        
+        .section-title {
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-gray);
+            margin-bottom: var(--space-2);
+        }
+        
+        .param-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .param-table th {
+            text-align: left;
+            padding: var(--space-2);
+            border-bottom: 2px solid rgba(0,0,0,0.1);
+            font-weight: 600;
+            color: var(--color-dark);
+        }
+        
+        .param-table td {
+            padding: var(--space-2);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            vertical-align: top;
+        }
+        
+        .param-name {
+            font-family: var(--font-mono);
+            color: var(--color-primary);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .param-type {
+            font-family: var(--font-mono);
+            color: var(--color-accent);
+            font-size: 0.9rem;
+        }
+        
+        .param-desc {
+            color: var(--color-gray);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        
+        .example-section {
+            margin-top: var(--space-4);
+        }
+        
+        .example-section pre {
+            margin: 0;
+            background: var(--color-code-bg);
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: var(--space-3);
+        }
+        
+        .api-nav {
+            position: sticky;
+            top: 20px;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: var(--space-3);
+            margin-bottom: var(--space-4);
+        }
+        
+        .api-nav h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-gray);
+            margin-bottom: var(--space-2);
+        }
+        
+        .api-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .api-nav a {
+            display: block;
+            padding: var(--space-1) 0;
+            color: var(--color-dark);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .api-nav a:hover {
+            color: var(--color-primary);
+        }
+        
+        .api-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: var(--space-6);
+            align-items: start;
+        }
+        
+        @media (max-width: 1024px) {
+            .api-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .api-nav {
+                position: static;
+                margin-bottom: var(--space-6);
+            }
+        }
+    </style>
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <div class="header-content">
-            <div class="logo">
-                <img src="../images/syft-logo.svg" alt="Syft" class="logo-img">
-                <a href="../index.html" class="logo-text">syft-installer</a>
+        <nav>
+            <div class="nav-wrapper">
+                <div class="logo-group">
+                    <img src="../images/syftbox-logo.svg" alt="SyftBox" class="syftbox-logo">
+                    <a href="../index.html" class="logo">SyftPerm</a>
+                </div>
+                <div class="nav-links">
+                    <a href="../quickstart.html">Quick Start</a>
+                    <a href="../permission-reasons.html">Permission Reasons</a>
+                    <a href="index.html" class="active">API</a>
+                    <a href="https://github.com/OpenMined/syft-perm" class="github-link">GitHub</a>
+                </div>
             </div>
-            <nav>
-                <a href="../index.html">Home</a>
-                <a href="../quickstart.html">Quick Start</a>
-                <a href="#installer-class">Installer</a>
-                <a href="#functions">Functions</a>
-                <a href="https://github.com/OpenMined/syft-installer" target="_blank">GitHub</a>
-            </nav>
-        </div>
+        </nav>
     </header>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <h1>📚 API Reference</h1>
-                <p class="hero-subtitle">Complete reference for all classes, methods, and configuration options in syft-installer.</p>
-            </div>
-        </section>
+    <!-- API Hero -->
+    <section class="api-hero">
+        <div class="container">
+            <h1>API Reference</h1>
+            <p class="hero-subtitle">Complete documentation for every method, parameter, and return type.</p>
+        </div>
+    </section>
 
-        <!-- Quick Reference -->
-        <section class="section">
-            <div class="section-content">
-                <h2>⚡ Quick Reference</h2>
-                <p>Jump to what you need:</p>
-                
-                <div class="api-grid">
-                    <div class="api-section">
-                        <h3><a href="#install-function">si.install()</a></h3>
-                        <p>One-liner installation function</p>
-                        <pre><code class="language-python">si.install(
-    install_mode="interactive",
-    install_apps=None,
-    debug=False
-)</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3><a href="#installer-class">Installer Class</a></h3>
-                        <p>Main installer class for step-by-step control</p>
-                        <pre><code class="language-python">installer = si.Installer(
-    email=None,
-    headless=False
-)</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3><a href="#environment-variables">Environment Variables</a></h3>
-                        <p>Configuration via environment</p>
-                        <pre><code class="language-bash">INSTALL_MODE=interactive
-INSTALL_APPS=app1,app2
-DEBUG=true</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3><a href="#exceptions">Exceptions</a></h3>
-                        <p>Error handling and custom exceptions</p>
-                        <pre><code class="language-python">try:
-    si.install()
-except si.InstallationError as e:
-    print(f"Error: {e}")</code></pre>
-                    </div>
+    <!-- API Content -->
+    <section class="api-section">
+        <div class="container">
+            <div class="api-content">
+                <!-- Navigation Sidebar -->
+                <aside class="api-nav">
+                    <h3>Quick Navigation</h3>
+                    <ul>
+                        <li><a href="#module-functions">Module Functions</a></li>
+                        <li><a href="#grant-permissions">Granting Permissions</a></li>
+                        <li><a href="#check-permissions">Checking Permissions</a></li>
+                        <li><a href="#revoke-permissions">Revoking Permissions</a></li>
+                        <li><a href="#utility-methods">Utility Methods</a></li>
+                        <li><a href="#files-api">Files API</a></li>
+                        <li><a href="#types">Types & Constants</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Main Content -->
+                <div class="api-main">
+                    <!-- Module Functions -->
+                    <section id="module-functions">
+                        <h2>Module Functions</h2>
+                        
+                        <div class="api-method">
+                            <div class="method-signature">syft_perm.open(path)</div>
+                            <p class="method-description">
+                                Opens a file or folder with SyftBox permissions. Returns a SyftFile or SyftFolder object
+                                that provides methods for managing permissions.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">path</span></td>
+                                            <td><span class="param-type">str | Path</span></td>
+                                            <td><span class="param-desc">Path to the file or folder. Can be a local path, relative path, or syft:// URL</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">SyftFile | SyftFolder</span></td>
+                                            <td><span class="param-desc">SyftFile object if path is a file, SyftFolder object if path is a directory</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Raises</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">ValueError</span></td>
+                                            <td><span class="param-desc">If the path cannot be resolved or doesn't exist</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Open a local file
+file = syft_perm.open("data.csv")
+
+# Open a folder
+folder = syft_perm.open("my_project/")
+
+# Open a remote file
+remote_file = syft_perm.open("syft://alice@datasite.org/data.csv")</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Granting Permissions -->
+                    <section id="grant-permissions">
+                        <h2>Granting Permissions</h2>
+                        
+                        <div class="api-method">
+                            <div class="method-signature">file.grant_read_access(user)</div>
+                            <p class="method-description">
+                                Grants read-only access to a user. The user can view the file contents but cannot modify or delete it.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user, or "*" to grant public access</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">None</span></td>
+                                            <td><span class="param-desc">This method modifies permissions in-place</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Grant read access to a specific user
+file.grant_read_access("bob@company.com")
+
+# Make file publicly readable
+file.grant_read_access("*")</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.grant_create_access(user)</div>
+                            <p class="method-description">
+                                Grants create access to a user. Includes read permission plus the ability to create new files in folders.
+                                For files, this is equivalent to read access.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">None</span></td>
+                                            <td><span class="param-desc">This method modifies permissions in-place</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Allow user to create files in a folder
+folder.grant_create_access("alice@company.com")</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.grant_write_access(user)</div>
+                            <p class="method-description">
+                                Grants write access to a user. Includes read and create permissions plus the ability to modify existing files.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">None</span></td>
+                                            <td><span class="param-desc">This method modifies permissions in-place</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Allow user to edit files
+file.grant_write_access("team@company.com")</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.grant_admin_access(user)</div>
+                            <p class="method-description">
+                                Grants admin access to a user. Includes all permissions plus the ability to manage permissions for other users.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">None</span></td>
+                                            <td><span class="param-desc">This method modifies permissions in-place</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Grant full control to admin
+file.grant_admin_access("admin@company.com")</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Checking Permissions -->
+                    <section id="check-permissions">
+                        <h2>Checking Permissions</h2>
+                        
+                        <div class="api-method">
+                            <div class="method-signature">file.has_read_access(user)</div>
+                            <p class="method-description">
+                                Checks if a user has read access to the file or folder.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user to check</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">bool</span></td>
+                                            <td><span class="param-desc">True if the user has read access, False otherwise</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python">if file.has_read_access("bob@company.com"):
+    print("Bob can read this file")</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.has_create_access(user)</div>
+                            <p class="method-description">
+                                Checks if a user has create access. For folders, this means they can create new files.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user to check</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">bool</span></td>
+                                            <td><span class="param-desc">True if the user has create access, False otherwise</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.has_write_access(user)</div>
+                            <p class="method-description">
+                                Checks if a user has write access to modify the file.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user to check</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">bool</span></td>
+                                            <td><span class="param-desc">True if the user has write access, False otherwise</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.has_admin_access(user)</div>
+                            <p class="method-description">
+                                Checks if a user has admin access to manage permissions.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user to check</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">bool</span></td>
+                                            <td><span class="param-desc">True if the user has admin access, False otherwise</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Revoking Permissions -->
+                    <section id="revoke-permissions">
+                        <h2>Revoking Permissions</h2>
+                        
+                        <div class="api-method">
+                            <div class="method-signature">file.revoke_read_access(user)</div>
+                            <p class="method-description">
+                                Revokes read access from a user. This removes all permissions for the user.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user, or "*" to revoke public access</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">None</span></td>
+                                            <td><span class="param-desc">This method modifies permissions in-place</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.revoke_create_access(user)</div>
+                            <p class="method-description">
+                                Revokes create access from a user. The user retains read access if they had higher permissions.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">None</span></td>
+                                            <td><span class="param-desc">This method modifies permissions in-place</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.revoke_write_access(user)</div>
+                            <p class="method-description">
+                                Revokes write access from a user. The user retains read and create access if they had higher permissions.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">None</span></td>
+                                            <td><span class="param-desc">This method modifies permissions in-place</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.revoke_admin_access(user)</div>
+                            <p class="method-description">
+                                Revokes admin access from a user. The user retains read, create, and write access.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">None</span></td>
+                                            <td><span class="param-desc">This method modifies permissions in-place</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Utility Methods -->
+                    <section id="utility-methods">
+                        <h2>Utility Methods</h2>
+                        
+                        <div class="api-method">
+                            <div class="method-signature">file.explain_permissions(user)</div>
+                            <p class="method-description">
+                                Provides a detailed explanation of why a user has or doesn't have specific permissions,
+                                including inheritance chains and pattern matches.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">user</span></td>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Email address of the user to explain permissions for</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">str</span></td>
+                                            <td><span class="param-desc">Human-readable explanation of the user's permissions</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python">explanation = file.explain_permissions("alice@example.com")
+print(explanation)
+# Output: alice@example.com has the following permissions:
+# - read access from: /data/syft.pub.yaml (pattern: '*.csv')</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.move_file_and_its_permissions(new_path)</div>
+                            <p class="method-description">
+                                Moves a file to a new location while preserving its permissions. Creates any necessary
+                                syft.pub.yaml files to maintain the same access controls.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">new_path</span></td>
+                                            <td><span class="param-type">str | Path</span></td>
+                                            <td><span class="param-desc">Destination path for the file</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">SyftFile</span></td>
+                                            <td><span class="param-desc">New SyftFile object at the destination path</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Move file and keep permissions
+new_file = file.move_file_and_its_permissions("archive/data.csv")</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">file.share</div>
+                            <p class="method-description">
+                                Property that displays an interactive permission sharing widget in Jupyter notebooks.
+                                Shows current permissions and allows adding/removing users.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2"><em>This is a property, not a method - no parameters</em></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">IPython.display.HTML</span></td>
+                                            <td><span class="param-desc">Interactive widget (in Jupyter) or None (in console)</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Display sharing widget in Jupyter
+file.share  # Note: property, not method call</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Files API -->
+                    <section id="files-api">
+                        <h2>Files API</h2>
+                        
+                        <div class="api-method">
+                            <div class="method-signature">syft_perm.files</div>
+                            <p class="method-description">
+                                Global instance providing access to file browsing functionality (files only).
+                                In Jupyter notebooks, displays an interactive file browser widget showing only files.
+                            </p>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Display interactive file browser (files only)
+syft_perm.files</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">syft_perm.folders</div>
+                            <p class="method-description">
+                                Global instance providing access to folder browsing functionality (folders only).
+                                In Jupyter notebooks, displays an interactive file browser widget showing only folders.
+                            </p>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Display interactive file browser (folders only)
+syft_perm.folders</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">syft_perm.files_and_folders</div>
+                            <p class="method-description">
+                                Global instance providing access to file and folder browsing functionality.
+                                In Jupyter notebooks, displays an interactive file browser widget showing both files and folders.
+                                This is the original behavior of the old .files API.
+                            </p>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Display interactive file browser (both files and folders)
+syft_perm.files_and_folders</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">syft_perm.files.all()</div>
+                            <p class="method-description">
+                                Returns all files (not folders) with permissions in your SyftBox datasites directory.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="2"><em>No parameters</em></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">list[dict]</span></td>
+                                            <td><span class="param-desc">List of file metadata dictionaries containing name, path, permissions, size, etc.</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">syft_perm.files.get(limit=50, offset=0)</div>
+                            <p class="method-description">
+                                Returns a paginated list of files with permissions.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">limit</span></td>
+                                            <td><span class="param-type">int</span></td>
+                                            <td><span class="param-desc">Number of items per page (default: 50)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="param-name">offset</span></td>
+                                            <td><span class="param-type">int</span></td>
+                                            <td><span class="param-desc">Starting index (default: 0)</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">dict</span></td>
+                                            <td><span class="param-desc">Dictionary with 'files', 'total_count', 'offset', 'limit', and 'has_more' keys</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">syft_perm.files.search(query=None, admin=None, filetype=None)</div>
+                            <p class="method-description">
+                                Search files by query string and/or filter by admin user and file type.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">query</span></td>
+                                            <td><span class="param-type">str | None</span></td>
+                                            <td><span class="param-desc">Search term for file names and paths</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="param-name">admin</span></td>
+                                            <td><span class="param-type">str | None</span></td>
+                                            <td><span class="param-desc">Filter by admin email address</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="param-name">filetype</span></td>
+                                            <td><span class="param-type">str | None</span></td>
+                                            <td><span class="param-desc">Filter by type: 'file' or 'folder'</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">Files</span></td>
+                                            <td><span class="param-desc">Filtered Files instance (displays as widget in Jupyter)</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">syft_perm.files[start:end]</div>
+                            <p class="method-description">
+                                Slice notation for selecting files by index range.
+                            </p>
+                            
+                            <div class="params-section">
+                                <div class="section-title">Parameters</div>
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Type</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">start</span></td>
+                                            <td><span class="param-type">int</span></td>
+                                            <td><span class="param-desc">Starting index (inclusive)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="param-name">end</span></td>
+                                            <td><span class="param-type">int</span></td>
+                                            <td><span class="param-desc">Ending index (exclusive)</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="returns-section">
+                                <div class="section-title">Returns</div>
+                                <table class="param-table">
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-type">Files</span></td>
+                                            <td><span class="param-desc">Files instance with selected range</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                            <div class="example-section">
+                                <div class="section-title">Example</div>
+                                <pre><code class="language-python"># Get first 10 files
+first_ten = syft_perm.files[0:10]</code></pre>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Types and Constants -->
+                    <section id="types">
+                        <h2>Types & Constants</h2>
+                        
+                        <div class="api-method">
+                            <div class="method-signature">Permission Levels</div>
+                            <p class="method-description">
+                                SyftPerm uses a hierarchical permission system where each level includes all permissions from lower levels:
+                            </p>
+                            
+                            <div class="params-section">
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Level</th>
+                                            <th>Value</th>
+                                            <th>Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">read</span></td>
+                                            <td><span class="param-type">"read"</span></td>
+                                            <td><span class="param-desc">Can view file contents</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="param-name">create</span></td>
+                                            <td><span class="param-type">"create"</span></td>
+                                            <td><span class="param-desc">Read + can create new files in folders</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="param-name">write</span></td>
+                                            <td><span class="param-type">"write"</span></td>
+                                            <td><span class="param-desc">Read + Create + can modify existing files</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="param-name">admin</span></td>
+                                            <td><span class="param-type">"admin"</span></td>
+                                            <td><span class="param-desc">Read + Create + Write + can manage permissions</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="api-method">
+                            <div class="method-signature">Special Users</div>
+                            <p class="method-description">
+                                Special user identifiers with specific meanings:
+                            </p>
+                            
+                            <div class="params-section">
+                                <table class="param-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Identifier</th>
+                                            <th>Meaning</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td><span class="param-name">*</span></td>
+                                            <td><span class="param-desc">Public access (anyone can access)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td><span class="param-name">user@example.com</span></td>
+                                            <td><span class="param-desc">Specific user identified by email</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
                 </div>
-            </div>
-        </section>
-
-        <!-- Install Function -->
-        <section id="install-function" class="section">
-            <div class="section-content">
-                <h2>🚀 si.install() Function</h2>
-                <p>The main entry point for simple SyftBox installation.</p>
-                
-                <div class="api-section">
-                    <h3>Signature</h3>
-                    <pre><code class="language-python">def install(
-    install_mode: str = "interactive",
-    install_apps: Optional[str] = None,
-    debug: bool = False,
-    **kwargs
-) -> bool</code></pre>
-                </div>
-                
-                <div class="api-section">
-                    <h3>Parameters</h3>
-                    <table class="api-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Default</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>install_mode</code></td>
-                                <td>str</td>
-                                <td>"interactive"</td>
-                                <td>Installation mode: "interactive", "download-only", or "setup-only"</td>
-                            </tr>
-                            <tr>
-                                <td><code>install_apps</code></td>
-                                <td>str | None</td>
-                                <td>None</td>
-                                <td>Comma-separated list of apps to install (e.g., "dataroom,whisper")</td>
-                            </tr>
-                            <tr>
-                                <td><code>debug</code></td>
-                                <td>bool</td>
-                                <td>False</td>
-                                <td>Enable debug output and logging</td>
-                            </tr>
-                            <tr>
-                                <td><code>**kwargs</code></td>
-                                <td>dict</td>
-                                <td>{}</td>
-                                <td>Additional arguments passed to Installer class</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="api-section">
-                    <h3>Returns</h3>
-                    <p><code>bool</code> - True if installation completed successfully, False otherwise</p>
-                </div>
-                
-                <div class="api-section">
-                    <h3>Examples</h3>
-                    <pre><code class="language-python"># Simple installation
-success = si.install()
-
-# Download only
-si.install(install_mode="download-only")
-
-# Install with apps and debug
-si.install(
-    install_apps="dataroom,whisper", 
-    debug=True
-)
-
-# Pass additional arguments to Installer
-si.install(email="user@example.com", headless=True)</code></pre>
-                </div>
-            </div>
-        </section>
-
-        <!-- Installer Class -->
-        <section id="installer-class" class="section">
-            <div class="section-content">
-                <h2>🔧 Installer Class</h2>
-                <p>Main class for programmatic control over SyftBox installation.</p>
-                
-                <div class="api-section">
-                    <h3>Constructor</h3>
-                    <pre><code class="language-python">class Installer:
-    def __init__(
-        self,
-        email: Optional[str] = None,
-        headless: bool = False,
-        config: Optional[Dict] = None
-    )</code></pre>
-                    
-                    <table class="api-table">
-                        <thead>
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Type</th>
-                                <th>Default</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>email</code></td>
-                                <td>str | None</td>
-                                <td>None</td>
-                                <td>Email address for authentication. If None, will prompt user</td>
-                            </tr>
-                            <tr>
-                                <td><code>headless</code></td>
-                                <td>bool</td>
-                                <td>False</td>
-                                <td>Run in headless mode (no interactive prompts)</td>
-                            </tr>
-                            <tr>
-                                <td><code>config</code></td>
-                                <td>dict | None</td>
-                                <td>None</td>
-                                <td>Custom configuration dictionary</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="api-section">
-                    <h3>Methods</h3>
-                    
-                    <h4>install()</h4>
-                    <p>Perform complete installation process.</p>
-                    <pre><code class="language-python">def install(
-    self,
-    install_mode: str = "interactive",
-    install_apps: Optional[str] = None,
-    debug: bool = False
-) -> bool</code></pre>
-                    
-                    <h4>request_otp()</h4>
-                    <p>Request OTP to be sent to user's email.</p>
-                    <pre><code class="language-python">def request_otp(self) -> bool</code></pre>
-                    
-                    <h4>verify_otp(otp: str)</h4>
-                    <p>Verify the OTP received via email.</p>
-                    <pre><code class="language-python">def verify_otp(self, otp: str) -> bool</code></pre>
-                    
-                    <h4>download()</h4>
-                    <p>Download SyftBox binary for the current platform.</p>
-                    <pre><code class="language-python">def download(self) -> bool</code></pre>
-                    
-                    <h4>setup()</h4>
-                    <p>Set up SyftBox (assumes binary is already downloaded).</p>
-                    <pre><code class="language-python">def setup(
-    self,
-    install_apps: Optional[str] = None
-) -> bool</code></pre>
-                    
-                    <h4>start_client()</h4>
-                    <p>Start the SyftBox client process.</p>
-                    <pre><code class="language-python">def start_client(
-    self,
-    background: bool = False
-) -> bool</code></pre>
-                </div>
-                
-                <div class="api-section">
-                    <h3>Properties</h3>
-                    
-                    <table class="api-table">
-                        <thead>
-                            <tr>
-                                <th>Property</th>
-                                <th>Type</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><code>is_authenticated</code></td>
-                                <td>bool</td>
-                                <td>True if user is authenticated with valid token</td>
-                            </tr>
-                            <tr>
-                                <td><code>is_downloaded</code></td>
-                                <td>bool</td>
-                                <td>True if SyftBox binary is downloaded</td>
-                            </tr>
-                            <tr>
-                                <td><code>is_running</code></td>
-                                <td>bool</td>
-                                <td>True if SyftBox client is currently running</td>
-                            </tr>
-                            <tr>
-                                <td><code>version</code></td>
-                                <td>str</td>
-                                <td>Version of the downloaded/installed SyftBox</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                
-                <div class="api-section">
-                    <h3>Examples</h3>
-                    <pre><code class="language-python"># Step-by-step installation
-installer = si.Installer(email="user@example.com")
-
-if installer.request_otp():
-    otp = input("Enter OTP: ")
-    if installer.verify_otp(otp):
-        installer.start_client(background=True)
-        print("Installation complete!")
-
-# Check status
-if installer.is_authenticated:
-    print("User is authenticated")
-
-if installer.is_running:
-    print(f"SyftBox {installer.version} is running")</code></pre>
-                </div>
-            </div>
-        </section>
-
-        <!-- Environment Variables -->
-        <section id="environment-variables" class="section">
-            <div class="section-content">
-                <h2>🌍 Environment Variables</h2>
-                <p>Configure syft-installer behavior using environment variables (matches install.sh):</p>
-                
-                <table class="api-table">
-                    <thead>
-                        <tr>
-                            <th>Variable</th>
-                            <th>Default</th>
-                            <th>Description</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td><code>INSTALL_MODE</code></td>
-                            <td>"interactive"</td>
-                            <td>Installation mode: "interactive", "download-only", or "setup-only"</td>
-                        </tr>
-                        <tr>
-                            <td><code>INSTALL_APPS</code></td>
-                            <td>None</td>
-                            <td>Comma-separated list of apps to install (e.g., "dataroom,whisper")</td>
-                        </tr>
-                        <tr>
-                            <td><code>DEBUG</code></td>
-                            <td>False</td>
-                            <td>Enable debug output (set to "true" or "1")</td>
-                        </tr>
-                        <tr>
-                            <td><code>ARTIFACT_BASE_URL</code></td>
-                            <td>official URL</td>
-                            <td>Custom base URL for downloading SyftBox artifacts</td>
-                        </tr>
-                        <tr>
-                            <td><code>SYFT_EMAIL</code></td>
-                            <td>None</td>
-                            <td>Email address for authentication (avoids prompting)</td>
-                        </tr>
-                        <tr>
-                            <td><code>SYFT_OTP</code></td>
-                            <td>None</td>
-                            <td>OTP for authentication (use with caution in automation)</td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <div class="api-section">
-                    <h3>Usage Examples</h3>
-                    <pre><code class="language-bash"># Set environment variables
-export INSTALL_MODE=download-only
-export INSTALL_APPS=dataroom,whisper
-export DEBUG=true
-
-# Run Python script
-python -c "import syft_installer as si; si.install()"</code></pre>
-                    
-                    <pre><code class="language-python"># Or set in Python
-import os
-import syft_installer as si
-
-os.environ["INSTALL_MODE"] = "setup-only"
-os.environ["DEBUG"] = "true"
-
-si.install()</code></pre>
-                </div>
-            </div>
-        </section>
-
-        <!-- Exceptions -->
-        <section id="exceptions" class="section">
-            <div class="section-content">
-                <h2>⚠️ Exceptions</h2>
-                <p>Custom exceptions raised by syft-installer:</p>
-                
-                <div class="api-section">
-                    <h3>InstallationError</h3>
-                    <p>Base exception for all installation-related errors.</p>
-                    <pre><code class="language-python">class InstallationError(Exception):
-    """Base exception for installation errors"""</code></pre>
-                </div>
-                
-                <div class="api-section">
-                    <h3>AuthenticationError</h3>
-                    <p>Raised when authentication fails (invalid email, OTP, etc.).</p>
-                    <pre><code class="language-python">class AuthenticationError(InstallationError):
-                    """Authentication failed"""</code></pre>
-                </div>
-                
-                <div class="api-section">
-                    <h3>DownloadError</h3>
-                    <p>Raised when binary download fails.</p>
-                    <pre><code class="language-python">class DownloadError(InstallationError):
-                    """Binary download failed"""</code></pre>
-                </div>
-                
-                <div class="api-section">
-                    <h3>SetupError</h3>
-                    <p>Raised when setup/configuration fails.</p>
-                    <pre><code class="language-python">class SetupError(InstallationError):
-                    """Setup/configuration failed"""</code></pre>
-                </div>
-                
-                <div class="api-section">
-                    <h3>Error Handling Example</h3>
-                    <pre><code class="language-python">import syft_installer as si
-from syft_installer.exceptions import (
-    AuthenticationError,
-    DownloadError,
-    SetupError
-)
-
-try:
-    installer = si.Installer(email="user@example.com")
-    installer.install()
-    
-except AuthenticationError as e:
-    print(f"Authentication failed: {e}")
-    # Handle auth error (retry, different email, etc.)
-    
-except DownloadError as e:
-    print(f"Download failed: {e}")
-    # Handle download error (retry, check connection, etc.)
-    
-except SetupError as e:
-    print(f"Setup failed: {e}")
-    # Handle setup error (permissions, disk space, etc.)
-    
-except si.InstallationError as e:
-    print(f"General installation error: {e}")
-    # Handle any other installation error</code></pre>
-                </div>
-            </div>
-        </section>
-
-        <!-- Advanced Usage -->
-        <section id="advanced" class="section">
-            <div class="section-content">
-                <h2>🚀 Advanced Usage Patterns</h2>
-                
-                <div class="api-grid">
-                    <div class="api-section">
-                        <h3>Custom Configuration</h3>
-                        <pre><code class="language-python"># Custom configuration
-config = {
-    "download_url": "https://custom.url",
-    "install_dir": "/custom/path",
-    "timeout": 300
-}
-
-installer = si.Installer(config=config)
-installer.install()</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3>Retry Logic</h3>
-                        <pre><code class="language-python"># Retry with backoff
-import time
-from syft_installer.exceptions import DownloadError
-
-for attempt in range(3):
-    try:
-        si.install()
-        break
-    except DownloadError:
-        time.sleep(2 ** attempt)
-        if attempt == 2:
-            raise</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3>Progress Monitoring</h3>
-                        <pre><code class="language-python"># Monitor installation progress
-installer = si.Installer()
-
-print("Requesting OTP...")
-installer.request_otp()
-
-otp = input("Enter OTP: ")
-print("Verifying OTP...")
-installer.verify_otp(otp)
-
-print("Starting client...")
-installer.start_client()</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3>Conditional Installation</h3>
-                        <pre><code class="language-python"># Install only if not already running
-installer = si.Installer()
-
-if not installer.is_running:
-    print("SyftBox not running, installing...")
-    installer.install()
-else:
-    print("SyftBox already running!")</code></pre>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Documentation</h3>
-                <ul>
-                    <li><a href="../index.html">Home</a></li>
-                    <li><a href="../quickstart.html">Quick Start</a></li>
-                    <li><a href="../core-concept.html">Architecture</a></li>
-                    <li><a href="#installer-class">API Reference</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Community</h3>
-                <ul>
-                    <li><a href="https://github.com/OpenMined/syft-installer">GitHub</a></li>
-                    <li><a href="https://github.com/OpenMined/syft-installer/issues">Issues</a></li>
-                    <li><a href="https://openmined.org">OpenMined</a></li>
-                    <li><a href="https://slack.openmined.org">Slack</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Resources</h3>
-                <ul>
-                    <li><a href="https://syftbox.openmined.org">SyftBox</a></li>
-                    <li><a href="https://docs.syftbox.openmined.org">SyftBox Docs</a></li>
-                    <li><a href="https://pypi.org/project/syft-installer/">PyPI</a></li>
-                </ul>
             </div>
         </div>
-        
-        <div class="footer-bottom">
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
             <p>Built with ❤️ by <a href="https://openmined.org">OpenMined</a></p>
-            <p>Licensed under Apache 2.0</p>
         </div>
     </footer>
 
     <script src="../js/main.js"></script>
-    <style>
-        .api-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-        }
-        
-        .api-table th,
-        .api-table td {
-            border: 1px solid var(--color-gray-300);
-            padding: 12px;
-            text-align: left;
-        }
-        
-        .api-table th {
-            background-color: var(--color-gray-100);
-            font-weight: 600;
-        }
-        
-        .api-table code {
-            background-color: var(--color-gray-100);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.875em;
-        }
-    </style>
 </body>
 </html>

@@ -3,389 +3,154 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick Start - Syft Installer</title>
-    <meta name="description" content="Get started with syft-installer in minutes - step-by-step installation and usage guide">
+    <title>Quick Start - SyftPerm</title>
+    <link rel="icon" type="image/svg+xml" href="images/syftbox-logo.svg">
     <link rel="stylesheet" href="css/style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Header -->
     <header>
-        <div class="header-content">
-            <div class="logo">
-                <img src="images/syft-logo.svg" alt="Syft" class="logo-img">
-                <a href="index.html" class="logo-text">syft-installer</a>
+        <nav>
+            <div class="nav-wrapper">
+                <div class="logo-group">
+                    <img src="images/syftbox-logo.svg" alt="SyftBox" class="syftbox-logo">
+                    <a href="index.html" class="logo">SyftPerm</a>
+                </div>
+                <div class="nav-links">
+                    <a href="quickstart.html" class="active">Quick Start</a>
+                    <a href="permission-reasons.html">Permission Reasons</a>
+                    <a href="api/index.html">API</a>
+                    <a href="https://github.com/OpenMined/syft-perm" class="github-link">GitHub</a>
+                </div>
             </div>
-            <nav>
-                <a href="index.html">Home</a>
-                <a href="#installation">Install</a>
-                <a href="#usage">Usage</a>
-                <a href="api/">API</a>
-                <a href="https://github.com/OpenMined/syft-installer" target="_blank">GitHub</a>
-            </nav>
-        </div>
+        </nav>
     </header>
 
-    <main>
-        <!-- Hero Section -->
-        <section class="hero">
-            <div class="hero-content">
-                <h1>🚀 Quick Start Guide</h1>
-                <p class="hero-subtitle">Get SyftBox installed and running in your environment in under 5 minutes.</p>
-            </div>
-        </section>
+    <!-- Quick Start Content -->
+    <section class="quickstart-hero">
+        <div class="container">
+            <h1>1-Minute Quick Start</h1>
+            <p class="hero-subtitle">From zero to managing permissions like a pro.</p>
+        </div>
+    </section>
 
-        <!-- Prerequisites -->
-        <section id="prerequisites" class="section">
-            <div class="section-content">
-                <h2>📋 Prerequisites</h2>
-                <p>Before you begin, make sure you have:</p>
-                
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <h3>🐍 Python 3.8+</h3>
-                        <p>Python 3.8 or higher installed on your system</p>
-                        <pre><code class="language-bash">python --version</code></pre>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <h3>📦 pip</h3>
-                        <p>Python package installer (usually comes with Python)</p>
-                        <pre><code class="language-bash">pip --version</code></pre>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <h3>📧 Email Access</h3>
-                        <p>Access to an email account for OTP verification</p>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <h3>🌐 Internet Connection</h3>
-                        <p>For downloading SyftBox and package dependencies</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Installation -->
-        <section id="installation" class="section">
-            <div class="section-content">
-                <h2>⚡ Installation</h2>
-                <p>Install syft-installer using pip:</p>
-                
-                <div class="install-command">
-                    <span class="install-label">Install via pip</span>
-                    <code>pip install syft-installer</code>
-                    <button class="copy-btn" data-copy="pip install syft-installer">📋</button>
-                </div>
-                
-                <p>That's it! You're ready to start installing SyftBox programmatically.</p>
-            </div>
-        </section>
-
-        <!-- Basic Usage -->
-        <section id="usage" class="section">
-            <div class="section-content">
-                <h2>🎯 Basic Usage</h2>
-                
-                <div class="examples-tabs">
-                    <div class="tab-buttons">
-                        <button class="tab-btn active" data-tab="simple">Simple Install</button>
-                        <button class="tab-btn" data-tab="email">With Email</button>
-                        <button class="tab-btn" data-tab="full-control">Full Control</button>
-                    </div>
-                    
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="simple">
-                            <h3>🚀 One-Line Installation</h3>
-                            <p>The simplest way to install SyftBox:</p>
-                            <pre><code class="language-python">import syft_installer as si
-
-# One-liner installation - prompts for email and OTP
-si.install()</code></pre>
-                            <p>This will:</p>
-                            <ul>
-                                <li>✅ Prompt for your email address</li>
-                                <li>✅ Send OTP to your email</li>
-                                <li>✅ Prompt for OTP verification</li>
-                                <li>✅ Download and install SyftBox</li>
-                                <li>✅ Start the SyftBox client</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="tab-pane" id="email">
-                            <h3>📧 Pre-configured Email</h3>
-                            <p>Skip the email prompt by providing it upfront:</p>
-                            <pre><code class="language-python">import syft_installer as si
-
-# Pre-configure email to skip one prompt
-installer = si.Installer(email="your.email@example.com")
-installer.install()  # Only prompts for OTP</code></pre>
-                            <p>This approach is perfect when you know the email address in advance.</p>
-                        </div>
-                        
-                        <div class="tab-pane" id="full-control">
-                            <h3>🔧 Full Programmatic Control</h3>
-                            <p>Break down the installation into individual steps:</p>
-                            <pre><code class="language-python">import syft_installer as si
-
-# Create installer instance
-installer = si.Installer(email="your.email@example.com")
-
-# Step 1: Request OTP
-installer.request_otp()
-print("OTP sent to your email!")
-
-# Step 2: Verify OTP (get from email)
-otp = input("Enter OTP from email: ")
-installer.verify_otp(otp)
-
-# Step 3: Start the client
-installer.start_client(background=True)</code></pre>
-                            <p>Perfect for automation or when you need custom logic between steps.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Environment-Specific Guides -->
-        <section id="environments" class="section">
-            <div class="section-content">
-                <h2>🌍 Environment-Specific Guides</h2>
-                <p>Choose the guide that matches your environment:</p>
-                
-                <div class="workflow-examples">
-                    <div class="workflow-item">
-                        <div class="workflow-icon">📓</div>
-                        <div class="workflow-content">
-                            <h3>Jupyter Notebooks</h3>
-                            <p>Works seamlessly in Jupyter environments with automatic detection:</p>
-                            <pre><code class="language-python"># In a Jupyter cell
-import syft_installer as si
-si.install()  # Uses widgets for input when available</code></pre>
-                        </div>
-                    </div>
-                    
-                    <div class="workflow-item">
-                        <div class="workflow-icon">☁️</div>
-                        <div class="workflow-content">
-                            <h3>Google Colab</h3>
-                            <p>Optimized for Colab with widget-based authentication:</p>
-                            <pre><code class="language-python"># In a Colab cell
-!pip install syft-installer
-
-import syft_installer as si
-si.install()  # Automatically adapts to Colab environment</code></pre>
-                        </div>
-                    </div>
-                    
-                    <div class="workflow-item">
-                        <div class="workflow-icon">🖥️</div>
-                        <div class="workflow-content">
-                            <h3>Terminal/Command Line</h3>
-                            <p>Falls back to the familiar TUI when in terminal:</p>
-                            <pre><code class="language-python"># In a Python script or interactive terminal
-import syft_installer as si
-si.install()  # Uses syftbox login TUI in terminal</code></pre>
-                        </div>
-                    </div>
-                    
-                    <div class="workflow-item">
-                        <div class="workflow-icon">🤖</div>
-                        <div class="workflow-content">
-                            <h3>CI/CD & Automation</h3>
-                            <p>Headless mode for automated deployments:</p>
-                            <pre><code class="language-python"># For automated environments
-installer = si.Installer(
-    email="bot@company.com",
-    headless=True
-)
-installer.request_otp()
-# Get OTP programmatically (email API, etc.)
-installer.verify_otp(retrieved_otp)
-installer.start_client(background=True)</code></pre>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Advanced Configuration -->
-        <section id="advanced" class="section">
-            <div class="section-content">
-                <h2>⚙️ Advanced Configuration</h2>
-                <p>Customize the installation with additional options:</p>
-                
-                <div class="api-grid">
-                    <div class="api-section">
-                        <h3>Installation Modes</h3>
-                        <pre><code class="language-python"># Download only (no setup)
-si.install(install_mode="download-only")
-
-# Setup only (binary already downloaded)
-si.install(install_mode="setup-only")
-
-# Interactive (default)
-si.install(install_mode="interactive")</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3>App Installation</h3>
-                        <pre><code class="language-python"># Install specific SyftBox apps
-si.install(install_apps="dataroom,whisper")
-
-# Install multiple apps
-si.install(
-    install_apps="calculator,dataroom,whisper"
-)</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3>Debug Mode</h3>
-                        <pre><code class="language-python"># Enable debug output
-si.install(debug=True)
-
-# Or set environment variable
-import os
-os.environ["DEBUG"] = "true"
-si.install()</code></pre>
-                    </div>
-                    
-                    <div class="api-section">
-                        <h3>Environment Variables</h3>
-                        <pre><code class="language-bash"># Set before running Python
-export INSTALL_MODE=download-only
-export INSTALL_APPS=app1,app2
-export DEBUG=true
-export ARTIFACT_BASE_URL=custom.url</code></pre>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Troubleshooting -->
-        <section id="troubleshooting" class="section">
-            <div class="section-content">
-                <h2>🔧 Troubleshooting</h2>
-                <p>Common issues and their solutions:</p>
-                
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <h3>❌ Installation Fails</h3>
-                        <p><strong>Problem:</strong> Package installation fails</p>
-                        <p><strong>Solution:</strong> Try upgrading pip and installing with verbose output:</p>
-                        <pre><code class="language-bash">pip install --upgrade pip
-pip install -v syft-installer</code></pre>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <h3>📧 OTP Not Received</h3>
-                        <p><strong>Problem:</strong> OTP email doesn't arrive</p>
-                        <p><strong>Solution:</strong> Check spam folder and verify email address:</p>
-                        <pre><code class="language-python">installer = si.Installer(email="correct@email.com")
-installer.request_otp()  # Try again</code></pre>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <h3>🚫 Permission Errors</h3>
-                        <p><strong>Problem:</strong> Permission denied during installation</p>
-                        <p><strong>Solution:</strong> Use user installation or virtual environment:</p>
-                        <pre><code class="language-bash">pip install --user syft-installer
-# or create virtual environment first</code></pre>
-                    </div>
-                    
-                    <div class="feature-card">
-                        <h3>🐍 Python Version Issues</h3>
-                        <p><strong>Problem:</strong> Compatibility issues</p>
-                        <p><strong>Solution:</strong> Ensure Python 3.8+ is being used:</p>
-                        <pre><code class="language-bash">python3 --version
-pip3 install syft-installer</code></pre>
-                    </div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 2rem;">
-                    <p>Still having issues? <a href="https://github.com/OpenMined/syft-installer/issues" target="_blank">Report a bug on GitHub</a> or ask for help on <a href="https://slack.openmined.org" target="_blank">OpenMined Slack</a>.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Next Steps -->
-        <section id="next-steps" class="cta-section">
-            <div class="section-content">
-                <h2>🎉 What's Next?</h2>
-                <p>You've successfully installed SyftBox! Here's what you can do next:</p>
-                
-                <div class="quickstart-steps">
-                    <div class="step">
-                        <div class="step-number">1</div>
-                        <div class="step-content">
-                            <h3>Explore the API</h3>
-                            <p>Learn about all available methods and configurations</p>
-                        </div>
-                    </div>
-                    
-                    <div class="step">
-                        <div class="step-number">2</div>
-                        <div class="step-content">
-                            <h3>Try Examples</h3>
-                            <p>Check out real-world usage scenarios and patterns</p>
-                        </div>
-                    </div>
-                    
-                    <div class="step">
-                        <div class="step-number">3</div>
-                        <div class="step-content">
-                            <h3>Start Building</h3>
-                            <p>Use SyftBox for your federated learning projects</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cta-buttons">
-                    <a href="api/" class="btn btn-primary btn-large">View API Reference →</a>
-                    <a href="index.html#examples" class="btn btn-secondary btn-large">See More Examples</a>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer>
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Documentation</h3>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="api/">API Reference</a></li>
-                    <li><a href="core-concept.html">Architecture</a></li>
-                    <li><a href="#troubleshooting">Troubleshooting</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Community</h3>
-                <ul>
-                    <li><a href="https://github.com/OpenMined/syft-installer">GitHub</a></li>
-                    <li><a href="https://github.com/OpenMined/syft-installer/issues">Issues</a></li>
-                    <li><a href="https://openmined.org">OpenMined</a></li>
-                    <li><a href="https://slack.openmined.org">Slack</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Resources</h3>
-                <ul>
-                    <li><a href="https://syftbox.openmined.org">SyftBox</a></li>
-                    <li><a href="https://docs.syftbox.openmined.org">SyftBox Docs</a></li>
-                    <li><a href="https://pypi.org/project/syft-installer/">PyPI</a></li>
-                </ul>
+    <!-- Step 1: Install -->
+    <section class="quickstart-step">
+        <div class="container">
+            <h2><span class="step-number">1</span> Install SyftPerm</h2>
+            <div class="install-command">
+                <code>pip install syft-perm</code>
+                <button class="copy-btn" data-copy="pip install syft-perm">Copy</button>
             </div>
         </div>
-        
-        <div class="footer-bottom">
+    </section>
+
+    <!-- Step 2: Your First Permission -->
+    <section class="quickstart-step alt-bg">
+        <div class="container">
+            <h2><span class="step-number">2</span> Grant Your First Permission</h2>
+            <p>Open any file and grant access to a colleague:</p>
+            <pre><code class="language-python">import syft_perm
+
+# Open a file
+file = syft_perm.open("research_data.csv")
+
+# Grant read access to a colleague
+file.grant_read_access("colleague@university.edu")
+
+# That's it! They can now read the file.</code></pre>
+        </div>
+    </section>
+
+    <!-- Step 3: Check Permissions -->
+    <section class="quickstart-step">
+        <div class="container">
+            <h2><span class="step-number">3</span> Check Who Has Access</h2>
+            <p>See who can access your files:</p>
+            <pre><code class="language-python"># Check if someone has access
+if file.has_read_access("reviewer@journal.org"):
+    print("Reviewer can read the file")
+
+# Explain why someone has/doesn't have access
+explanation = file.explain_permissions("reviewer@journal.org")
+print(explanation)</code></pre>
+        </div>
+    </section>
+
+    <!-- Step 4: Folder Permissions -->
+    <section class="quickstart-step alt-bg">
+        <div class="container">
+            <h2><span class="step-number">4</span> Manage Entire Projects</h2>
+            <p>Set permissions on folders - all files inside automatically inherit:</p>
+            <pre><code class="language-python"># Open a project folder
+project = syft_perm.open("ml_project/")
+
+# Grant different levels of access
+project.grant_read_access("intern@company.com")      # Can only read
+project.grant_write_access("engineer@company.com")   # Can read & write
+project.grant_admin_access("lead@company.com")       # Full control
+
+# All files in the folder now have these permissions!</code></pre>
+        </div>
+    </section>
+
+    <!-- Step 5: Advanced -->
+    <section class="quickstart-step">
+        <div class="container">
+            <h2><span class="step-number">5</span> Real-World Example</h2>
+            <p>Here's how a research team might use SyftPerm:</p>
+            <pre><code class="language-python"># Set up a clinical trial project
+trial = syft_perm.open("clinical_trial_2024/")
+
+# External reviewers can only read
+trial.grant_read_access("ethics@hospital.org")
+trial.grant_read_access("reviewer@fda.gov")
+
+# Research assistants can add data
+trial.grant_write_access("assistant1@lab.edu")
+trial.grant_write_access("assistant2@lab.edu")
+
+# PI has full control
+trial.grant_admin_access("pi@university.edu")
+
+# Make summary public (but not raw data!)
+summary = syft_perm.open("clinical_trial_2024/summary.pdf")
+summary.grant_read_access("*")  # Anyone can read the summary</code></pre>
+        </div>
+    </section>
+
+    <!-- What's Next -->
+    <section class="next-steps">
+        <div class="container">
+            <h2>You're Ready! 🎉</h2>
+            <p>You now know everything you need to start using SyftPerm.</p>
+            
+            <div class="next-links">
+                <div class="next-link">
+                    <h3>🚀 10-Minute Tutorial</h3>
+                    <p>Master SyftPerm with our comprehensive interactive tutorial.</p>
+                    <a href="https://github.com/OpenMined/syft-perm/blob/main/syft-perm-10-minute-tutorial.ipynb" class="btn btn-primary">Launch Tutorial</a>
+                </div>
+                
+                <div class="next-link">
+                    <h3>📖 Full API Reference</h3>
+                    <p>Explore all available methods and options.</p>
+                    <a href="api/index.html" class="btn btn-secondary">View API Docs</a>
+                </div>
+                
+                <div class="next-link">
+                    <h3>💬 Need Help?</h3>
+                    <p>Join the OpenMined community.</p>
+                    <a href="https://openmined.org" class="btn btn-secondary">Get Support</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
             <p>Built with ❤️ by <a href="https://openmined.org">OpenMined</a></p>
-            <p>Licensed under Apache 2.0</p>
         </div>
     </footer>
 

@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Permission Reasons - syft-perm</title>
+    <link rel="icon" type="image/svg+xml" href="images/syftbox-logo.svg">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* API Layout Styles */
+        .api-content {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: var(--space-6);
+            align-items: start;
+        }
+        
+        .api-nav {
+            position: sticky;
+            top: 100px;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: var(--space-3);
+            margin-bottom: var(--space-4);
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        
+        .api-nav h3 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--color-gray);
+            margin-bottom: var(--space-2);
+            font-weight: 700;
+        }
+        
+        .api-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .api-nav a {
+            display: block;
+            padding: var(--space-1) 0;
+            color: var(--color-dark);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .api-nav a:hover {
+            color: var(--color-primary);
+        }
+        
+        .api-nav a.active {
+            color: var(--color-primary);
+            font-weight: 600;
+            border-left: 3px solid var(--color-primary);
+            padding-left: var(--space-2);
+            margin-left: calc(-1 * var(--space-2));
+        }
+        
+        @media (max-width: 1024px) {
+            .api-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .api-nav {
+                position: static;
+                margin-bottom: var(--space-6);
+                max-height: none;
+            }
+        }
+        
+        .api-main {
+            min-width: 0; /* Prevent overflow in grid */
+        }
+        
+        .reason-section {
+            margin-bottom: 60px;
+            background: var(--color-white);
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .reason-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid var(--color-light-gray);
+        }
+        
+        .reason-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--color-light-gray);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+        
+        .reason-title {
+            flex: 1;
+        }
+        
+        .reason-title h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: var(--color-dark);
+        }
+        
+        .reason-title p {
+            margin: 4px 0 0 0;
+            color: var(--color-gray);
+            font-size: 1rem;
+        }
+        
+        .filesystem-diagram {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 24px 0;
+            font-family: 'SF Mono', Consolas, Monaco, monospace;
+            font-size: 13px;
+            line-height: 1.8;
+            overflow-x: auto;
+            white-space: pre;
+        }
+        
+        .file-tree {
+            color: #374151;
+        }
+        
+        .tree-line {
+            color: #9ca3af;
+        }
+        
+        .folder-name {
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .file-name {
+            color: #374151;
+        }
+        
+        .highlight-owner {
+            background: #f3e8ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #7c3aed;
+            font-weight: 600;
+        }
+        
+        .highlight-yaml {
+            background: #fce7f3;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #db2777;
+            font-weight: 600;
+        }
+        
+        .highlight-file {
+            background: #dbeafe;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #2563eb;
+        }
+        
+        .highlight-pattern {
+            background: #fef3c7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d97706;
+        }
+        
+        .permission-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .badge-read {
+            background: #dcfce7;
+            color: #166534;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-write {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-admin {
+            background: #f3e8ff;
+            color: #6b21a8;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-owner {
+            background: #fce7f3;
+            color: #be185d;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .example-yaml {
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            color: #374151;
+            border-radius: 8px;
+            margin: 16px 0;
+            overflow-x: auto;
+        }
+        
+        .example-yaml pre {
+            margin: 0;
+            padding: 20px;
+            background: transparent;
+            border: none;
+            white-space: pre;
+            overflow-x: auto;
+        }
+        
+        .example-yaml pre code {
+            font-family: 'SF Mono', Consolas, Monaco, monospace;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #374151;
+            background: transparent;
+            padding: 0;
+        }
+        
+        .yaml-comment {
+            color: #6b7280;
+            font-style: normal;
+        }
+        
+        .yaml-key {
+            color: #dc2626;
+            font-weight: 600;
+        }
+        
+        .yaml-value {
+            color: #059669;
+        }
+        
+        /* Ensure YAML displays correctly */
+        .example-yaml pre * {
+            display: inline;
+        }
+        
+        .reason-example {
+            background: #f1f5f9;
+            border-left: 4px solid var(--color-accent);
+            padding: 16px 20px;
+            margin: 16px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .reason-example code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #1e293b;
+            font-family: 'SF Mono', Consolas, Monaco, monospace;
+        }
+        
+        code {
+            font-family: 'SF Mono', Consolas, Monaco, monospace;
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            color: #374151;
+        }
+        
+        .info-box {
+            background: #eff6ff;
+            border: 1px solid #dbeafe;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin: 24px 0;
+        }
+        
+        .info-box h3 {
+            margin: 0 0 8px 0;
+            color: #1e40af;
+            font-size: 1.1rem;
+        }
+        
+        .info-box p {
+            margin: 0;
+            color: #3730a3;
+        }
+        
+        .permission-hierarchy {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            justify-content: center;
+            margin: 24px 0;
+            padding: 24px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .hierarchy-level {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 100px;
+        }
+        
+        .hierarchy-arrow {
+            color: #6b7280;
+            font-size: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .permission-hierarchy {
+                flex-direction: column;
+            }
+            
+            .hierarchy-arrow {
+                transform: rotate(90deg);
+            }
+        }
+        
+        pre {
+            background: #f8f9fa;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="nav-wrapper">
+                <div class="logo-group">
+                    <img src="images/syftbox-logo.svg" alt="SyftBox" class="syftbox-logo">
+                    <a href="index.html" class="logo">syft-perm</a>
+                </div>
+                <div class="nav-links">
+                    <a href="quickstart.html">Quick Start</a>
+                    <a href="permission-reasons.html" class="active">Permission Reasons</a>
+                    <a href="api/index.html">API</a>
+                    <a href="https://github.com/OpenMined/syft-perm" class="github-link">GitHub</a>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Permission Reasons Hero -->
+    <section class="api-hero">
+        <div class="container">
+            <h1>Understanding Permission Reasons</h1>
+            <p class="hero-subtitle">Every permission in syft-perm has a clear reason. This guide explains each one with visual examples.</p>
+        </div>
+    </section>
+
+    <!-- Permission Reasons Content -->
+    <section class="api-section">
+        <div class="container">
+            <div class="api-content">
+                <!-- Navigation Sidebar -->
+                <aside class="api-nav">
+                    <h3>Quick Navigation</h3>
+                    <ul>
+                        <li><a href="#permission-hierarchy">Permission Hierarchy</a></li>
+                        <li><a href="#owner-of-path">Owner of Path</a></li>
+                        <li><a href="#explicitly-granted">Explicitly Granted</a></li>
+                        <li><a href="#pattern-matching">Pattern Matching</a></li>
+                        <li><a href="#inheritance">Permission Inheritance</a></li>
+                        <li><a href="#nearest-node">Nearest Node Algorithm</a></li>
+                        <li><a href="#public-access">Public Access</a></li>
+                        <li><a href="#manual-grant">Manual Grant</a></li>
+                        <li><a href="#permission-denied">Permission Denied</a></li>
+                        <li><a href="#special-cases">Special Cases</a></li>
+                        <li><a href="#pro-tips">Pro Tips</a></li>
+                    </ul>
+                </aside>
+
+                <!-- Main Content -->
+                <div class="api-main">
+
+        <!-- Permission Hierarchy -->
+        <div id="permission-hierarchy" class="info-box">
+            <h3>📊 Permission Hierarchy</h3>
+            <p>Higher permission levels include all lower levels:</p>
+        </div>
+        
+        <div class="permission-hierarchy">
+            <div class="hierarchy-level badge-read">Read</div>
+            <div class="hierarchy-arrow">→</div>
+            <div class="hierarchy-level" style="background: rgba(251, 146, 60, 0.2); color: #c2410c;">Create</div>
+            <div class="hierarchy-arrow">→</div>
+            <div class="hierarchy-level badge-write">Write</div>
+            <div class="hierarchy-arrow">→</div>
+            <div class="hierarchy-level badge-admin">Admin</div>
+        </div>
+
+        <!-- Owner of Path -->
+        <section id="owner-of-path" class="reason-section">
+            <div class="reason-header">
+                <div class="reason-icon">👑</div>
+                <div class="reason-title">
+                    <h2>Owner of path</h2>
+                    <p>The user owns the datasite or is in the ownership path</p>
+                </div>
+            </div>
+            
+            <div class="filesystem-diagram">
+                <div class="file-tree"><span class="tree-line">~/SyftBox/</span>
+<span class="tree-line">└── datasites/</span>
+    <span class="tree-line">└──</span> <span class="highlight-owner">alice@example.com/</span> <span class="badge-owner">OWNER</span>
+        <span class="tree-line">├──</span> syft.pub.yaml
+        <span class="tree-line">├──</span> public/
+        <span class="tree-line">│   └──</span> research.csv    <span class="badge-admin">All permissions</span>
+        <span class="tree-line">└──</span> private/
+            <span class="tree-line">└──</span> notes.txt      <span class="badge-admin">All permissions</span></div>
+            </div>
+            
+            <div class="reason-example">
+                <strong>Example:</strong> Alice automatically has <code>admin</code> access to all files in her datasite <code>alice@example.com/</code> because she is the owner.
+            </div>
+            
+            <p>This reason appears when:</p>
+            <ul>
+                <li>The file is within the user's own datasite directory</li>
+                <li>The directory name matches the user's email address</li>
+                <li>No explicit permissions are needed - ownership grants full control</li>
+            </ul>
+        </section>
+
+        <!-- Explicit Permissions -->
+        <section id="explicitly-granted" class="reason-section">
+            <div class="reason-header">
+                <div class="reason-icon">🎯</div>
+                <div class="reason-title">
+                    <h2>Explicitly granted [permission] in [path]</h2>
+                    <p>Direct permission grant in a YAML file</p>
+                </div>
+            </div>
+            
+            <div class="filesystem-diagram">
+                <div class="file-tree"><span class="tree-line">~/SyftBox/datasites/alice@example.com/</span>
+<span class="tree-line">├──</span> <span class="highlight-yaml">syft.pub.yaml</span>  <span style="color: #6b7280">← Contains rules</span>
+<span class="tree-line">├──</span> research/
+<span class="tree-line">│   ├──</span> <span class="highlight-file">data.csv</span>      <span class="badge-read">bob: read</span>
+<span class="tree-line">│   └──</span> <span class="highlight-file">analysis.py</span>   <span class="badge-write">carol: write</span>
+<span class="tree-line">└──</span> public/
+    <span class="tree-line">└──</span> results.pdf</div>
+            </div>
+            
+            <div class="example-yaml">
+<pre><code># In ~/SyftBox/datasites/alice@example.com/syft.pub.yaml
+rules:
+  - pattern: 'research/data.csv'
+    access:
+      read:
+        - 'bob@example.com'
+  - pattern: 'research/analysis.py'
+    access:
+      write:
+        - 'carol@example.com'</code></pre>
+            </div>
+            
+            <div class="reason-example">
+                <strong>Example:</strong> Bob sees "Explicitly granted read in /alice@example.com/syft.pub.yaml" when accessing <code>data.csv</code>
+            </div>
+        </section>
+
+        <!-- Pattern Matching -->
+        <section id="pattern-matching" class="reason-section">
+            <div class="reason-header">
+                <div class="reason-icon">🔍</div>
+                <div class="reason-title">
+                    <h2>Pattern '[pattern]' matched</h2>
+                    <p>File matches a glob pattern in permission rules</p>
+                </div>
+            </div>
+            
+            <div class="filesystem-diagram">
+                <div class="file-tree"><span class="tree-line">~/SyftBox/datasites/alice@example.com/</span>
+<span class="tree-line">├──</span> syft.pub.yaml
+<span class="tree-line">├──</span> data/
+<span class="tree-line">│   ├──</span> <span class="highlight-pattern">experiment1.csv</span>  ✓ Matches <code>*.csv</code>
+<span class="tree-line">│   ├──</span> <span class="highlight-pattern">experiment2.csv</span>  ✓ Matches <code>*.csv</code>
+<span class="tree-line">│   └──</span> notes.txt
+<span class="tree-line">└──</span> code/
+    <span class="tree-line">├──</span> <span class="highlight-pattern">main.py</span>      ✓ Matches <code>**/*.py</code>
+    <span class="tree-line">└──</span> utils/
+        <span class="tree-line">└──</span> <span class="highlight-pattern">helper.py</span>  ✓ Matches <code>**/*.py</code></div>
+            </div>
+            
+            <div class="example-yaml">
+<pre><code>rules:
+  - pattern: '*.csv'    # Matches CSV files in root
+    access:
+      read:
+        - 'data-team@example.com'
+  - pattern: '**/*.py'  # Matches Python files anywhere
+    access:
+      write:
+        - 'dev-team@example.com'</code></pre>
+            </div>
+            
+            <p><strong>Common patterns:</strong></p>
+            <ul>
+                <li><code>*</code> - Matches any characters (except /)</li>
+                <li><code>**</code> - Matches any characters (including /)</li>
+                <li><code>*.csv</code> - All CSV files in current directory</li>
+                <li><code>**/*.csv</code> - All CSV files in any subdirectory</li>
+                <li><code>data/*</code> - Everything in the data folder</li>
+                <li><code>**/*</code> - Everything recursively</li>
+            </ul>
+        </section>
+
+        <!-- Inheritance -->
+        <section id="inheritance" class="reason-section">
+            <div class="reason-header">
+                <div class="reason-icon">🔗</div>
+                <div class="reason-title">
+                    <h2>Included via [higher permission] permission in [path]</h2>
+                    <p>Permission inherited from a higher access level</p>
+                </div>
+            </div>
+            
+            <div class="filesystem-diagram">
+                <div class="file-tree"><span class="tree-line">Bob has <strong>write</strong> permission on project/*</span>
+<span class="tree-line">Write automatically includes: read, create</span>
+
+<span class="folder-name">project/</span>
+<span class="tree-line">├──</span> README.md   <span class="badge-write">✓ write</span> <span class="badge-read">✓ read (inherited)</span>
+<span class="tree-line">└──</span> data.csv    <span class="badge-write">✓ write</span> <span class="badge-read">✓ read (inherited)</span></div>
+            </div>
+            
+            <div class="example-yaml">
+<pre><code>rules:
+  - pattern: 'project/*'
+    access:
+      write:  # Write includes read automatically
+        - 'bob@example.com'</code></pre>
+            </div>
+            
+            <div class="reason-example">
+                <strong>Example:</strong> Bob has <code>write</code> permission on project files. He automatically gets <code>read</code> access with the reason "Included via write permission in /alice@example.com/syft.pub.yaml"
+            </div>
+            
+            <div class="info-box">
+                <h3>💡 Remember the hierarchy</h3>
+                <p>Admin access includes Write, Create, and Read. Write access includes Create and Read. Create access includes Read.</p>
+            </div>
+        </section>
+
+        <!-- Nearest Node Algorithm -->
+        <section id="nearest-node" class="reason-section">
+            <div class="reason-header">
+                <div class="reason-icon">📍</div>
+                <div class="reason-title">
+                    <h2>Nearest-node: Inherited from parent directory</h2>
+                    <p>No specific rule found, using closest parent's permissions</p>
+                </div>
+            </div>
+            
+            <div class="filesystem-diagram">
+                <div class="file-tree"><span class="folder-name">research/</span>
+<span class="tree-line">├──</span> <span class="highlight-yaml">syft.pub.yaml</span>  <span style="color: #6b7280">← Nearest permission file</span>
+<span class="tree-line">├──</span> 2024/
+<span class="tree-line">│   └──</span> january/
+<span class="tree-line">│       └──</span> results.csv   <span style="color: #6b7280">↑ Inherits from research/</span>
+<span class="tree-line">└──</span> 2023/
+    <span class="tree-line">└──</span> old-data.csv  <span style="color: #6b7280">↑ Inherits from research/</span></div>
+            </div>
+            
+            <div class="example-yaml">
+<pre><code># In ~/SyftBox/datasites/alice@example.com/research/syft.pub.yaml
+rules:
+  - pattern: '**/*'  # Applies to all subdirectories
+    access:
+      read:
+        - 'research-team@example.com'</code></pre>
+            </div>
+            
+            <div class="reason-example">
+                <strong>Example:</strong> Files in <code>2024/january/</code> inherit permissions from <code>research/syft.pub.yaml</code> because there's no closer YAML file defining permissions.
+            </div>
+        </section>
+
+        <!-- Public Access -->
+        <section id="public-access" class="reason-section">
+            <div class="reason-header">
+                <div class="reason-icon">🌍</div>
+                <div class="reason-title">
+                    <h2>Public access (*)</h2>
+                    <p>File is accessible to everyone</p>
+                </div>
+            </div>
+            
+            <div class="filesystem-diagram">
+                <div class="file-tree"><span class="folder-name">alice@example.com/</span>
+<span class="tree-line">├──</span> public/
+<span class="tree-line">│   ├──</span> dataset.csv   <span class="badge-read">🌍 Everyone can read</span>
+<span class="tree-line">│   └──</span> README.md     <span class="badge-read">🌍 Everyone can read</span>
+<span class="tree-line">└──</span> guestbook.txt     <span class="badge-write">🌍 Everyone can write</span></div>
+            </div>
+            
+            <div class="example-yaml">
+<pre><code>rules:
+  - pattern: 'public/*'
+    access:
+      read:
+        - '*'  # Asterisk means everyone
+  - pattern: 'guestbook.txt'
+    access:
+      write:
+        - '*'  # Anyone can write</code></pre>
+            </div>
+            
+            <div class="info-box">
+                <h3>⚠️ Security Note</h3>
+                <p>Use public access (*) carefully. It grants access to anyone with a SyftBox account.</p>
+            </div>
+        </section>
+
+        <!-- Manual Grant -->
+        <section id="manual-grant" class="reason-section">
+            <div class="reason-header">
+                <div class="reason-icon">✏️</div>
+                <div class="reason-title">
+                    <h2>Manually granted [permission] permission</h2>
+                    <p>Permission added through the UI or API</p>
+                </div>
+            </div>
+            
+            <p>This reason appears when:</p>
+            <ul>
+                <li>Using the share button in the syft-perm web interface</li>
+                <li>Calling <code>file.grant_read_access("user@example.com")</code> in Python</li>
+                <li>Using the permission API endpoints directly</li>
+            </ul>
+            
+            <div class="reason-example">
+                <strong>Example:</strong> After clicking "Share" and adding bob@example.com with read access, Bob sees "Manually granted read permission"
+            </div>
+        </section>
+
+        <!-- Permission Denied Reasons -->
+        <section id="permission-denied" class="reason-section">
+            <div class="reason-header">
+                <div class="reason-icon">🚫</div>
+                <div class="reason-title">
+                    <h2>Permission Denied Reasons</h2>
+                    <p>Why a user doesn't have access</p>
+                </div>
+            </div>
+            
+            <p>When a permission check returns <code>granted: false</code>, you might see:</p>
+            
+            <ul>
+                <li><strong>"No matching rules found"</strong> - No YAML rules grant this permission</li>
+                <li><strong>"User not in access list"</strong> - Rules exist but don't include this user</li>
+                <li><strong>"Pattern 'X' matched"</strong> - A pattern matched but didn't grant the requested permission level</li>
+            </ul>
+            
+            <div class="example-yaml">
+<pre><code># User bob@example.com has read but wants write access
+rules:
+  - pattern: 'data.csv'
+    access:
+      read:
+        - 'bob@example.com'
+      write:
+        - 'alice@example.com'  # Bob not included</code></pre>
+            </div>
+        </section>
+
+        <!-- Special Cases -->
+        <section id="special-cases" class="reason-section">
+            <div class="reason-header">
+                <div class="reason-icon">⚡</div>
+                <div class="reason-title">
+                    <h2>Special Cases</h2>
+                    <p>Other reasons you might encounter</p>
+                </div>
+            </div>
+            
+            <h3>YAML File Locations</h3>
+            <p>syft-perm searches for <code>syft.pub.yaml</code> files in this order:</p>
+            <ol>
+                <li>Same directory as the file</li>
+                <li>Parent directories (moving up)</li>
+                <li>Datasite root directory</li>
+            </ol>
+            
+            <div class="filesystem-diagram">
+                <div class="file-tree"><span class="tree-line">For file: research/2024/data.csv</span>
+<span class="tree-line">syft-perm searches in this order:</span>
+
+<span class="folder-name">alice@example.com/</span>
+<span class="tree-line">├──</span> syft.pub.yaml      <span style="color: #6b7280">3️⃣ Last resort</span>
+<span class="tree-line">└──</span> research/
+    <span class="tree-line">├──</span> syft.pub.yaml  <span style="color: #6b7280">2️⃣ Parent directory</span>
+    <span class="tree-line">└──</span> 2024/
+        <span class="tree-line">├──</span> <span class="highlight-yaml">syft.pub.yaml</span>  <span style="color: #059669">1️⃣ Same directory (used first)</span>
+        <span class="tree-line">└──</span> data.csv</div>
+            </div>
+            
+            <h3>Multiple Rules</h3>
+            <p>When multiple rules match a file:</p>
+            <ul>
+                <li>All matching rules are combined</li>
+                <li>Permissions are additive (never subtractive)</li>
+                <li>Most specific pattern takes precedence for conflicting rules</li>
+            </ul>
+        </section>
+
+        <!-- Tips -->
+        <section id="pro-tips" class="reason-section">
+            <div class="reason-header">
+                <div class="reason-icon">💡</div>
+                <div class="reason-title">
+                    <h2>Pro Tips</h2>
+                    <p>Best practices for understanding permissions</p>
+                </div>
+            </div>
+            
+            <ol>
+                <li>
+                    <strong>Use explain_permissions()</strong>
+                    <pre><code>file = syft_perm.open("data.csv")
+explanation = file.explain_permissions("bob@example.com")
+print(explanation)</code></pre>
+                </li>
+                
+                <li>
+                    <strong>Check the permission table in Jupyter</strong>
+                    <pre><code>file = syft_perm.open("research/")
+file  # Shows interactive permission viewer</code></pre>
+                </li>
+                
+                <li>
+                    <strong>Look for the YAML file path in reasons</strong>
+                    <p>The reason often includes the exact YAML file location, helping you find where to make changes.</p>
+                </li>
+                
+                <li>
+                    <strong>Remember inheritance</strong>
+                    <p>If you see "Included via write permission", the user has write access somewhere that automatically grants read.</p>
+                </li>
+            </ol>
+        </section>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>Built with ❤️ by <a href="https://openmined.org">OpenMined</a></p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('.api-nav a').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    const headerHeight = document.querySelector('header').offsetHeight;
+                    const targetPosition = targetElement.offsetTop - headerHeight - 20;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Highlight active section in navigation
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.api-nav a');
+        
+        function highlightActiveSection() {
+            let currentSection = '';
+            const scrollPosition = window.scrollY + 100;
+            
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#' + currentSection) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        window.addEventListener('scroll', highlightActiveSection);
+        highlightActiveSection();
+    </script>
+</body>
+</html>

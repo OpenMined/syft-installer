@@ -69,27 +69,8 @@ class Config(BaseModel):
             # This could happen if the file is corrupted or has wrong format
             return None
     
-    def is_valid(self) -> bool:
-        """Check if configuration has valid credentials."""
-        return bool(self.email and self.refresh_token)
-
-
 def load_config() -> Optional[Config]:
     """Load existing configuration."""
     return Config.load()
-
-
-def is_installed() -> bool:
-    """Check if SyftBox is installed."""
-    config = load_config()
-    if not config:
-        return False
-    
-    # Check if binary exists
-    if not config.binary_path.exists():
-        return False
-    
-    # Check if config is valid
-    return config.is_valid()
 
 

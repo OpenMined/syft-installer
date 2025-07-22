@@ -247,16 +247,6 @@ class _SyftBox:
             self._launcher.stop()
             _console.print("\n⏹️  Stopped SyftBox client\n")
     
-    def restart(self) -> None:
-        """Restart SyftBox client."""
-        _console.print("\n🔄 Restarting SyftBox client...\n")
-        config = self.config
-        if config:
-            self._launcher.restart(config)
-            _console.print("✅ SyftBox client restarted!\n")
-        else:
-            _console.print("❌ SyftBox not installed. Run .run() first.\n")
-    
     def start_if_stopped(self) -> bool:
         """
         Start SyftBox only if it's not already running.

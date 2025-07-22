@@ -1,0 +1,18 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- SyftPerm Logo - Simple geometric design inspired by SyftBox -->
+  
+  <!-- Outer container -->
+  <rect x="2" y="2" width="28" height="28" rx="4" fill="#F8C073" stroke="#F79763" stroke-width="1"/>
+  
+  <!-- Inner permission symbol -->
+  <rect x="6" y="6" width="20" height="20" rx="2" fill="white"/>
+  
+  <!-- Permission hierarchy bars -->
+  <rect x="9" y="9" width="14" height="2" fill="#52A8C5"/>
+  <rect x="9" y="13" width="11" height="2" fill="#6976AE"/>
+  <rect x="9" y="17" width="8" height="2" fill="#53BEA9"/>
+  <rect x="9" y="21" width="5" height="2" fill="#96D195"/>
+  
+  <!-- File icon -->
+  <path d="M24 8L22 6H18V8H24Z" fill="#353243"/>
+</svg>

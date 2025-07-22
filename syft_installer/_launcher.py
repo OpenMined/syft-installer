@@ -84,12 +84,6 @@ class Launcher:
             except Exception:
                 pass
     
-    def restart(self, config: Config) -> None:
-        """Restart SyftBox client."""
-        self.stop()
-        time.sleep(1)  # Brief pause before restart
-        self.start(config)
-    
     def is_running(self) -> bool:
         """Check if SyftBox client is running."""
         # Always check for external processes, not just our own
@@ -135,13 +129,6 @@ class Launcher:
             except Exception as e2:
                 print(f"   ps aux also failed: {e2}")
                 return False
-    
-    def get_status(self) -> dict:
-        """Get client status information."""
-        return {
-            "running": self.is_running(),
-            "pid": self.process.pid if self.process else None,
-        }
     
     def _run_foreground(self, cmd: list) -> None:
         """Run client in foreground."""
@@ -273,47 +260,4 @@ class Launcher:
             raise
 
 
-# Singleton launcher instance
-_launcher = Launcher()
-
-
-def start_client(config: Optional[Config] = None, background: bool = False) -> None:
-    """
-    Start SyftBox client.
-    
-    Args:
-        config: Configuration to use. If None, loads from disk.
-        background: Run in background
-    """
-    if config is None:
-        config = Config.load()
-        if config is None:
-            raise ValueError("No configuration found. Run install first.")
-    
-    _launcher.start(config, background)
-
-
-def stop_client() -> None:
-    """Stop SyftBox client."""
-    _launcher.stop()
-
-
-def restart_client(config: Optional[Config] = None) -> None:
-    """
-    Restart SyftBox client.
-    
-    Args:
-        config: Configuration to use. If None, loads from disk.
-    """
-    if config is None:
-        config = Config.load()
-        if config is None:
-            raise ValueError("No configuration found. Run install first.")
-    
-    _launcher.restart(config)
-
-
-def is_running() -> bool:
-    """Check if SyftBox client is running."""
-    return _launcher.is_running()
 

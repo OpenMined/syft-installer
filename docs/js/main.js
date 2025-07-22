@@ -14,14 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Show success state
                 this.classList.add('copied');
-                const originalText = this.textContent;
-                this.textContent = 'Copied!';
                 
-                // Reset after 2 seconds
+                // Reset after 1.5 seconds
                 setTimeout(() => {
                     this.classList.remove('copied');
-                    this.textContent = originalText;
-                }, 2000);
+                }, 1500);
             } catch (err) {
                 console.error('Failed to copy:', err);
             }

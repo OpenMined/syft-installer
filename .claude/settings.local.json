@@ -38,7 +38,8 @@
       "Bash(kill:*)",
       "Bash(python:*)",
       "Bash(uv run:*)",
-      "Bash(pkill:*)"
+      "Bash(pkill:*)",
+      "Bash(cp:*)"
     ],
     "deny": []
   }

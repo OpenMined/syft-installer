@@ -114,10 +114,3 @@ class Authenticator:
                     pass
             raise AuthenticationError(f"Failed to verify OTP: {str(e)}")
     
-    @staticmethod
-    def decode_token(token: str) -> Dict:
-        """Decode JWT token without verification (for reading claims)."""
-        try:
-            return jwt.decode(token, options={"verify_signature": False})
-        except Exception:
-            return {}

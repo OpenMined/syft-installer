@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>syft-installer - SyftBox Installation Made Simple</title>
+    <title>syft-perm - Syft Permissions Made Simpler</title>
     <link rel="icon" type="image/svg+xml" href="images/syftbox-logo.svg">
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -14,13 +14,13 @@
             <div class="nav-wrapper">
                 <div class="logo-group">
                     <img src="images/syftbox-logo.svg" alt="SyftBox" class="syftbox-logo">
-                    <a href="index.html" class="logo">syft-installer</a>
+                    <a href="index.html" class="logo">syft-perm</a>
                 </div>
                 <div class="nav-links">
                     <a href="quickstart.html">Quick Start</a>
-                    <a href="core-concept.html">Core Concepts</a>
+                    <a href="permission-reasons.html">Permission Reasons</a>
                     <a href="api/index.html">API</a>
-                    <a href="https://github.com/OpenMined/syft-installer" class="github-link">GitHub</a>
+                    <a href="https://github.com/OpenMined/syft-perm" class="github-link">GitHub</a>
                 </div>
             </div>
         </nav>
@@ -34,71 +34,67 @@
     </div>
     <section class="hero">
         <div class="container">
-            <h1 class="hero-title">SyftBox Installation Made Simple</h1>
-            <p class="hero-subtitle">Install SyftBox programmatically in Python notebooks and headless environments</p>
+            <h1 class="hero-title">Syft Permissions Made Simpler</h1>
+            <p class="hero-subtitle">A friendlier way to manage who can access what in SyftBox</p>
             
             <!-- Problem/Solution Split -->
             <div class="code-comparison">
                 <div class="code-before">
-                    <div class="code-label">🎯 One-line installation</div>
-                    <pre><code class="language-python"># Install and run SyftBox with a single command
-import syft_installer as si
-si.install_and_run("alice@example.com")
+                    <div class="code-label">🔍 SEE permissions clearly</div>
+                    <pre><code class="language-python"># In Jupyter notebooks - interactive permission editor
+file = syft_perm.open("data.csv")
+file  # Shows interactive permission editor widget
 
-# ✨ That's it! SyftBox is now running
-# 📧 Check your email for the OTP code
-# 🔐 Enter the code when prompted
-# 🚀 SyftBox starts automatically</code></pre>
+# Or view permissions in console:
+print(file)  # Shows permission table
+# User               Read  Create  Write  Admin  Reason
+# alice@example.com  ✓     ✓       ✓              admin.yaml: Admin permission granted
+# bob@example.com    ✓                            read.yaml: Pattern '*.txt' matched</code></pre>
                 </div>
                 
                 <div class="code-arrow">+</div>
                 
                 <div class="code-after">
-                    <div class="code-label">🔧 Full control when needed</div>
-                    <pre><code class="language-python"># Or take control of each step
-import syft_installer as si
+                    <div class="code-label">🎯 SET permissions simply</div>
+                    <pre><code class="language-python"># Simple API instead of YAML wrestling
+file = syft_perm.open("data.csv")
+file.grant_read_access("alice@example.com")
+file.grant_write_access("bob@company.com")
 
-# Install without starting
-si.install("alice@example.com")
-
-# Check status anytime
-si.status()
-
-# Start/stop as needed
-si.run()
-si.stop()</code></pre>
+# Automatically creates/updates syft.pub.yaml
+# No manual YAML editing needed!</code></pre>
                 </div>
             </div>
 
             <!-- Install Command -->
             <div class="install-section">
                 <div class="install-command">
-                    <code>pip install syft-installer</code>
-                    <button class="copy-btn" data-copy="pip install syft-installer">Copy</button>
+                    <code>pip install syft-perm</code>
+                    <button class="copy-btn" data-copy="pip install syft-perm">Copy</button>
                 </div>
-                <p class="install-note">Works in Jupyter, Colab, scripts, and CI/CD • No GUI required</p>
+                <p class="install-note">Works with your existing SyftBox setup • No configuration needed</p>
             </div>
         </div>
     </section>
 
-    <!-- Why syft-installer -->
+    <!-- Why SyftPerm -->
     <section class="why-syftperm">
         <div class="container">
             <h2>Why We Built This</h2>
-            <p class="section-subtitle">The TUI installer is great for humans. This is for everything else.</p>
+            <p class="section-subtitle">SyftBox's YAML-based permissions are powerful and flexible. SyftPerm makes them more accessible.</p>
             
             <div class="value-props">
                 <div class="value-prop">
-                    <h3>📓 Notebook Native</h3>
-                    <p>Install SyftBox directly from Jupyter or Google Colab. Perfect for tutorials and workshops.</p>
+                    <h3>🤝 Works With SyftBox</h3>
+                    <p>No changes to SyftBox core. SyftPerm is a friendly Python layer on top of our existing syft.pub.yaml system.</p>
                 </div>
                 <div class="value-prop">
-                    <h3>🤖 Automation Ready</h3>
-                    <p>Deploy SyftBox in CI/CD pipelines, Docker containers, or any headless environment.</p>
+                    <h3>📚 Lowers Learning Curve</h3>
+                    <p>New team members and data scientists can start managing permissions immediately without learning YAML syntax.</p>
                 </div>
                 <div class="value-prop">
-                    <h3>🎛️ Full API Control</h3>
-                    <p>Programmatically manage installation, configuration, and lifecycle. No manual steps.</p>
+                    <h3>🚀 Speeds Development</h3>
+                    <p>Less time debugging YAML indentation, more time building privacy-preserving applications.</p>
                 </div>
             </div>
         </div>
@@ -108,10 +104,14 @@ si.stop()</code></pre>
     <section class="video-demo">
         <div class="container">
             <h2>See It In Action</h2>
-            <p class="section-subtitle">Installing SyftBox in Google Colab with automatic email detection</p>
+            <p class="section-subtitle">Interactive widgets that make permission management a breeze</p>
             
             <div class="demo-video-container">
-                <img src="images/colab-demo.gif" alt="SyftBox Installation in Google Colab" style="width: 100%; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                <video controls autoplay loop muted playsinline>
+                    <source src="images/syft-perm-widgets-demo.webm" type="video/webm">
+                    <source src="images/syft-perm-widgets-demo.mp4" type="video/mp4">
+                    <img src="images/syft-perm-widgets-demo.gif" alt="SyftPerm Demo">
+                </video>
             </div>
         </div>
     </section>
@@ -120,67 +120,80 @@ si.stop()</code></pre>
     <section class="api-preview">
         <div class="container">
             <h2>The Whole API</h2>
-            <p class="section-subtitle">Every single public function</p>
+            <p class="section-subtitle">Every single public method and property</p>
             
             <div class="api-examples">
                 <div class="api-example">
-                    <h3>Installation</h3>
-                    <pre><code class="language-python"># All-in-one installation
-si.install_and_run("user@example.com")
-
-# Step by step
-si.install("user@example.com")  # Just install
-si.run()                         # Start later</code></pre>
+                    <h3>Opening Files & Folders</h3>
+                    <pre><code class="language-python"># Open files and folders
+file = syft_perm.open("data.csv")
+folder = syft_perm.open("project/")
+remote = syft_perm.open("syft://user@site/file.txt")</code></pre>
                 </div>
                 
                 <div class="api-example">
-                    <h3>Status & Control</h3>
-                    <pre><code class="language-python"># Check status
-si.status()           # Pretty status table
-si.status(detailed=True)  # Full details
-
-# Control daemon
-si.stop()             # Stop SyftBox
-si.run()              # Start again
-si.run_if_stopped()   # Conditional start</code></pre>
+                    <h3>Granting Permissions</h3>
+                    <pre><code class="language-python"># Grant different permission levels
+file.grant_read_access("user@example.com")
+file.grant_create_access("user@example.com")
+file.grant_write_access("user@example.com")
+file.grant_admin_access("user@example.com")</code></pre>
                 </div>
                 
                 <div class="api-example">
-                    <h3>Uninstall</h3>
-                    <pre><code class="language-python"># Complete removal
-si.uninstall()  # Removes everything</code></pre>
+                    <h3>Checking Permissions</h3>
+                    <pre><code class="language-python"># Check if user has specific permissions
+file.has_read_access("user@example.com")
+file.has_create_access("user@example.com")
+file.has_write_access("user@example.com")
+file.has_admin_access("user@example.com")</code></pre>
                 </div>
                 
                 <div class="api-example">
-                    <h3>Google Colab Magic</h3>
-                    <pre><code class="language-python"># In Google Colab - email auto-detected!
-import syft_installer as si
-si.install_and_run()  # No email needed!
-
-# Uses your Google account email
-# Perfect for workshops & tutorials</code></pre>
+                    <h3>Revoking Permissions</h3>
+                    <pre><code class="language-python"># Revoke specific permission levels
+file.revoke_read_access("user@example.com")
+file.revoke_create_access("user@example.com")
+file.revoke_write_access("user@example.com")
+file.revoke_admin_access("user@example.com")</code></pre>
                 </div>
                 
                 <div class="api-example">
-                    <h3>Non-Interactive Mode</h3>
-                    <pre><code class="language-python"># For automation & CI/CD
-session = si.install("user@example.com", 
-                     interactive=False)
-
-# Submit OTP programmatically
-session.submit_otp("ABC12345")</code></pre>
+                    <h3>Understanding Permissions</h3>
+                    <pre><code class="language-python"># Get detailed explanation of permissions
+explanation = file.explain_permissions("user@example.com")
+print(explanation)</code></pre>
+                    <p style="margin-top: 12px; font-size: 0.9rem;">
+                        <a href="permission-reasons.html" style="color: var(--color-accent);">
+                            📖 Learn about all permission reasons →
+                        </a>
+                    </p>
                 </div>
                 
                 <div class="api-example">
-                    <h3>Environment Info</h3>
-                    <pre><code class="language-python"># Get version info
-import syft_installer
-print(syft_installer.__version__)
-
-# Installation paths
-status = si.status()
-print(status['config_dir'])
-print(status['binary_path'])</code></pre>
+                    <h3>File Operations</h3>
+                    <pre><code class="language-python"># Move file with permissions preserved
+new_file = file.move_file_and_its_permissions("new/path.csv")</code></pre>
+                </div>
+                
+                <div class="api-example">
+                    <h3>Files Browser API</h3>
+                    <pre><code class="language-python"># Browse all files
+sp.files                                    # Interactive widget
+sp.files.all()                             # Get all files
+sp.files.get(limit=10, offset=0)          # Paginated results
+sp.files.search("query")                   # Search files
+sp.files.search(admin="user@example.com")  # Filter by admin
+sp.files.filter(folders=["path1", "path2"]) # Filter by folders
+sp.files[0:10]                            # Slice notation</code></pre>
+                </div>
+                
+                <div class="api-example">
+                    <h3>Interactive Widgets</h3>
+                    <pre><code class="language-python"># Display interactive widgets (Jupyter only)
+file.share  # Permission sharing widget
+file        # File editor with permissions view
+sp.files    # File browser widget</code></pre>
                 </div>
             </div>
         </div>
@@ -189,26 +202,26 @@ print(status['binary_path'])</code></pre>
     <!-- Gradient Feature Section -->
     <section class="gradient-feature">
         <div class="container">
-            <h2>Built for Modern Workflows</h2>
-            <p class="section-subtitle">From notebook experiments to production deployments</p>
+            <h2>Designed for Our Workflow</h2>
+            <p class="section-subtitle">Built by the team, for the team, to make our daily SyftBox permission work smoother</p>
             
             <div class="feature-cards">
                 <div class="feature-card">
-                    <div class="feature-icon">🚀</div>
-                    <h3>Zero to Running in 30 Seconds</h3>
-                    <p>One command downloads, installs, authenticates, and starts SyftBox</p>
+                    <div class="feature-icon">🔐</div>
+                    <h3>Same Power, Better Experience</h3>
+                    <p>All the granular control we need, now accessible through Python methods we already know</p>
                 </div>
                 
                 <div class="feature-card">
-                    <div class="feature-icon">🔄</div>
-                    <h3>Idempotent Operations</h3>
-                    <p>Run install multiple times safely. Already installed? It just starts the daemon.</p>
+                    <div class="feature-icon">🌐</div>
+                    <h3>Demo-Friendly</h3>
+                    <p>Show stakeholders how permissions work without explaining YAML syntax</p>
                 </div>
                 
                 <div class="feature-card">
-                    <div class="feature-icon">📦</div>
-                    <h3>Clean Uninstall</h3>
-                    <p>Completely removes SyftBox, config, and data when you're done</p>
+                    <div class="feature-icon">⚡</div>
+                    <h3>Faster Debugging</h3>
+                    <p>Quickly see why permissions aren't working with explain_permissions()</p>
                 </div>
             </div>
         </div>
@@ -217,40 +230,37 @@ print(status['binary_path'])</code></pre>
     <!-- Real Example -->
     <section class="real-example">
         <div class="container">
-            <h2>Real World Usage</h2>
-            <p style="text-align: center; margin-bottom: var(--space-6);">Here's how teams are using syft-installer in production:</p>
-            <pre><code class="language-python"># In your Docker container
-FROM python:3.9
-RUN pip install syft-installer
+            <h2>Under the Hood</h2>
+            <p style="text-align: center; margin-bottom: var(--space-6);">SyftPerm respects our existing infrastructure - it just makes it easier to use:</p>
+            <pre><code class="language-python"># When you write this Python:
+project = syft_perm.open("research_data/")
+project.grant_read_access("reviewer@journal.org")
+project.grant_write_access("team@university.edu")
 
-# In your Python script
-import syft_installer as si
-import os
+# SyftPerm manages the YAML for you:
+"""
+rules:
+  - pattern: '**/*'
+    access:
+      read:
+        - 'reviewer@journal.org'
+        - 'team@university.edu'
+      write:
+        - 'team@university.edu'
+"""
 
-# Get email from environment
-email = os.environ.get('SYFTBOX_EMAIL')
-if not email:
-    raise ValueError("SYFTBOX_EMAIL environment variable required")
-
-# Install and run
-print(f"Installing SyftBox for {email}...")
-si.install_and_run(email)
-
-# Your SyftBox app code here
-from syftbox.lib import SyftConfig
-config = SyftConfig.load()
-print(f"Running on datasite: {config.datasite_name}")</code></pre>
+# Full compatibility with manual YAML edits!</code></pre>
         </div>
     </section>
 
     <!-- Tutorial CTA Section -->
     <section class="tutorial-cta gradient-feature">
         <div class="container">
-            <h2>Get Started Now</h2>
+            <h2>Take the Tutorial</h2>
             
             <div class="cta-buttons">
-                <a href="quickstart.html" class="btn btn-primary btn-large">Quick Start Guide</a>
-                <a href="https://colab.research.google.com/github/OpenMined/syft-installer/blob/main/examples/quickstart.ipynb" class="btn btn-primary btn-large">Try in Google Colab</a>
+                <a href="quickstart.html" class="btn btn-primary btn-large">1 Minute Quickstart</a>
+                <a href="https://github.com/OpenMined/syft-perm/blob/main/syft-perm-10-minute-tutorial.ipynb" class="btn btn-primary btn-large">10 Minute Tutorial</a>
             </div>
         </div>
     </section>
@@ -260,8 +270,8 @@ print(f"Running on datasite: {config.datasite_name}")</code></pre>
     <section class="newsletter-section">
         <div class="container">
             <div class="newsletter-content">
-                <h2>Stay Updated</h2>
-                <p>Get notified about new features and updates to syft-installer</p>
+                <h2>Let's Discuss</h2>
+                <p>Questions? Ideas? Let's talk about how SyftPerm can help our team</p>
                 
                 <!-- HubSpot Form -->
                 <div id="hubspot-form-container"></div>

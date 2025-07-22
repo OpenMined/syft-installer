@@ -125,10 +125,3 @@ class Downloader:
         except Exception as e:
             raise DownloadError(f"Failed to install binary: {str(e)}")
     
-    def verify_checksum(self, file_path: Path, expected_checksum: str) -> bool:
-        """Verify file checksum."""
-        sha256_hash = hashlib.sha256()
-        with open(file_path, "rb") as f:
-            for byte_block in iter(lambda: f.read(4096), b""):
-                sha256_hash.update(byte_block)
-        return sha256_hash.hexdigest() == expected_checksum
