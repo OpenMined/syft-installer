@@ -246,15 +246,11 @@ class _SyftBox:
                 prog.update(95, "✅ SyftBox daemon started successfully")
                 prog.finish(f"✅ SyftBox installed and running for {config.email}")
             else:
-                # After fresh install, continue the existing progress
-                from syft_installer._progress import progress
-                
-                # Start the daemon
+                # After fresh install, just start the daemon quietly
                 self._process_manager.start(config, background=background)
                 
-                # Finish with a single line message
-                sys.stdout.write(f"\r✅ SyftBox installed and running for {config.email}" + ' ' * 50 + '\n')
-                sys.stdout.flush()
+                # Final status message
+                print(f"✅ SyftBox is now running for {config.email}")
         else:
             display.show_already_running(config.email)
     
@@ -361,12 +357,44 @@ class _SyftBox:
             display.show_error(f"Invalid email address: {email}")
             return
         
-        # Start single-line installation progress
-        prog = progress_context()
+        # FIRST: Request OTP before doing anything else
+        print(f"📧 Requesting verification code for {email}...")
+        
+        from syft_installer._auth import Authenticator
+        auth = Authenticator(self.server)
         
         try:
-            # Phase 1: Setup (10%)
-            prog.update(10, f"📦 Setting up installation environment for {email}")
+            auth.request_otp(email)
+        except Exception as e:
+            display.show_error(f"Failed to request verification code: {str(e)}")
+            return
+        
+        # Get OTP input
+        otp = input("Enter Code from Email: ").strip()
+        
+        # Progress bar function
+        def update_progress_bar(progress, width=50, message=""):
+            """Update progress bar on the same line"""
+            filled = int(width * progress / 100)
+            bar = '█' * filled + '░' * (width - filled)
+            
+            # For Jupyter, use \r to return to beginning of line
+            sys.stdout.write('\r')
+            
+            # Write the progress bar
+            if message:
+                sys.stdout.write(f"{message} |{bar}| {progress:3.0f}%")
+            else:
+                sys.stdout.write(f"Progress: |{bar}| {progress:3.0f}%")
+            
+            sys.stdout.flush()
+        
+        # NOW: Start installation with smooth progress from 0 to 100
+        try:
+            # Phase 1: Setup (0-20%)
+            for i in range(0, 21):
+                update_progress_bar(i, "📦 Setting up installation environment...")
+                time.sleep(0.02)
             
             bin_dir = Path.home() / ".local" / "bin"
             binary_path = bin_dir / "syftbox"
@@ -376,69 +404,43 @@ class _SyftBox:
             config_dir.mkdir(parents=True, exist_ok=True)
             self.data_dir.mkdir(parents=True, exist_ok=True)
             
-            # Phase 2: Download binary
+            # Phase 2: Download binary (20-50%)
             if not binary_path.exists():
-                prog.update(20, "📥 Downloading SyftBox binary from syftbox.net")
+                for i in range(21, 36):
+                    update_progress_bar(i, "📥 Downloading SyftBox binary...")
+                    time.sleep(0.05)
                 
                 from syft_installer._downloader import Downloader
                 downloader = Downloader()
-                
-                prog.update(35, "📥 Extracting SyftBox binary (~13MB)")
                 downloader.download_and_install(binary_path)
-                prog.update(50, "✅ SyftBox binary installed successfully")
+                
+                for i in range(36, 51):
+                    update_progress_bar(i, "📥 Extracting SyftBox binary...")
+                    time.sleep(0.03)
             else:
-                prog.update(50, "✅ SyftBox binary already exists")
+                for i in range(21, 51):
+                    update_progress_bar(i, "✅ SyftBox binary already exists")
+                    time.sleep(0.01)
             
-            # Phase 3: Request verification
-            prog.update(60, f"📧 Requesting OTP verification for {email}")
+            # Phase 3: Verify OTP (50-80%)
+            for i in range(51, 71):
+                update_progress_bar(i, "🔐 Verifying code...")
+                time.sleep(0.03)
+        
+            from syft_installer._utils import sanitize_otp, validate_otp
+            otp = sanitize_otp(otp)
             
-            from syft_installer._auth import Authenticator
-            auth = Authenticator(self.server)
+            if not validate_otp(otp):
+                sys.stdout.write("\r❌ Invalid verification code - must be 8 digits\n")
+                sys.stdout.flush()
+                return
             
-            prog.update(70, f"🌐 Connecting to {self.server}/auth/otp/request")
-            auth.request_otp(email)
-            
-            prog.update(80, "✅ Verification code sent to your email")
-            
-        except Exception as e:
-            prog.finish(f"❌ Installation failed: {str(e)}")
-            return
-        
-        # Update progress to maximum
-        prog.update(100, "📧 Verification code sent to your email")
-        
-        # Small delay for visual feedback
-        time.sleep(0.5)
-        
-        # Clear the progress line completely
-        sys.stdout.write('\r' + ' ' * 120 + '\r')
-        sys.stdout.flush()
-        
-        # Show the message and get OTP on same line
-        sys.stdout.write("📧 Verification code sent to your email - OTP: ")
-        sys.stdout.flush()
-        
-        # Get input using readline to avoid automatic newline
-        otp = sys.stdin.readline().strip()
-        
-        # Move cursor up one line to overwrite the OTP input line
-        sys.stdout.write('\033[1A\r' + ' ' * 120 + '\r')
-        sys.stdout.flush()
-        
-        # Show verifying message briefly
-        sys.stdout.write("🔐 Verifying code...")
-        sys.stdout.flush()
-        
-        from syft_installer._utils import sanitize_otp, validate_otp
-        otp = sanitize_otp(otp)
-        
-        if not validate_otp(otp):
-            sys.stdout.write("\r❌ Invalid verification code - must be 8 digits\n")
-            sys.stdout.flush()
-            return
-        
-        try:
             tokens = auth.verify_otp(email, otp)
+            
+            # Phase 4: Save configuration (70-90%)
+            for i in range(71, 91):
+                update_progress_bar(i, "💾 Saving configuration...")
+                time.sleep(0.02)
             
             config = _Config(
                 email=email,
@@ -449,12 +451,17 @@ class _SyftBox:
             )
             config.save()
             
-            # Clear the verifying message
-            sys.stdout.write('\r' + ' ' * 120 + '\r')
-            sys.stdout.flush()
+            # Phase 5: Complete (90-100%)
+            for i in range(91, 101):
+                update_progress_bar(i, "✅ Finalizing installation...")
+                time.sleep(0.01)
+            
+            # Final message
+            update_progress_bar(100, "✅ SyftBox installation complete!")
+            print()  # New line after progress bar
             
         except Exception as e:
-            sys.stdout.write(f"\r❌ Verification failed: {str(e)}\n")
+            sys.stdout.write(f"\r❌ Installation failed: {str(e)}\n")
             sys.stdout.flush()
             return
     
