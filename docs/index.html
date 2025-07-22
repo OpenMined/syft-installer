@@ -145,6 +145,21 @@ si.install_and_run_if_needed()</code></pre>
                     padding: 1rem;
                     box-sizing: border-box;
                 }
+                
+                /* Full width for Magic tab */
+                #magic .video-container {
+                    max-width: none;
+                    width: 100vw;
+                    margin-left: calc(50% - 50vw);
+                    border-radius: 0;
+                    background: #000;
+                    padding: 0;
+                }
+                
+                #magic .video-container iframe {
+                    width: 100%;
+                    height: 100%;
+                }
                 .video-container video {
                     border-radius: 8px;
                     background: #000;
@@ -198,7 +213,7 @@ si.install_and_run_if_needed()</code></pre>
                     
                     <div class="tab-pane" id="magic">
                         <div class="video-container">
-                            <iframe id="magic-video" width="100%" height="600" 
+                            <iframe id="magic-video" width="100%" height="400" 
                                     src="https://www.youtube.com/embed/dQw4w9WgXcQ?enablejsapi=1"
                                     title="Magic Demo" frameborder="0" 
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
