@@ -9,8 +9,7 @@ from typing import Optional
 import requests
 from rich.progress import Progress, DownloadColumn, TransferSpeedColumn
 
-from syft_installer._exceptions import DownloadError, PlatformError
-from syft_installer._platform import get_binary_url
+from syft_installer._utils import DownloadError, PlatformError, get_binary_url
 
 
 class Downloader:

@@ -3,8 +3,7 @@ from typing import Dict
 import jwt
 import requests
 
-from syft_installer._exceptions import AuthenticationError, ValidationError
-from syft_installer._validators import validate_email, validate_otp, sanitize_otp
+from syft_installer._utils import AuthenticationError, ValidationError, validate_email, validate_otp, sanitize_otp
 
 
 class Authenticator:

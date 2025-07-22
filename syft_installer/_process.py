@@ -7,7 +7,7 @@ import time
 from pathlib import Path
 from typing import List, Dict, Optional
 
-from syft_installer._exceptions import BinaryNotFoundError
+from syft_installer._utils import BinaryNotFoundError
 
 
 class ProcessManager:

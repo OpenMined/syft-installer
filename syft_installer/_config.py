@@ -3,8 +3,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
 
-from syft_installer._exceptions import ConfigError
-from syft_installer._runtime import RuntimeEnvironment
+from syft_installer._utils import ConfigError, RuntimeEnvironment
 
 
 @dataclass

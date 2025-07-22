@@ -67,7 +67,7 @@ class InstallerSession:
         Returns:
             Dict with status and message
         """
-        from syft_installer._validators import sanitize_otp, validate_otp
+        from syft_installer._utils import sanitize_otp, validate_otp
         
         # Sanitize and validate OTP
         otp = sanitize_otp(otp)
@@ -347,7 +347,7 @@ class _SyftBox:
                 return
         
         # Validate email
-        from syft_installer._validators import validate_email
+        from syft_installer._utils import validate_email
         if not validate_email(email):
             _console.print(f"❌ Invalid email address: {email}")
             return
@@ -392,7 +392,7 @@ class _SyftBox:
         otp = _console.input("\n📧 Enter the OTP sent to your email: ")
         
         # Verify OTP
-        from syft_installer._validators import sanitize_otp, validate_otp
+        from syft_installer._utils import sanitize_otp, validate_otp
         otp = sanitize_otp(otp)
         if not validate_otp(otp):
             _console.print("❌ Invalid OTP. Must be 8 uppercase alphanumeric characters.")
@@ -406,7 +406,7 @@ class _SyftBox:
             _console.print("✅ Authentication successful")
             
             # Create and save config
-            from syft_installer._runtime import RuntimeEnvironment
+            from syft_installer._utils import RuntimeEnvironment
             config = _Config(
                 email=email,
                 data_dir=str(self.data_dir),
@@ -454,7 +454,7 @@ class _SyftBox:
                     return None
                 
             # Validate email
-            from syft_installer._validators import validate_email
+            from syft_installer._utils import validate_email
             if not validate_email(self.email):
                 _console.print(f"❌ Invalid email address: {self.email}")
                 return None
@@ -630,7 +630,7 @@ def install(email: Optional[str] = None, interactive: bool = True) -> Union[bool
         _console.print("\n📦 Starting SyftBox installation...\n")
         
         # Validate email
-        from syft_installer._validators import validate_email
+        from syft_installer._utils import validate_email
         if not validate_email(email):
             _console.print(f"❌ Invalid email address: {email}")
             return None

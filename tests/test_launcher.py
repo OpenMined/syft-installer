@@ -6,7 +6,7 @@ from pathlib import Path
 
 from syft_installer._process import ProcessManager
 from syft_installer._config import Config
-from syft_installer._exceptions import BinaryNotFoundError
+from syft_installer._utils import BinaryNotFoundError
 
 
 class TestProcessManager:
