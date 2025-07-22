@@ -557,10 +557,10 @@ code {
 .gradient-feature {
     padding: var(--space-16) 0;
     background: 
-        radial-gradient(ellipse at top left, var(--color-accent) 0%, transparent 50%),
-        radial-gradient(ellipse at top right, var(--color-secondary) 0%, transparent 50%),
-        radial-gradient(ellipse at bottom center, var(--color-primary) 0%, transparent 50%),
-        var(--color-dark);
+        radial-gradient(ellipse 800px 600px at 15% 20%, #F79763 0%, transparent 40%),
+        radial-gradient(ellipse 900px 700px at 85% 30%, #6976AE 0%, transparent 45%),
+        radial-gradient(ellipse 1000px 800px at 50% 85%, #CC677B 0%, transparent 50%),
+        #0e0b0f;
     color: white;
     position: relative;
     overflow: hidden;
