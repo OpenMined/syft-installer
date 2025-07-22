@@ -41,10 +41,16 @@ class ProcessManager:
             self._run_foreground(cmd)
             return None
     
-    def stop(self) -> None:
-        """Stop the SyftBox client we started."""
+    def stop(self) -> bool:
+        """Stop the SyftBox client we started.
+        
+        Returns:
+            True if a process was stopped, False otherwise
+        """
         if self.process and self.process.poll() is None:
-            print("   Stopping process...")
+            # Only print if we actually have a process to stop
+            if self.verbose:
+                print("   Stopping process...")
             try:
                 self.process.terminate()
                 # Give it time to shutdown gracefully
@@ -55,8 +61,10 @@ class ProcessManager:
                 # Force kill if still running
                 if self.process.poll() is None:
                     self.process.kill()
+                return True
             except Exception:
                 pass
+        return False
         
         # Clean up stderr file
         if self.stderr_file and hasattr(self.stderr_file, 'name'):
