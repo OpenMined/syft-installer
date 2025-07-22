@@ -341,6 +341,12 @@ si.uninstall()
                 formElement.querySelectorAll('input[type="checkbox"]').forEach(el => {
                     el.parentElement.classList.add('hubspot-checkbox-wrapper');
                 });
+                // Style the "Sign up for" text to be gray
+                formElement.querySelectorAll('.hs-richtext p').forEach(el => {
+                    if (el.textContent.includes('Sign up for')) {
+                        el.style.color = 'rgba(255, 255, 255, 0.6)';
+                    }
+                });
             }
         });
     </script>

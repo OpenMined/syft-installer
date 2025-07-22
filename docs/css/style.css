@@ -1061,7 +1061,7 @@ code {
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-top: var(--space-4);
+    display: inline-block;
 }
 
 .newsletter-section-dark .hs-submit input[type="submit"]:hover {
@@ -1073,6 +1073,11 @@ code {
     color: rgba(255, 255, 255, 0.6);
     font-size: 0.875rem;
     line-height: 1.5;
+}
+
+.newsletter-section-dark .hs-richtext p {
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: var(--space-2);
 }
 
 .newsletter-section-dark .hs-richtext a {
@@ -1124,6 +1129,21 @@ code {
     display: inline !important;
     color: rgba(255, 255, 255, 0.7);
     font-size: 0.875rem;
+}
+
+/* Form layout fixes */
+.newsletter-section-dark .hs-form .hs-submit {
+    text-align: center;
+    margin-top: var(--space-4);
+}
+
+.newsletter-section-dark .legal-consent-container {
+    margin-top: var(--space-3);
+}
+
+.newsletter-section-dark .hs-form-field textarea {
+    min-height: 100px;
+    resize: vertical;
 }
 
 .newsletter-section::before {
