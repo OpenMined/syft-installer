@@ -117,7 +117,7 @@ class TestConfig:
             refresh_token="test_refresh_token"
         )
         
-        data = config.model_dump()
+        data = config.to_dict()
         assert data["email"] == "test@example.com"
         assert data["server_url"] == "https://syftbox.net"
         assert data["data_dir"] == "/path/to/data"
@@ -153,6 +153,8 @@ class TestConfig:
         # Should still create config with defaults for missing fields
         config = Config(**data)
         assert config.email == "test@example.com"
+        # data_dir should get default value
+        assert config.data_dir is not None
     
     def test_save_creates_directory(self):
         """Test that save creates the config directory if it doesn't exist."""

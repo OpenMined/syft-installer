@@ -1,6 +1,6 @@
-# SyftPerm Documentation Website
+# syft-installer Documentation Website
 
-This directory contains the complete documentation website for SyftPerm, built with modern web standards and styled after the OpenMined design system.
+This directory contains the complete documentation website for syft-installer, built with modern web standards and styled after the OpenMined design system.
 
 ## Structure
 
@@ -8,7 +8,7 @@ This directory contains the complete documentation website for SyftPerm, built w
 docs/
 ├── index.html              # Homepage
 ├── installation.html       # Installation guide
-├── quickstart.html         # 5-minute quick start
+├── quickstart.html         # 2-minute quick start
 ├── tutorials/
 │   ├── index.html          # Tutorial series overview
 │   └── [tutorial pages]    # Individual tutorial pages
@@ -37,10 +37,10 @@ The documentation website uses the OpenMined design system with:
 ## Features
 
 ### 📚 Comprehensive Documentation
-- Complete installation instructions
-- 5-minute quick start guide
-- Step-by-step tutorial series
-- Full Python API reference
+- Complete installation instructions for syft-installer
+- 2-minute quick start guide for SyftBox installation
+- Step-by-step guides for notebook environments
+- Full Python API reference for syft-installer functions
 
 ### 🎨 Modern Design
 - Clean, professional styling
@@ -142,4 +142,4 @@ The site is optimized for performance:
 
 ## License
 
-Same as the main SyftPerm project - MIT License.
+Same as the main syft-installer project - MIT License.

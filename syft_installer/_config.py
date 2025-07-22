@@ -1,20 +1,30 @@
 import json
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Optional
-
-from pydantic import BaseModel, Field
+from typing import Optional
 
 from syft_installer._exceptions import ConfigError
 from syft_installer._runtime import RuntimeEnvironment
 
 
-class Config(BaseModel):
+@dataclass
+class Config:
     """SyftBox configuration."""
     email: str
-    data_dir: str = Field(default_factory=lambda: RuntimeEnvironment().default_data_dir)
+    data_dir: Optional[str] = None
     server_url: str = "https://syftbox.net"
     client_url: str = "http://localhost:7938"
     refresh_token: Optional[str] = None
+    
+    def __post_init__(self):
+        """Set default data_dir if not provided."""
+        if not self.data_dir:
+            self.data_dir = RuntimeEnvironment().default_data_dir
+    
+    def to_dict(self) -> dict:
+        """Convert config to dictionary (replacement for model_dump)."""
+        from dataclasses import asdict
+        return asdict(self)
     
     @property
     def config_dir(self) -> Path:
@@ -63,6 +73,11 @@ class Config(BaseModel):
         try:
             with open(config_file, "r") as f:
                 data = json.load(f)
+            
+            # Ensure data_dir is set
+            if "data_dir" not in data or not data["data_dir"]:
+                data["data_dir"] = RuntimeEnvironment().default_data_dir
+                
             return cls(**data)
         except Exception as e:
             # Return None instead of raising an exception
