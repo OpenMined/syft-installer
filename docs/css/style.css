@@ -1146,6 +1146,59 @@ code {
     resize: vertical;
 }
 
+/* AGGRESSIVE OVERRIDES FOR HUBSPOT FORM */
+/* Fix the name field layout issue */
+.newsletter-section-dark .hs_firstname,
+.newsletter-section-dark .hs_lastname {
+    display: inline-block !important;
+    width: calc(50% - 0.5rem) !important;
+    vertical-align: top !important;
+}
+
+.newsletter-section-dark .hs_firstname {
+    margin-right: 1rem !important;
+}
+
+.newsletter-section-dark .hs_email,
+.newsletter-section-dark .field.hs-form-field:not(.hs_firstname):not(.hs_lastname) {
+    width: 100% !important;
+    display: block !important;
+}
+
+/* Force all text to be consistent */
+.newsletter-section-dark .hs-form * {
+    font-family: var(--font-sans) !important;
+}
+
+.newsletter-section-dark .hs-richtext p,
+.newsletter-section-dark .hs-richtext span,
+.newsletter-section-dark .hs-richtext em,
+.newsletter-section-dark .hs-richtext i,
+.newsletter-section-dark .hs-richtext strong,
+.newsletter-section-dark .legal-consent-container p,
+.newsletter-section-dark .legal-consent-container span {
+    font-style: normal !important;
+    font-weight: normal !important;
+    font-size: 1rem !important;
+    line-height: 1.6 !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Checkbox text alignment */
+.newsletter-section-dark .hs-form-booleancheckbox-display {
+    display: flex !important;
+    align-items: flex-start !important;
+}
+
+.newsletter-section-dark .hs-form-booleancheckbox-display input {
+    margin-top: 0.25rem !important;
+    margin-right: 0.75rem !important;
+}
+
+.newsletter-section-dark .hs-form-booleancheckbox-display > span {
+    flex: 1 !important;
+}
+
 .newsletter-section::before {
     content: '';
     position: absolute;

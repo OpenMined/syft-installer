@@ -274,14 +274,26 @@ class ProcessManager:
                     )
                 else:
                     # Regular Unix environment
-                    self.process = subprocess.Popen(
-                        cmd,
-                        stdout=subprocess.DEVNULL,
-                        stderr=self.stderr_file,
-                        stdin=subprocess.DEVNULL,
-                        start_new_session=True,
-                        preexec_fn=os.setsid
-                    )
+                    try:
+                        # Try with os.setsid for proper daemon behavior
+                        self.process = subprocess.Popen(
+                            cmd,
+                            stdout=subprocess.DEVNULL,
+                            stderr=self.stderr_file,
+                            stdin=subprocess.DEVNULL,
+                            start_new_session=True,
+                            preexec_fn=os.setsid
+                        )
+                    except (OSError, AttributeError):
+                        # Fall back to simpler approach if os.setsid fails
+                        # This can happen in some restricted environments
+                        self.process = subprocess.Popen(
+                            cmd,
+                            stdout=subprocess.DEVNULL,
+                            stderr=self.stderr_file,
+                            stdin=subprocess.DEVNULL,
+                            start_new_session=True
+                        )
                 
                 # Give it a moment to start
                 time.sleep(1)
