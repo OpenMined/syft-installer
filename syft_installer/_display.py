@@ -59,11 +59,11 @@ class SyftDisplay:
     
     def show_otp_request(self, email: str):
         """Show clean OTP request message."""
-        self.console.print(f"📧 Verification code sent to {email}")
+        pass  # Silent - will be handled in progress
     
     def get_otp_input(self) -> str:
         """Get OTP input with clean prompt."""
-        return self.console.input("🔐 Enter your 8-digit verification code: ")
+        return self.console.input("OTP: ")
     
     def show_success(self, email: str, data_dir: str):
         """Show inspiring success message."""

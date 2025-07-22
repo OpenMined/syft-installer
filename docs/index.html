@@ -72,7 +72,7 @@ si.install_and_run_if_needed()</code></pre>
     <section class="video-demo">
         <div class="container">
             <h2>See It In Action</h2>
-            <p class="section-subtitle">Watch automatic SyftBox installation across different environments</p>
+            <p class="section-subtitle">privacy can be effortless</p>
             
             <style>
                 .demo-tabs {
@@ -234,40 +234,14 @@ si.uninstall()
         </div>
     </section>
 
-    <!-- Gradient Feature Section -->
+    <!-- Under the Hood with Gradient -->
     <section class="gradient-feature">
         <div class="container">
-            <h2>Designed for Data Scientists</h2>
-            <p class="section-subtitle">Built specifically for notebook environments and automated workflows</p>
-            
-            <div class="feature-cards">
-                <div class="feature-card">
-                    <div class="feature-icon">📝</div>
-                    <h3>Notebook-First</h3>
-                    <p>Rich terminal output, interactive prompts, and automatic environment detection for the best notebook experience</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🤖</div>
-                    <h3>Automation Ready</h3>
-                    <p>Non-interactive mode and session-based API make it perfect for CI/CD pipelines and automated deployments</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">🛡️</div>
-                    <h3>Secure by Design</h3>
-                    <p>Email-based OTP authentication with JWT tokens ensures only authorized users can install and run SyftBox</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Real Example -->
-    <section class="real-example">
-        <div class="container">
             <h2>Under the Hood</h2>
-            <p style="text-align: center; margin-bottom: var(--space-6);">Here's what SyftBox daemon creates when installed:</p>
-            <pre><code class="language-python"># SyftBox creates a complete local environment:
+            <p class="section-subtitle">Here's what SyftBox daemon creates when installed</p>
+            
+            <div style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 16px; padding: var(--space-6); margin-top: var(--space-6);">
+                <pre style="background: transparent; color: rgba(255, 255, 255, 0.95); margin: 0;"><code class="language-python"># SyftBox creates a complete local environment:
 
 ~/.syftbox/
   ├── config.json          # Authentication and server settings
@@ -281,8 +255,10 @@ si.uninstall()
   └── sync/                 # Synchronized data and files
 
 # Plus the daemon binary at ~/.local/bin/syftbox</code></pre>
+            </div>
         </div>
     </section>
+
 
     <!-- Try It Out - Apple Style -->
     <section style="padding: 8rem 0; background: #f5f5f7;">

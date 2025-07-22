@@ -40,7 +40,8 @@
       "Bash(uv run:*)",
       "Bash(pkill:*)",
       "Bash(cp:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "WebFetch(domain:openmined.org)"
     ],
     "deny": []
   }

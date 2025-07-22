@@ -556,33 +556,91 @@ code {
    ================================ */
 .gradient-feature {
     padding: var(--space-16) 0;
-    background: 
-        radial-gradient(ellipse 800px 600px at 15% 20%, #F79763 0%, transparent 40%),
-        radial-gradient(ellipse 900px 700px at 85% 30%, #6976AE 0%, transparent 45%),
-        radial-gradient(ellipse 1000px 800px at 50% 85%, #CC677B 0%, transparent 50%),
-        #0e0b0f;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #fccb90 75%, #d57eeb 100%);
     color: white;
     position: relative;
     overflow: hidden;
+    isolation: isolate;
 }
 
 .gradient-feature::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: none;
-    pointer-events: none;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: 
+        radial-gradient(circle 800px at 20% 50%, rgba(255, 255, 255, 0.4) 0%, transparent 40%),
+        radial-gradient(circle 600px at 80% 30%, rgba(255, 192, 203, 0.5) 0%, transparent 40%),
+        radial-gradient(circle 700px at 50% 80%, rgba(255, 218, 185, 0.4) 0%, transparent 45%),
+        radial-gradient(circle 900px at 10% 10%, rgba(230, 230, 250, 0.3) 0%, transparent 50%),
+        radial-gradient(circle 500px at 90% 90%, rgba(176, 224, 230, 0.4) 0%, transparent 40%);
+    filter: blur(40px);
+    transform: rotate(-15deg) translateZ(0);
+    animation: gradientShift 25s ease-in-out infinite;
+    mix-blend-mode: soft-light;
+}
+
+@keyframes gradientShift {
+    0%, 100% { 
+        transform: rotate(-15deg) scale(1) translate(0, 0) translateZ(0);
+        filter: blur(40px) brightness(1.2);
+    }
+    20% { 
+        transform: rotate(-25deg) scale(1.15) translate(-8%, 12%) translateZ(0);
+        filter: blur(60px) brightness(1.3);
+    }
+    40% { 
+        transform: rotate(-5deg) scale(1.1) translate(10%, -8%) translateZ(0);
+        filter: blur(30px) brightness(1.1);
+    }
+    60% { 
+        transform: rotate(-30deg) scale(1.2) translate(-15%, -5%) translateZ(0);
+        filter: blur(50px) brightness(1.4);
+    }
+    80% { 
+        transform: rotate(-10deg) scale(1.05) translate(5%, 10%) translateZ(0);
+        filter: blur(45px) brightness(1.2);
+    }
 }
 
 .gradient-feature::after {
     content: '';
     position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.1);
-    pointer-events: none;
+    top: -100%;
+    left: -100%;
+    width: 300%;
+    height: 300%;
+    background: 
+        radial-gradient(ellipse 1200px 800px at 30% 20%, rgba(255, 255, 255, 0.3) 0%, transparent 40%),
+        radial-gradient(ellipse 1000px 1400px at 70% 60%, rgba(255, 182, 193, 0.4) 0%, transparent 45%),
+        radial-gradient(ellipse 1500px 900px at 50% 90%, rgba(255, 239, 213, 0.3) 0%, transparent 50%),
+        radial-gradient(circle 600px at 85% 15%, rgba(230, 230, 250, 0.4) 0%, transparent 35%);
+    filter: blur(60px);
+    transform: rotate(35deg) translateZ(0);
+    mix-blend-mode: overlay;
+    animation: gradientShift2 35s ease-in-out infinite reverse;
+    opacity: 0.8;
+}
+
+@keyframes gradientShift2 {
+    0%, 100% { 
+        transform: rotate(35deg) scale(1) translate(0, 0) skew(0deg, 0deg) translateZ(0);
+        filter: blur(60px) hue-rotate(0deg);
+    }
+    25% { 
+        transform: rotate(55deg) scale(0.95) translate(15%, -15%) skew(5deg, -5deg) translateZ(0);
+        filter: blur(80px) hue-rotate(20deg);
+    }
+    50% { 
+        transform: rotate(20deg) scale(1.3) translate(-10%, 20%) skew(-8deg, 3deg) translateZ(0);
+        filter: blur(40px) hue-rotate(-15deg);
+    }
+    75% { 
+        transform: rotate(40deg) scale(1.1) translate(5%, -5%) skew(3deg, -3deg) translateZ(0);
+        filter: blur(70px) hue-rotate(10deg);
+    }
 }
 
 .gradient-feature .container {
@@ -645,17 +703,8 @@ code {
 }
 
 /* ================================
-   Real Example Section
+   Data Scientists Section (removed)
    ================================ */
-.real-example {
-    background: var(--color-light-gray);
-    padding: var(--space-12) 0;
-}
-
-.real-example h2 {
-    text-align: center;
-    margin-bottom: var(--space-6);
-}
 
 /* ================================
    Tutorial CTA Section
