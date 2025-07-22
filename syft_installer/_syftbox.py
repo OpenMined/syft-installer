@@ -295,23 +295,21 @@ class _SyftBox:
             # After fresh install, create progress bar function
             def show_progress(progress, message):
                 progress = int(progress)
-                # Calculate bar width to match final message length
-                # Final message: "✅ SyftBox is now running!!! (PID: 43798)" = ~43 chars
-                # We need: message + " |" + bar + "| " + "100%"
-                # So bar width = 43 - len(message) - 7 (for " |", "| ", "100%")
-                max_msg_len = 43
-                bar_width = max(10, max_msg_len - len(message) - 7)
+                
+                # Fixed widths to match final message
+                message_width = 43  # Width of "✅ SyftBox is now running!!! (PID: 43883)"
+                bar_width = 10      # Fixed bar width
+                
+                # Pad message to fixed width
+                padded_message = message[:message_width].ljust(message_width)
                 
                 filled = int(bar_width * progress / 100)
                 bar = '█' * filled + '░' * (bar_width - filled)
                 
                 # Build the complete line
-                line = f'{message} |{bar}| {progress:3d}%'
+                line = f'{padded_message} |{bar}| {progress:3d}%'
                 
-                # Pad to ensure consistent width
-                padded_line = line.ljust(max_msg_len + 4)  # +4 for "100%"
-                
-                sys.stdout.write(f'\r{padded_line}')
+                sys.stdout.write(f'\r{line}')
                 sys.stdout.flush()
             
             # Show starting daemon at 95%
@@ -452,25 +450,22 @@ class _SyftBox:
             # Ensure progress is an integer
             progress = int(progress)
             
-            # Match the final message width
-            max_total_width = 47  # Total width including progress percentage
+            # Fixed widths to match final message
+            message_width = 43  # Width of "✅ SyftBox is now running!!! (PID: 43883)"
+            bar_width = 10      # Fixed bar width
             
-            # Calculate dynamic bar width based on message length
-            # Format: "message |bar| XXX%"
-            bar_width = max(10, max_total_width - len(message) - 7)  # 7 for " |", "| ", "XXX%"
+            # Pad message to fixed width
+            padded_message = message[:message_width].ljust(message_width)
             
             filled = int(bar_width * progress / 100)
             bar = '█' * filled + '░' * (bar_width - filled)
             
             # Build the complete line
-            line = f'{message} |{bar}| {progress:3d}%'
-            
-            # Pad to ensure consistent width
-            padded_line = line.ljust(max_total_width)
+            line = f'{padded_message} |{bar}| {progress:3d}%'
             
             # For Jupyter, use \r to return to beginning of line
             sys.stdout.write('\r')
-            sys.stdout.write(padded_line)
+            sys.stdout.write(line)
             sys.stdout.flush()
         
         # NOW: Start installation with smooth progress from 0 to 100
