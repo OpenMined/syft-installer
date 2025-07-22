@@ -295,11 +295,23 @@ class _SyftBox:
             # After fresh install, create progress bar function
             def show_progress(progress, message):
                 progress = int(progress)
-                width = 50
-                filled = int(width * progress / 100)
-                bar = '█' * filled + '░' * (width - filled)
-                padded_message = message.ljust(40)
-                sys.stdout.write(f'\r{padded_message} |{bar}| {progress:3d}%')
+                # Calculate bar width to match final message length
+                # Final message: "✅ SyftBox is now running!!! (PID: 43798)" = ~43 chars
+                # We need: message + " |" + bar + "| " + "100%"
+                # So bar width = 43 - len(message) - 7 (for " |", "| ", "100%")
+                max_msg_len = 43
+                bar_width = max(10, max_msg_len - len(message) - 7)
+                
+                filled = int(bar_width * progress / 100)
+                bar = '█' * filled + '░' * (bar_width - filled)
+                
+                # Build the complete line
+                line = f'{message} |{bar}| {progress:3d}%'
+                
+                # Pad to ensure consistent width
+                padded_line = line.ljust(max_msg_len + 4)  # +4 for "100%"
+                
+                sys.stdout.write(f'\r{padded_line}')
                 sys.stdout.flush()
             
             # Show starting daemon at 95%
@@ -315,7 +327,6 @@ class _SyftBox:
                 final_message = "✅ SyftBox is now running!!!"
             
             show_progress(100, final_message)
-            sys.stdout.write(' ' * 20)  # Clear any trailing characters
             _print()  # New line after final message
     
     def stop(self, all: bool = False) -> None:
@@ -440,28 +451,32 @@ class _SyftBox:
             """Update progress bar on the same line"""
             # Ensure progress is an integer
             progress = int(progress)
-            filled = int(width * progress / 100)
-            bar = '█' * filled + '░' * (width - filled)
             
-            # Pad message to fixed width to prevent bar from jumping
-            message_width = 40
-            if message:
-                padded_message = message.ljust(message_width)
-            else:
-                padded_message = "Progress:".ljust(message_width)
+            # Match the final message width
+            max_total_width = 47  # Total width including progress percentage
+            
+            # Calculate dynamic bar width based on message length
+            # Format: "message |bar| XXX%"
+            bar_width = max(10, max_total_width - len(message) - 7)  # 7 for " |", "| ", "XXX%"
+            
+            filled = int(bar_width * progress / 100)
+            bar = '█' * filled + '░' * (bar_width - filled)
+            
+            # Build the complete line
+            line = f'{message} |{bar}| {progress:3d}%'
+            
+            # Pad to ensure consistent width
+            padded_line = line.ljust(max_total_width)
             
             # For Jupyter, use \r to return to beginning of line
             sys.stdout.write('\r')
-            
-            # Write the progress bar with consistent formatting
-            sys.stdout.write(f"{padded_message} |{bar}| {progress:3d}%")
-            
+            sys.stdout.write(padded_line)
             sys.stdout.flush()
         
         # NOW: Start installation with smooth progress from 0 to 100
         try:
-            # Phase 1: Setup (0-20%)
-            for i in range(0, 21):
+            # Phase 1: Setup (0-10%)
+            for i in range(0, 11):
                 update_progress_bar(i, message="📦 Setting up installation environment...")
                 time.sleep(0.02)
             
@@ -473,7 +488,7 @@ class _SyftBox:
             config_dir.mkdir(parents=True, exist_ok=True)
             self.data_dir.mkdir(parents=True, exist_ok=True)
             
-            # Phase 2: Download binary (20-50%)
+            # Phase 2: Download binary (10-70%)
             if not binary_path.exists():
                 from syft_installer._downloader import Downloader
                 downloader = Downloader()
@@ -481,27 +496,27 @@ class _SyftBox:
                 # Define callback to update progress bar based on download
                 def download_progress(downloaded, total, message):
                     if total > 0:
-                        # Map download progress to 20-50% range
+                        # Map download progress to 10-70% range (60% of total)
                         download_percent = (downloaded / total) * 100
-                        overall_progress = 20 + int((download_percent * 30) / 100)
+                        overall_progress = 10 + int((download_percent * 60) / 100)
                         update_progress_bar(overall_progress, message=message)
                     else:
-                        # For extract/install phases, just show at 48-50%
+                        # For extract/install phases, show at 65-70%
                         if "Extracting" in message:
-                            update_progress_bar(48, message=message)
+                            update_progress_bar(65, message=message)
                         elif "Installing" in message:
-                            update_progress_bar(50, message=message)
+                            update_progress_bar(70, message=message)
                 
                 downloader.download_and_install(binary_path, download_progress)
             else:
-                for i in range(21, 51):
+                for i in range(11, 71):
                     update_progress_bar(i, message="✅ SyftBox binary already exists")
-                    time.sleep(0.01)
+                    time.sleep(0.005)
             
-            # Phase 3: Verify OTP (50-80%)
-            for i in range(51, 71):
+            # Phase 3: Verify OTP (70-85%)
+            for i in range(71, 86):
                 update_progress_bar(i, message="🔐 Verifying code...")
-                time.sleep(0.03)
+                time.sleep(0.02)
         
             from syft_installer._utils import sanitize_otp, validate_otp
             otp = sanitize_otp(otp)
@@ -513,8 +528,8 @@ class _SyftBox:
             
             tokens = auth.verify_otp(email, otp)
             
-            # Phase 4: Save configuration (70-90%)
-            for i in range(71, 91):
+            # Phase 4: Save configuration (85-95%)
+            for i in range(86, 96):
                 update_progress_bar(i, message="💾 Saving configuration...")
                 time.sleep(0.02)
             
@@ -527,10 +542,8 @@ class _SyftBox:
             )
             config.save()
             
-            # Phase 5: Complete (90-95%)  - Don't go to 100% yet
-            for i in range(91, 96):
-                update_progress_bar(i, message="✅ Finalizing installation...")
-                time.sleep(0.01)
+            # Stay at 95% - daemon starting happens in run() method
+            update_progress_bar(95, message="✅ Installation complete...")
             
             # Installation is done but daemon not started yet - stay at 95%
             
