@@ -1104,8 +1104,13 @@ code {
 
 /* Center and constrain the HubSpot form container */
 .newsletter-section-dark #hubspot-form-container {
-    max-width: 500px;
+    max-width: 450px;
     margin: 0 auto;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 3rem;
+    backdrop-filter: blur(20px);
 }
 
 .newsletter-section-dark .hs-form {
@@ -1147,6 +1152,38 @@ code {
 }
 
 /* AGGRESSIVE OVERRIDES FOR HUBSPOT FORM */
+/* Reset all HubSpot default styles */
+.newsletter-section-dark .hs-form fieldset {
+    max-width: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.newsletter-section-dark .hs-form .hs-form-field {
+    margin: 0 0 1rem 0 !important;
+    padding: 0 !important;
+}
+
+.newsletter-section-dark .hs-form .hs-field-desc {
+    display: none !important;
+}
+
+.newsletter-section-dark .hs-form .hs-form-field > label {
+    display: none !important;
+}
+
+/* Remove all default HubSpot spacing */
+.newsletter-section-dark .hs-form .inputs-list {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.newsletter-section-dark .hs-form ul {
+    list-style: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
 /* Fix the name field layout issue */
 .newsletter-section-dark .hs_firstname,
 .newsletter-section-dark .hs_lastname {

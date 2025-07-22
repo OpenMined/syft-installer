@@ -330,75 +330,145 @@ si.uninstall()
             css: "",
             cssClass: "newsletter-hubspot-form",
             onFormReady: function(form) {
-                // Style the form to match our design
-                const formElement = form[0] || form;
-                
-                // Fix the name field layout
-                const firstNameField = formElement.querySelector('.hs_firstname');
-                const lastNameField = formElement.querySelector('.hs_lastname');
-                
-                if (firstNameField && lastNameField) {
-                    // Create a flex container for name fields
-                    const nameContainer = document.createElement('div');
-                    nameContainer.style.display = 'flex';
-                    nameContainer.style.gap = '1rem';
-                    nameContainer.style.marginBottom = '1rem';
+                // Function to apply all styles
+                function applyFormStyles() {
+                    const formElement = document.querySelector('#hubspot-form-container form');
+                    if (!formElement) return;
                     
-                    // Insert container before first name field
-                    firstNameField.parentNode.insertBefore(nameContainer, firstNameField);
+                    // Hide all labels (we'll use placeholders)
+                    formElement.querySelectorAll('label').forEach(label => {
+                        if (!label.querySelector('input[type="checkbox"]')) {
+                            label.style.display = 'none';
+                        }
+                    });
                     
-                    // Move fields into container
-                    nameContainer.appendChild(firstNameField);
-                    nameContainer.appendChild(lastNameField);
+                    // Fix the name field layout by finding the actual field groups
+                    const fieldGroups = formElement.querySelectorAll('.hs-form-field');
+                    let firstNameGroup = null;
+                    let lastNameGroup = null;
                     
-                    // Style the fields
-                    [firstNameField, lastNameField].forEach(field => {
-                        field.style.flex = '1';
-                        field.style.margin = '0';
+                    fieldGroups.forEach(group => {
+                        if (group.querySelector('input[name="firstname"]')) firstNameGroup = group;
+                        if (group.querySelector('input[name="lastname"]')) lastNameGroup = group;
+                    });
+                    
+                    if (firstNameGroup && lastNameGroup) {
+                        // Create a container for both name fields
+                        const nameContainer = document.createElement('div');
+                        nameContainer.style.cssText = 'display: flex; gap: 1rem; margin-bottom: 1rem;';
+                        
+                        // Insert the container
+                        firstNameGroup.parentNode.insertBefore(nameContainer, firstNameGroup);
+                        
+                        // Move both field groups into the container
+                        nameContainer.appendChild(firstNameGroup);
+                        nameContainer.appendChild(lastNameGroup);
+                        
+                        // Style the field groups
+                        [firstNameGroup, lastNameGroup].forEach(group => {
+                            group.style.cssText = 'flex: 1; margin: 0;';
+                        });
+                    }
+                    
+                    // Style all inputs with more specific selectors
+                    formElement.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(el => {
+                        el.style.cssText = `
+                            width: 100% !important;
+                            padding: 12px 16px !important;
+                            font-size: 1rem !important;
+                            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                            border-radius: 12px !important;
+                            background: rgba(255, 255, 255, 0.05) !important;
+                            color: white !important;
+                            box-sizing: border-box !important;
+                            margin: 0 !important;
+                            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+                        `;
+                        
+                        // Add placeholders
+                        if (el.name === 'firstname') el.placeholder = 'First name';
+                        if (el.name === 'lastname') el.placeholder = 'Last name';
+                        if (el.name === 'email') el.placeholder = 'Email address';
+                    });
+                    
+                    // Style submit button
+                    formElement.querySelectorAll('input[type="submit"]').forEach(el => {
+                        el.style.cssText = `
+                            background: white !important;
+                            color: #0a0a0a !important;
+                            border: none !important;
+                            padding: 12px 32px !important;
+                            border-radius: 980px !important;
+                            font-size: 1rem !important;
+                            font-weight: 500 !important;
+                            cursor: pointer !important;
+                            width: auto !important;
+                            margin-top: 1rem !important;
+                        `;
+                    });
+                    
+                    // Style form groups to remove default margins
+                    formElement.querySelectorAll('.hs-form-field').forEach(field => {
+                        field.style.marginBottom = '0';
+                    });
+                    
+                    // Fix email field group specifically
+                    const emailGroup = formElement.querySelector('.hs_email');
+                    if (emailGroup) {
+                        emailGroup.style.marginBottom = '1rem';
+                    }
+                    
+                    // Fix ALL text elements
+                    formElement.querySelectorAll('.hs-richtext p, .hs-richtext span, .hs-richtext em, .hs-richtext i').forEach(el => {
+                        el.style.cssText = `
+                            color: rgba(255, 255, 255, 0.6) !important;
+                            font-style: normal !important;
+                            font-weight: normal !important;
+                            font-size: 0.9rem !important;
+                            line-height: 1.6 !important;
+                            margin: 0.5rem 0 !important;
+                        `;
+                    });
+                    
+                    // Style legal text
+                    formElement.querySelectorAll('.legal-consent-container').forEach(el => {
+                        el.style.cssText = `
+                            margin-top: 1rem !important;
+                            color: rgba(255, 255, 255, 0.6) !important;
+                            font-size: 0.9rem !important;
+                        `;
+                    });
+                    
+                    // Fix checkboxes and their labels
+                    formElement.querySelectorAll('input[type="checkbox"]').forEach(el => {
+                        el.style.cssText = `
+                            margin-right: 8px !important;
+                            width: 16px !important;
+                            height: 16px !important;
+                            vertical-align: middle !important;
+                        `;
+                        
+                        // Style the label that contains the checkbox
+                        const label = el.closest('label');
+                        if (label) {
+                            label.style.cssText = `
+                                display: flex !important;
+                                align-items: flex-start !important;
+                                color: rgba(255, 255, 255, 0.6) !important;
+                                font-size: 0.9rem !important;
+                                line-height: 1.4 !important;
+                            `;
+                        }
                     });
                 }
                 
-                // Style all inputs
-                formElement.querySelectorAll('input[type="text"], input[type="email"], textarea').forEach(el => {
-                    el.style.width = '100%';
-                    el.style.padding = '12px 16px';
-                    el.style.fontSize = '1rem';
-                    el.style.border = '1px solid rgba(255, 255, 255, 0.2)';
-                    el.style.borderRadius = '12px';
-                    el.style.background = 'rgba(255, 255, 255, 0.05)';
-                    el.style.color = 'white';
-                    el.style.boxSizing = 'border-box';
-                });
+                // Apply styles immediately
+                applyFormStyles();
                 
-                // Style submit button
-                formElement.querySelectorAll('input[type="submit"]').forEach(el => {
-                    el.style.background = 'white';
-                    el.style.color = '#0a0a0a';
-                    el.style.border = 'none';
-                    el.style.padding = '12px 32px';
-                    el.style.borderRadius = '980px';
-                    el.style.fontSize = '1rem';
-                    el.style.fontWeight = '500';
-                    el.style.cursor = 'pointer';
-                });
-                
-                // Fix ALL text to be consistent
-                formElement.querySelectorAll('p, span, em, i, strong, b, label').forEach(el => {
-                    if (el.closest('.hs-richtext') || el.closest('.legal-consent-container')) {
-                        el.style.color = 'rgba(255, 255, 255, 0.6)';
-                        el.style.fontStyle = 'normal';
-                        el.style.fontWeight = 'normal';
-                        el.style.fontSize = '1rem';
-                        el.style.lineHeight = '1.6';
-                    }
-                });
-                
-                // Fix checkboxes
-                formElement.querySelectorAll('input[type="checkbox"]').forEach(el => {
-                    el.style.marginRight = '8px';
-                    el.style.width = '16px';
-                    el.style.height = '16px';
-                });
+                // Apply again after a delay to catch any async rendering
+                setTimeout(applyFormStyles, 100);
+                setTimeout(applyFormStyles, 500);
+                setTimeout(applyFormStyles, 1000);
             }
         });
     </script>
