@@ -30,7 +30,9 @@
       "Bash(uv run pytest:*)",
       "Bash(git reset:*)",
       "Bash(git restore:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:openmined.github.io)"
     ],
     "deny": []
   }

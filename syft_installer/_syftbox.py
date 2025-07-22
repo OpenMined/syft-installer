@@ -333,8 +333,24 @@ class _SyftBox:
     
     def _install(self) -> None:
         """Run installation flow."""
+        # Auto-detect email in Colab if not provided
+        email = self.email
+        if email is None:
+            from syft_installer._colab_utils import is_google_colab, get_colab_user_email
+            
+            if is_google_colab():
+                _console.print("🔍 Detected Google Colab environment")
+                email = get_colab_user_email()
+                if email is None:
+                    _console.print("❌ Could not detect email. Please provide it explicitly.")
+                    return
+                self.email = email  # Store for later use
+            else:
+                _console.print("❌ Email is required. In Google Colab, we can detect it automatically.")
+                return
+        
         installer = _SimpleInstaller(
-            email=self.email,
+            email=email,
             server_url=self.server
         )
         
@@ -373,9 +389,19 @@ class _SyftBox:
         if not self.is_installed:
             _console.print("📦 SyftBox not installed. Starting installation...\n")
             
+            # Auto-detect email in Colab if not provided
             if not self.email:
-                _console.print("❌ Email is required for non-interactive installation")
-                return None
+                from syft_installer._colab_utils import is_google_colab, get_colab_user_email
+                
+                if is_google_colab():
+                    _console.print("🔍 Detected Google Colab environment")
+                    self.email = get_colab_user_email()
+                    if not self.email:
+                        _console.print("❌ Could not detect email. Please provide it explicitly.")
+                        return None
+                else:
+                    _console.print("❌ Email is required for non-interactive installation")
+                    return None
                 
             installer = _SimpleInstaller(
                 email=self.email,
@@ -454,7 +480,7 @@ def _get_instance(**kwargs) -> _SyftBox:
 
 
 # Super simple API
-def install(email: str, interactive: bool = True) -> Union[bool, Optional[InstallerSession]]:
+def install(email: Optional[str] = None, interactive: bool = True) -> Union[bool, Optional[InstallerSession]]:
     """
     Install SyftBox without starting it.
     
@@ -462,7 +488,8 @@ def install(email: str, interactive: bool = True) -> Union[bool, Optional[Instal
     Useful when you want to install now but run later.
     
     Args:
-        email: Your email address for authentication (required)
+        email: Your email address for authentication. If not provided in Google Colab,
+               will attempt to detect it automatically from your Google account.
         interactive: If True, prompts for OTP input. If False, returns an InstallerSession
                     object for programmatic OTP submission (default: True)
         
@@ -477,6 +504,10 @@ def install(email: str, interactive: bool = True) -> Union[bool, Optional[Instal
         # Enter OTP when prompted
         >>> si.run()  # Start later
         
+        Interactive mode in Colab (auto-detect email):
+        >>> import syft_installer as si
+        >>> si.install()  # Email detected from Google account
+        
         Non-interactive mode:
         >>> import syft_installer as si
         >>> session = si.install("user@example.com", interactive=False)
@@ -484,6 +515,20 @@ def install(email: str, interactive: bool = True) -> Union[bool, Optional[Instal
         >>>     session.submit_otp("ABC12345")
         >>> si.run()  # Start later
     """
+    # Auto-detect email in Colab if not provided
+    if email is None:
+        from syft_installer._colab_utils import is_google_colab, get_colab_user_email
+        
+        if is_google_colab():
+            _console.print("🔍 Detected Google Colab environment")
+            email = get_colab_user_email()
+            if email is None:
+                _console.print("❌ Could not detect email. Please provide it explicitly.")
+                return False if interactive else None
+        else:
+            _console.print("❌ Email is required. In Google Colab, we can detect it automatically.")
+            return False if interactive else None
+    
     instance = _get_instance(email=email)
     if instance.is_installed:
         _console.print("✅ SyftBox is already installed")
