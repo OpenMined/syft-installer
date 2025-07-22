@@ -179,21 +179,7 @@ class _SyftBox:
     def is_installed(self) -> bool:
         """Check if SyftBox is installed."""
         config = _Config.load()
-        binary_path = Path.home() / ".local" / "bin" / "syftbox"
-        
-        # Debug: Check individual conditions
-        config_exists = config is not None
-        binary_exists = binary_path.exists()
-        
-        # If binary exists but config doesn't, try loading config again
-        # (in case of race condition)
-        if binary_exists and not config_exists:
-            import time
-            time.sleep(0.1)  # Brief pause
-            config = _Config.load()
-            config_exists = config is not None
-        
-        return config_exists and binary_exists
+        return config is not None
     
     @property
     def is_running(self) -> bool:
