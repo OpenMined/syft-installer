@@ -346,23 +346,22 @@ code {
 }
 
 .copy-btn {
-    background: var(--color-secondary);
-    color: white;
-    border: none;
+    background: #e2e8f0;
+    color: #4a5568;
+    border: 1px solid #cbd5e0;
     padding: var(--space-1) var(--space-2);
     border-radius: 6px;
     cursor: pointer;
     font-size: 0.9rem;
     transition: all 0.2s;
-    font-weight: 600;
+    font-weight: 500;
     position: relative;
     overflow: hidden;
 }
 
 .copy-btn:hover {
-    background: #059669;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: #cbd5e0;
+    border-color: #a0aec0;
 }
 
 .copy-btn:active {
