@@ -18,10 +18,10 @@ class ProcessManager:
         self.stderr_file = None
         self.verbose = verbose
     
-    def start(self, config, background: bool = True, progress_callback=None) -> None:
-        """Start SyftBox client."""
+    def start(self, config, background: bool = True, progress_callback=None) -> Optional[int]:
+        """Start SyftBox client. Returns PID if successful."""
         if self.is_running():
-            return
+            return self.process.pid if self.process else None
         
         # Check binary exists
         if not config.binary_path.exists():
@@ -36,8 +36,10 @@ class ProcessManager:
         
         if background:
             self._run_background(cmd, progress_callback)
+            return self.process.pid if self.process else None
         else:
             self._run_foreground(cmd)
+            return None
     
     def stop(self) -> None:
         """Stop the SyftBox client we started."""

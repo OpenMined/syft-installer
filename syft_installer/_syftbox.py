@@ -246,15 +246,29 @@ class _SyftBox:
                 prog.update(95, "✅ SyftBox daemon started successfully")
                 prog.finish(f"✅ SyftBox installed and running for {config.email}")
             else:
-                # After fresh install, continue with the same progress bar
-                # Start the daemon
-                self._process_manager.start(config, background=background)
+                # After fresh install, create progress bar function
+                def show_progress(progress, message):
+                    progress = int(progress)
+                    width = 50
+                    filled = int(width * progress / 100)
+                    bar = '█' * filled + '░' * (width - filled)
+                    padded_message = message.ljust(40)
+                    sys.stdout.write(f'\r{padded_message} |{bar}| {progress:3d}%')
+                    sys.stdout.flush()
                 
-                # Show final running status
-                # Use the same progress bar format as in _install
-                bar = '█' * 50  # Full bar
-                padded_message = f"✅ SyftBox is now running!".ljust(40)
-                sys.stdout.write(f'\r{padded_message} |{bar}| 100%')
+                # Show starting daemon at 95%
+                show_progress(95, "🚀 Starting SyftBox daemon...")
+                
+                # Start the daemon and get PID
+                pid = self._process_manager.start(config, background=background)
+                
+                # Show final running status with PID at 100%
+                if pid:
+                    final_message = f"✅ SyftBox is now running! (PID: {pid})"
+                else:
+                    final_message = "✅ SyftBox is now running!"
+                
+                show_progress(100, final_message)
                 sys.stdout.write(' ' * 20)  # Clear any trailing characters
                 print()  # New line after final message
         else:
@@ -468,12 +482,12 @@ class _SyftBox:
             )
             config.save()
             
-            # Phase 5: Complete (90-100%)
-            for i in range(91, 101):
+            # Phase 5: Complete (90-95%)  - Don't go to 100% yet
+            for i in range(91, 96):
                 update_progress_bar(i, message="✅ Finalizing installation...")
                 time.sleep(0.01)
             
-            # Don't show "installation complete" - will show "running" message instead
+            # Installation is done but daemon not started yet - stay at 95%
             
         except Exception as e:
             sys.stdout.write(f"\r❌ Installation failed: {str(e)}\n")
