@@ -18,6 +18,7 @@ Usage:
 """
 import os
 import shutil
+import sys
 from pathlib import Path
 from typing import Optional, Dict, Any, Union
 from rich.console import Console
@@ -388,12 +389,15 @@ class _SyftBox:
             prog.finish(f"❌ Installation failed: {str(e)}")
             return
         
-        # Get OTP from user with single-line flow
-        prog.update(85, "📧 Verification code sent - enter OTP below")
-        prog.finish("📧 Verification code sent to your email")
+        # Update progress to show OTP is needed
+        prog.update(85, "📧 Verification code sent to your email")
         
-        # Get OTP input on same line
-        otp = _console.input("OTP: ")
+        # Clear the progress line and get OTP input on same line
+        sys.stdout.write('\r' + ' ' * 120 + '\r')
+        sys.stdout.flush()
+        
+        # Get OTP input
+        otp = _console.input("📧 Verification code sent to your email - OTP: ")
         
         # Verify OTP with progress
         prog = progress_context()
