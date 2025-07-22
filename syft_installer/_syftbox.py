@@ -215,7 +215,7 @@ class _SyftBox:
         if self.is_running:
             config = self.config
             if config:
-                display.show_already_running(config.email)
+                print(f"✅ SyftBox already running for {config.email}")
             else:
                 print("✅ SyftBox is already running")
             return
