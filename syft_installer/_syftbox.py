@@ -669,6 +669,10 @@ def install(email: Optional[str] = None, interactive: bool = True, silent: bool 
         # Enter OTP when prompted
         >>> si.run()  # Start later
         
+        Silent mode:
+        >>> si.install("user@example.com", silent=True)
+        # No output displayed
+        
         Interactive mode in Colab (auto-detect email):
         >>> import syft_installer as si
         >>> si.install()  # Email detected from Google account
@@ -752,19 +756,19 @@ def install(email: Optional[str] = None, interactive: bool = True, silent: bool 
             _console_print("✅ Binary already exists")
         
         # Request OTP
-        _console.print(f"\n📧 Requesting OTP for {email}...")
+        _console_print(f"\n📧 Requesting OTP for {email}...")
         try:
             from syft_installer._auth import Authenticator
             auth = Authenticator(instance.server)
             result = auth.request_otp(email)
-            _console.print("✅ OTP sent! Check your email (including spam folder)")
+            _console_print("✅ OTP sent! Check your email (including spam folder)")
             
             session = InstallerSession(email, instance, auth, background=False)
-            _console.print("👉 Use session.submit_otp('YOUR_OTP') to complete installation\n")
+            _console_print("👉 Use session.submit_otp('YOUR_OTP') to complete installation\n")
             return session
             
         except Exception as e:
-            _console.print(f"❌ OTP request failed: {str(e)}")
+            _console_print(f"❌ OTP request failed: {str(e)}")
             return None
 
 
@@ -784,6 +788,9 @@ def run(background: bool = True, silent: bool = False) -> bool:
     Example:
         >>> import syft_installer as si
         >>> si.run()  # Assumes already installed
+        
+        Silent mode:
+        >>> si.run(silent=True)  # No output
     """
     # Apply silent mode if requested
     if silent:
@@ -840,6 +847,10 @@ def install_and_run_if_needed(email: Optional[str] = None, background: bool = Tr
         >>> import syft_installer as si
         >>> si.install_and_run_if_needed("user@example.com")
         # Enter OTP when prompted
+        
+        Silent mode:
+        >>> si.install_and_run_if_needed("user@example.com", silent=True)
+        # No output displayed
         
         Non-interactive mode:
         >>> import syft_installer as si
@@ -912,6 +923,9 @@ def stop(all: bool = False, silent: bool = False) -> None:
     Example:
         >>> import syft_installer as si
         >>> si.stop()
+        
+        Silent mode:
+        >>> si.stop(silent=True)  # No output
     """
     # Apply silent mode if requested
     if silent:

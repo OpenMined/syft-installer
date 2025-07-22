@@ -172,7 +172,8 @@ si.install_and_run_if_needed()</code></pre>
                     
                     <div class="tab-pane" id="magic">
                         <div class="video-container">
-                            <iframe width="100%" height="600" src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                            <iframe width="100%" height="600" src="" 
+                                    data-src="https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1"
                                     title="Magic Demo" frameborder="0" 
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                                     allowfullscreen></iframe>
@@ -323,7 +324,24 @@ si.uninstall()
                     
                     // Add active class to clicked button and corresponding pane
                     this.classList.add('active');
-                    document.getElementById(targetTab).classList.add('active');
+                    const targetPane = document.getElementById(targetTab);
+                    targetPane.classList.add('active');
+                    
+                    // Special handling for Magic tab
+                    if (targetTab === 'magic') {
+                        const iframe = targetPane.querySelector('iframe');
+                        if (iframe && iframe.getAttribute('data-src') && !iframe.src) {
+                            // Load the video with autoplay
+                            iframe.src = iframe.getAttribute('data-src');
+                        }
+                    } else {
+                        // Stop any playing videos when switching away from Magic tab
+                        const magicPane = document.getElementById('magic');
+                        const magicIframe = magicPane.querySelector('iframe');
+                        if (magicIframe && magicIframe.src) {
+                            magicIframe.src = '';
+                        }
+                    }
                 });
             });
         });
