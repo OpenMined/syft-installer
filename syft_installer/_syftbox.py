@@ -393,8 +393,9 @@ class _SyftBox:
             display.show_error(f"Failed to request verification code: {str(e)}")
             return
         
-        # Get OTP input on same line
-        otp = input(f"📧 Enter code sent to {email}: ").strip()
+        # Get OTP input on same line (hidden)
+        import getpass
+        otp = getpass.getpass(f"📧 Enter code sent to {email}: ").strip()
         
         # Progress bar function
         def update_progress_bar(progress, width=50, message=""):
