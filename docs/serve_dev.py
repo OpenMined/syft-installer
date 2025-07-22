@@ -40,14 +40,21 @@ class LiveReloadHandler(SimpleHTTPRequestHandler):
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
             
+            # Send initial connection message
+            self.wfile.write(b'data: connected\n\n')
+            self.wfile.flush()
+            
             # Keep connection open and wait for reload signal
-            while True:
-                if hasattr(self.server, 'reload_flag') and self.server.reload_flag:
-                    self.wfile.write(b'data: reload\n\n')
-                    self.wfile.flush()
-                    self.server.reload_flag = False
-                    break
-                time.sleep(0.1)
+            try:
+                while True:
+                    if hasattr(self.server, 'reload_flag') and self.server.reload_flag:
+                        self.wfile.write(b'data: reload\n\n')
+                        self.wfile.flush()
+                        self.server.reload_flag = False
+                        break
+                    time.sleep(0.1)
+            except (BrokenPipeError, ConnectionResetError):
+                pass
             return
         
         # Inject live reload script into HTML files

@@ -32,7 +32,13 @@
       "Bash(git restore:*)",
       "Bash(git checkout:*)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:openmined.github.io)"
+      "WebFetch(domain:openmined.github.io)",
+      "Bash(env)",
+      "Bash(git ls-tree:*)",
+      "Bash(kill:*)",
+      "Bash(python:*)",
+      "Bash(uv run:*)",
+      "Bash(pkill:*)"
     ],
     "deny": []
   }
