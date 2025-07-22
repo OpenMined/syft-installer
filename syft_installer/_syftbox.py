@@ -375,6 +375,8 @@ class _SyftBox:
         # Progress bar function
         def update_progress_bar(progress, width=50, message=""):
             """Update progress bar on the same line"""
+            # Ensure progress is an integer
+            progress = int(progress)
             filled = int(width * progress / 100)
             bar = '█' * filled + '░' * (width - filled)
             
@@ -393,7 +395,7 @@ class _SyftBox:
         try:
             # Phase 1: Setup (0-20%)
             for i in range(0, 21):
-                update_progress_bar(i, "📦 Setting up installation environment...")
+                update_progress_bar(i, message="📦 Setting up installation environment...")
                 time.sleep(0.02)
             
             bin_dir = Path.home() / ".local" / "bin"
@@ -407,7 +409,7 @@ class _SyftBox:
             # Phase 2: Download binary (20-50%)
             if not binary_path.exists():
                 for i in range(21, 36):
-                    update_progress_bar(i, "📥 Downloading SyftBox binary...")
+                    update_progress_bar(i, message="📥 Downloading SyftBox binary...")
                     time.sleep(0.05)
                 
                 from syft_installer._downloader import Downloader
@@ -415,16 +417,16 @@ class _SyftBox:
                 downloader.download_and_install(binary_path)
                 
                 for i in range(36, 51):
-                    update_progress_bar(i, "📥 Extracting SyftBox binary...")
+                    update_progress_bar(i, message="📥 Extracting SyftBox binary...")
                     time.sleep(0.03)
             else:
                 for i in range(21, 51):
-                    update_progress_bar(i, "✅ SyftBox binary already exists")
+                    update_progress_bar(i, message="✅ SyftBox binary already exists")
                     time.sleep(0.01)
             
             # Phase 3: Verify OTP (50-80%)
             for i in range(51, 71):
-                update_progress_bar(i, "🔐 Verifying code...")
+                update_progress_bar(i, message="🔐 Verifying code...")
                 time.sleep(0.03)
         
             from syft_installer._utils import sanitize_otp, validate_otp
@@ -439,7 +441,7 @@ class _SyftBox:
             
             # Phase 4: Save configuration (70-90%)
             for i in range(71, 91):
-                update_progress_bar(i, "💾 Saving configuration...")
+                update_progress_bar(i, message="💾 Saving configuration...")
                 time.sleep(0.02)
             
             config = _Config(
@@ -453,11 +455,11 @@ class _SyftBox:
             
             # Phase 5: Complete (90-100%)
             for i in range(91, 101):
-                update_progress_bar(i, "✅ Finalizing installation...")
+                update_progress_bar(i, message="✅ Finalizing installation...")
                 time.sleep(0.01)
             
             # Final message
-            update_progress_bar(100, "✅ SyftBox installation complete!")
+            update_progress_bar(100, message="✅ SyftBox installation complete!")
             print()  # New line after progress bar
             
         except Exception as e:
