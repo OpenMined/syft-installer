@@ -19,12 +19,13 @@ class Downloader:
         self.chunk_size = chunk_size
         self.session = requests.Session()
     
-    def download_and_install(self, target_path: Path) -> None:
+    def download_and_install(self, target_path: Path, progress_callback=None) -> None:
         """
         Download and install SyftBox binary.
         
         Args:
             target_path: Where to install the binary
+            progress_callback: Optional callback(downloaded_bytes, total_bytes, message)
         """
         # Get download URL for current platform
         url = get_binary_url()
@@ -35,34 +36,42 @@ class Downloader:
         with tempfile.TemporaryDirectory() as temp_dir:
             # Download tarball
             tarball_path = Path(temp_dir) / "syftbox.tar.gz"
-            self._download_file(url, tarball_path)
+            self._download_file(url, tarball_path, progress_callback)
             
             # Extract binary
+            if progress_callback:
+                progress_callback(0, 0, "📦 Extracting SyftBox binary...")
             binary_path = self._extract_binary(tarball_path, temp_dir)
             
             # Install binary
+            if progress_callback:
+                progress_callback(0, 0, "📝 Installing SyftBox binary...")
             self._install_binary(binary_path, target_path)
     
-    def _download_file(self, url: str, dest: Path) -> None:
-        """Download file with progress bar."""
+    def _download_file(self, url: str, dest: Path, progress_callback=None) -> None:
+        """Download file with progress tracking."""
         try:
             response = self.session.get(url, stream=True)
             response.raise_for_status()
             
             total_size = int(response.headers.get("content-length", 0))
+            downloaded = 0
             
-            # Use rich progress bar if available and in terminal
-            try:
-                is_terminal = os.isatty(sys.stdout.fileno())
-            except (AttributeError, OSError):
-                # In some environments (like Colab), stdout may not have fileno
-                is_terminal = False
-            
-            # Always use silent download for clean experience
             with open(dest, "wb") as f:
                 for chunk in response.iter_content(chunk_size=self.chunk_size):
                     if chunk:
                         f.write(chunk)
+                        downloaded += len(chunk)
+                        
+                        if progress_callback and total_size > 0:
+                            # Report download progress
+                            mb_downloaded = downloaded / (1024 * 1024)
+                            mb_total = total_size / (1024 * 1024)
+                            progress_callback(
+                                downloaded, 
+                                total_size, 
+                                f"📥 Downloading SyftBox ({mb_downloaded:.1f}/{mb_total:.1f} MB)..."
+                            )
                             
         except requests.exceptions.RequestException as e:
             raise DownloadError(f"Failed to download binary: {str(e)}")

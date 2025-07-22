@@ -416,17 +416,24 @@ class _SyftBox:
             
             # Phase 2: Download binary (20-50%)
             if not binary_path.exists():
-                for i in range(21, 36):
-                    update_progress_bar(i, message="📥 Downloading SyftBox binary...")
-                    time.sleep(0.05)
-                
                 from syft_installer._downloader import Downloader
                 downloader = Downloader()
-                downloader.download_and_install(binary_path)
                 
-                for i in range(36, 51):
-                    update_progress_bar(i, message="📥 Extracting SyftBox binary...")
-                    time.sleep(0.03)
+                # Define callback to update progress bar based on download
+                def download_progress(downloaded, total, message):
+                    if total > 0:
+                        # Map download progress to 20-50% range
+                        download_percent = (downloaded / total) * 100
+                        overall_progress = 20 + int((download_percent * 30) / 100)
+                        update_progress_bar(overall_progress, message=message)
+                    else:
+                        # For extract/install phases, just show at 48-50%
+                        if "Extracting" in message:
+                            update_progress_bar(48, message=message)
+                        elif "Installing" in message:
+                            update_progress_bar(50, message=message)
+                
+                downloader.download_and_install(binary_path, download_progress)
             else:
                 for i in range(21, 51):
                     update_progress_bar(i, message="✅ SyftBox binary already exists")
@@ -466,11 +473,7 @@ class _SyftBox:
                 update_progress_bar(i, message="✅ Finalizing installation...")
                 time.sleep(0.01)
             
-            # Final message
-            update_progress_bar(100, message="✅ SyftBox installation complete!")
-            # Clear any remaining characters and move to new line
-            sys.stdout.write(' ' * 20)  # Clear any trailing characters
-            print()  # New line after progress bar
+            # Don't show "installation complete" - will show "running" message instead
             
         except Exception as e:
             sys.stdout.write(f"\r❌ Installation failed: {str(e)}\n")
