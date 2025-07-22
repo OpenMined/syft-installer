@@ -211,7 +211,9 @@ class _SyftBox:
         # Show welcome message
         display.show_welcome(version=__version__)
         
-        if not self.is_installed:
+        was_installed = self.is_installed
+        
+        if not was_installed:
             self._install()
         
         # Check configuration
@@ -229,18 +231,33 @@ class _SyftBox:
         
         # Start if not running
         if not self.is_running:
-            prog = progress_context()
-            
-            def progress_update(step, message):
-                prog.update(step, message)
-            
-            prog.update(20, f"🚀 Starting SyftBox daemon for {config.email}")
-            prog.update(50, f"📌 Executing {config.binary_path} daemon")
-            
-            self._process_manager.start(config, background=background, progress_callback=progress_update)
-            
-            prog.update(95, "✅ SyftBox daemon started successfully")
-            prog.finish(f"✅ SyftBox installed and running for {config.email}")
+            # Only show progress if we didn't just install
+            if was_installed:
+                prog = progress_context()
+                
+                def progress_update(step, message):
+                    prog.update(step, message)
+                
+                prog.update(20, f"🚀 Starting SyftBox daemon for {config.email}")
+                prog.update(50, f"📌 Executing {config.binary_path} daemon")
+                
+                self._process_manager.start(config, background=background, progress_callback=progress_update)
+                
+                prog.update(95, "✅ SyftBox daemon started successfully")
+                prog.finish(f"✅ SyftBox installed and running for {config.email}")
+            else:
+                # After fresh install, continue the existing progress
+                from syft_installer._progress import progress
+                
+                # Start the daemon
+                self._process_manager.start(config, background=background)
+                
+                # Finish the installation progress
+                if progress.is_active:
+                    progress.update(100, "✅ SyftBox daemon started successfully")
+                    progress.finish(f"✅ SyftBox installed and running for {config.email}")
+                else:
+                    print(f"✅ SyftBox installed and running for {config.email}")
         else:
             display.show_already_running(config.email)
     
@@ -433,7 +450,8 @@ class _SyftBox:
             config.save()
             
             prog.update(90, "✅ Configuration saved successfully")
-            prog.finish("✅ SyftBox installation complete!")
+            prog.update(95, "🚀 Starting SyftBox daemon...")
+            # Don't finish here - let the run method handle completion
             
         except Exception as e:
             prog.finish(f"❌ Verification failed: {str(e)}")

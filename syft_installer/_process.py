@@ -315,7 +315,10 @@ class ProcessManager:
                                 print(f"   Error output: {stderr_content}")
                     raise RuntimeError("Failed to start syftbox daemon")
                 else:
-                    print(f"   ✅ Process started with PID: {self.process.pid}")
+                    if progress_callback:
+                        progress_callback(90, f"✅ Process started with PID: {self.process.pid}")
+                    elif self.verbose:
+                        print(f"   ✅ Process started with PID: {self.process.pid}")
                 
         except Exception as e:
             print(f"   ❌ Failed to launch: {e}")
