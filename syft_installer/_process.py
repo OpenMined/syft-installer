@@ -276,12 +276,23 @@ class ProcessManager:
                 
                 if restricted_env:
                     # In restricted environments, use minimal subprocess options
-                    self.process = subprocess.Popen(
-                        cmd,
-                        stdout=subprocess.DEVNULL,
-                        stderr=self.stderr_file,
-                        stdin=subprocess.DEVNULL
-                    )
+                    # Try to ignore SIGINT to survive Colab/Jupyter interrupts
+                    try:
+                        self.process = subprocess.Popen(
+                            cmd,
+                            stdout=subprocess.DEVNULL,
+                            stderr=self.stderr_file,
+                            stdin=subprocess.DEVNULL,
+                            preexec_fn=lambda: signal.signal(signal.SIGINT, signal.SIG_IGN)
+                        )
+                    except (OSError, AttributeError, TypeError):
+                        # If preexec_fn is not allowed, fall back to simple call
+                        self.process = subprocess.Popen(
+                            cmd,
+                            stdout=subprocess.DEVNULL,
+                            stderr=self.stderr_file,
+                            stdin=subprocess.DEVNULL
+                        )
                 else:
                     # Regular Unix environment
                     # Check if we're in a Jupyter/IPython environment
@@ -293,13 +304,23 @@ class ProcessManager:
                         pass
                     
                     if in_jupyter:
-                        # Jupyter environment - use simpler subprocess call
-                        self.process = subprocess.Popen(
-                            cmd,
-                            stdout=subprocess.DEVNULL,
-                            stderr=self.stderr_file,
-                            stdin=subprocess.DEVNULL
-                        )
+                        # Jupyter environment - try to ignore SIGINT to survive interrupts
+                        try:
+                            self.process = subprocess.Popen(
+                                cmd,
+                                stdout=subprocess.DEVNULL,
+                                stderr=self.stderr_file,
+                                stdin=subprocess.DEVNULL,
+                                preexec_fn=lambda: signal.signal(signal.SIGINT, signal.SIG_IGN)
+                            )
+                        except Exception:
+                            # Fallback without preexec_fn
+                            self.process = subprocess.Popen(
+                                cmd,
+                                stdout=subprocess.DEVNULL,
+                                stderr=self.stderr_file,
+                                stdin=subprocess.DEVNULL
+                            )
                     else:
                         # Regular terminal - try full daemon mode, fallback if needed
                         try:
