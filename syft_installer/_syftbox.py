@@ -161,7 +161,8 @@ class _SyftBox:
     def __init__(self, 
                  email: Optional[str] = None,
                  server: str = "https://syftbox.net",
-                 data_dir: Optional[str] = None):
+                 data_dir: Optional[str] = None,
+                 auto_auth: bool = False):
         """
         Initialize SyftBox manager.
         
@@ -169,10 +170,12 @@ class _SyftBox:
             email: Your email (optional - will prompt if needed)
             server: SyftBox server URL (default: https://syftbox.net)
             data_dir: Data directory (default: ~/SyftBox)
+            auto_auth: If True, automatically authenticates with Google Colab (default: False)
         """
         self.email = email
         self.server = server
         self.data_dir = Path(data_dir).expanduser() if data_dir else Path.home() / "SyftBox"
+        self.auto_auth = auto_auth
         self._process_manager = _ProcessManager(verbose=False)
     
     @property
@@ -424,26 +427,46 @@ class _SyftBox:
     
     def _install(self) -> None:
         """Run installation flow with single-line progress display."""
-        # Auto-detect email in Colab if not provided
+        # Handle email detection based on auto_auth setting
         email = self.email
         if email is None:
-            from syft_installer._colab_utils import is_google_colab, get_colab_user_email
+            from syft_installer._colab_utils import is_google_colab, is_colab_authenticated, get_colab_user_email
             
             if is_google_colab():
-                email = get_colab_user_email()
+                # Check if user already authenticated
+                if is_colab_authenticated():
+                    # User already authenticated, get email
+                    email = get_colab_user_email()
+                    if email is not None:
+                        self.email = email
+                elif self.auto_auth:
+                    # auto_auth=True: authenticate automatically
+                    email = get_colab_user_email()
+                    if email is not None:
+                        self.email = email
+                
+                # If still no email, prompt for manual input
                 if email is None:
-                    display.show_error(
-                        "Could not detect your Google account email",
-                        "Please provide your email explicitly: si.install('your@email.com')"
-                    )
-                    return
-                self.email = email
+                    try:
+                        email = input("Auth using your email: ").strip()
+                        if not email:
+                            display.show_error("Email is required for installation")
+                            return
+                        self.email = email
+                    except (KeyboardInterrupt, EOFError):
+                        display.show_error("Installation cancelled")
+                        return
             else:
-                display.show_error(
-                    "Email is required for installation",
-                    "In Google Colab, we can detect it automatically. Otherwise, provide it: si.install('your@email.com')"
-                )
-                return
+                # Not in Colab, prompt for email
+                try:
+                    email = input("Enter your email: ").strip()
+                    if not email:
+                        display.show_error("Email is required for installation")
+                        return
+                    self.email = email
+                except (KeyboardInterrupt, EOFError):
+                    display.show_error("Installation cancelled")
+                    return
         
         # Validate email
         from syft_installer._utils import validate_email
@@ -851,7 +874,7 @@ def run(background: bool = True, silent: bool = False) -> bool:
         return False
 
 
-def install_and_run_if_needed(email: Optional[str] = None, background: bool = True, interactive: bool = True, silent: bool = False) -> Optional['InstallerSession']:
+def install_and_run_if_needed(email: Optional[str] = None, background: bool = True, interactive: bool = True, silent: bool = False, auto_auth: bool = False) -> Optional['InstallerSession']:
     """
     Install (if needed) and run (if needed) SyftBox.
     
@@ -867,6 +890,8 @@ def install_and_run_if_needed(email: Optional[str] = None, background: bool = Tr
         interactive: If True, prompts for OTP input. If False, returns an InstallerSession
                     object for programmatic OTP submission (default: True)
         silent: If True, suppresses all output (default: False)
+        auto_auth: If True, automatically authenticates with Google Colab if in Colab environment (default: False).
+                  If False, prompts for manual email input when not authenticated.
         
     Returns:
         None in interactive mode, or InstallerSession object in non-interactive mode
@@ -895,9 +920,9 @@ def install_and_run_if_needed(email: Optional[str] = None, background: bool = Tr
     # Apply silent mode if requested
     if silent:
         with silence_output():
-            return install_and_run_if_needed(email, background, interactive, silent=False)
+            return install_and_run_if_needed(email, background, interactive, silent=False, auto_auth=auto_auth)
     
-    instance = _get_instance(email=email)
+    instance = _get_instance(email=email, auto_auth=auto_auth)
     
     if interactive:
         instance.run(background)
