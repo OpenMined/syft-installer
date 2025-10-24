@@ -13,6 +13,32 @@ def is_google_colab() -> bool:
         return False
 
 
+def is_colab_authenticated() -> bool:
+    """
+    Check if user is already authenticated with Google Colab.
+    
+    Returns:
+        True if user has already run auth.authenticate_user(), False otherwise
+    """
+    if not is_google_colab():
+        return False
+        
+    try:
+        import subprocess
+        # Check if gcloud auth is already active
+        result = subprocess.run(
+            ["gcloud", "auth", "list", "--filter=status:ACTIVE", "--format=value(account)"],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+        # If there's an active account, user is authenticated
+        return bool(result.stdout.strip())
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        # gcloud not available or no active auth
+        return False
+
+
 def get_colab_user_email() -> Optional[str]:
     """
     Get the authenticated user's email in Google Colab.
